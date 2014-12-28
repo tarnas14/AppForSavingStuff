@@ -1,6 +1,6 @@
 ﻿namespace Specification
 {
-    using System.Linq;
+    using ConsoleUi;
     using NUnit.Framework;
 
     [TestFixture]
@@ -39,23 +39,6 @@
             //then
             Assert.That(userCommand.Name, Is.EqualTo("testName"));
             Assert.That(new []{"param1", "param2", "param3"}, Is.EquivalentTo(userCommand.Params));
-        }
-    }
-
-    internal class CleverFactory : UserCommandFactory
-    {
-        public UserCommand CreateUserCommand(string userInput)
-        {
-            var withoutLeadingSlash = userInput.TrimEnd().Substring(1);
-            var brokenDown = withoutLeadingSlash.Split(' ');
-            var name = brokenDown.First();
-            var commandParams = brokenDown.Skip(1).ToList();
-
-            return new UserCommand
-            {
-                Name = name,
-                Params = commandParams
-            };
         }
     }
 }
