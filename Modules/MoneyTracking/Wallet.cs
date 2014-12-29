@@ -6,13 +6,11 @@
     {
         private readonly IDictionary<string, Moneyz> _sources;
         private readonly WalletHistory _walletHistory;
-        private readonly OperationFactory _operationFactory;
         private readonly TimeMaster _timeMaster;
 
-        public Wallet(WalletHistory walletHistory, OperationFactory operationFactory, TimeMaster timeMaster)
+        public Wallet(WalletHistory walletHistory, TimeMaster timeMaster)
         {
             _walletHistory = walletHistory;
-            _operationFactory = operationFactory;
             _timeMaster = timeMaster;
             _sources = new Dictionary<string, Moneyz>();
         }
@@ -21,8 +19,16 @@
         {
             MakeSureSourceExists(sourceName);
 
+            var before = _sources[sourceName];
             _sources[sourceName] = _sources[sourceName] + howMuch;
-            _walletHistory.SaveOperation(_operationFactory.GetInOperation(sourceName, howMuch));
+            var operation = new Operation
+            {
+                Before = before,
+                After = _sources[sourceName],
+                Source = sourceName,
+                When = _timeMaster.Now
+            };
+            _walletHistory.SaveOperation(operation);
         }
 
         private void MakeSureSourceExists(string sourceName)
@@ -42,8 +48,16 @@
         {
             MakeSureSourceExists(sourceName);
 
+            var before = _sources[sourceName];
             _sources[sourceName] = _sources[sourceName] - howMuch;
-            _walletHistory.SaveOperation(_operationFactory.GetOutOperation(sourceName, howMuch));
+            var operation = new Operation()
+            {
+                Before = before,
+                After = _sources[sourceName],
+                Source = sourceName,
+                When = _timeMaster.Now
+            };
+            _walletHistory.SaveOperation(operation);
         }
 
         public void Transfer(string source, string destination, Moneyz howMuch)
@@ -51,9 +65,8 @@
             MakeSureSourceExists(source);
             MakeSureSourceExists(destination);
 
-            _sources[source] = _sources[source] - howMuch;
-            _sources[destination] = _sources[destination] + howMuch;
-            _walletHistory.SaveOperation(_operationFactory.GetTransferOperation(source, destination, howMuch));
+            Subtract(source, howMuch);
+            Add(destination, howMuch);
         }
 
         public History GetFullHistory()

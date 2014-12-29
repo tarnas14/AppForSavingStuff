@@ -18,7 +18,7 @@
         public void Setup()
         {
             _timeMasterMock = new Mock<TimeMaster>();
-            _wallet = new Wallet(new InMemoryWalletHistory(), new OperationFactory(_timeMasterMock.Object), _timeMasterMock.Object);
+            _wallet = new Wallet(new InMemoryWalletHistory(), _timeMasterMock.Object);
         }
 
         [Test]
@@ -67,27 +67,71 @@
         }
 
         [Test]
-        public void ShouldProvideHistoryOfOperationsOnTheWallet()
+        public void ShouldStoreAddOperation()
         {
             //given
-            const string someOtherSourceName = "someOtherSource";
-            _wallet.Add(TestSourceName, new Moneyz(5));
-            _wallet.Subtract(TestSourceName, new Moneyz(4));
-            _wallet.Transfer(TestSourceName, someOtherSourceName, new Moneyz(1));
+            var now = new DateTime(2012, 12, 12);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(now);
+            var howMuch = new Moneyz(5);
+            _wallet.Add(TestSourceName, howMuch);
+
+            //when
+            var fullHistory = _wallet.GetFullHistory();
+            var firstOperation = fullHistory.Operations.First();
+
+            //then
+            Assert.That(fullHistory.Operations.Count, Is.EqualTo(1));
+            Assert.That(firstOperation.Source, Is.EqualTo(TestSourceName));
+            Assert.That(firstOperation.When, Is.EqualTo(now));
+            Assert.That(firstOperation.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(firstOperation.After, Is.EqualTo(howMuch));
+        }
+
+        [Test]
+        public void ShouldStoreSubtractOperation()
+        {
+            //given
+            var now = new DateTime(2012, 12, 12);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(now);
+            var howMuch = new Moneyz(5);
+            _wallet.Subtract(TestSourceName, howMuch);
+
+            //when
+            var fullHistory = _wallet.GetFullHistory();
+            var firstOperation = fullHistory.Operations.First();
+
+            //then
+            Assert.That(fullHistory.Operations.Count, Is.EqualTo(1));
+            Assert.That(firstOperation.Source, Is.EqualTo(TestSourceName));
+            Assert.That(firstOperation.When, Is.EqualTo(now));
+            Assert.That(firstOperation.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(firstOperation.After, Is.EqualTo(new Moneyz(-5)));
+        }
+
+        [Test]
+        public void ShouldStoreTransferOperation()
+        {
+            //given
+            _timeMasterMock.SetupSequence(mock => mock.Now)
+                .Returns(new DateTime(2013, 12, 13))
+                .Returns(new DateTime(2013, 12, 14));
+            const string destinationName = "destination";
+            var howMuch = new Moneyz(5);
+            _wallet.Transfer(TestSourceName, destinationName, howMuch);
 
             //when
             var fullHistory = _wallet.GetFullHistory();
 
             //then
-            Assert.That(fullHistory.Operations.Count, Is.EqualTo(3));
-            Assert.IsTrue(fullHistory.Operations.All(operation => operation.Source == TestSourceName));
-            Assert.That(fullHistory.Operations[0].Type, Is.EqualTo(OperationType.In));
-            Assert.That(fullHistory.Operations[0].HowMuch, Is.EqualTo(new Moneyz(5)));
-            Assert.That(fullHistory.Operations[1].Type, Is.EqualTo(OperationType.Out));
-            Assert.That(fullHistory.Operations[1].HowMuch, Is.EqualTo(new Moneyz(4)));
-            Assert.That(fullHistory.Operations[2].Type, Is.EqualTo(OperationType.Transfer));
-            Assert.That(fullHistory.Operations[2].HowMuch, Is.EqualTo(new Moneyz(1)));
-            Assert.That(fullHistory.Operations[2].Destination, Is.EqualTo(someOtherSourceName));
+            Assert.That(fullHistory.Operations.Count, Is.EqualTo(2));
+            var firstOperation = fullHistory.Operations[0];
+            var secondOperation = fullHistory.Operations[1];
+            Assert.That(firstOperation.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(firstOperation.After, Is.EqualTo(new Moneyz(-5)));
+            Assert.That(secondOperation.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(secondOperation.After, Is.EqualTo(howMuch));
+            Console.WriteLine("{0} > {1}", secondOperation.When, firstOperation.When);
+            Assert.That(secondOperation.When > firstOperation.When);
         }
 
         [Test]
@@ -99,6 +143,8 @@
             _timeMasterMock.SetupGet(mock => mock.Today).Returns(yesterMonth);
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(yesterMonth);
             _wallet.Add(TestSourceName, new Moneyz(4));
+            _wallet.Subtract(TestSourceName, new Moneyz(3));
+            _wallet.Transfer(TestSourceName, "otherSource", new Moneyz(1));
             _timeMasterMock.SetupGet(mock => mock.Today).Returns(today);
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
             _wallet.Add(TestSourceName, new Moneyz(5));
@@ -108,7 +154,8 @@
 
             //then
             Assert.That(historyForThisMonth.Operations.Count, Is.EqualTo(1));
-            Assert.That(historyForThisMonth.Operations.First().HowMuch, Is.EqualTo(new Moneyz(5)));
+            Assert.That(historyForThisMonth.Operations.First().Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(historyForThisMonth.Operations.First().After, Is.EqualTo(new Moneyz(5)));
         }
     }
 }
