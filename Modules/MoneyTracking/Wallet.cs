@@ -5,21 +5,20 @@
     public class Wallet
     {
         private readonly IDictionary<string, Moneyz> _sources;
+        private readonly WalletHistory _walletHistory;
 
-        public Wallet()
+        public Wallet(WalletHistory walletHistory)
         {
+            _walletHistory = walletHistory;
             _sources = new Dictionary<string, Moneyz>();
-            History = new WalletHistory();
         }
-
-        public WalletHistory History { get; private set; }
 
         public void Add(string sourceName, Moneyz howMuch)
         {
             MakeSureSourceExists(sourceName);
 
             _sources[sourceName] = _sources[sourceName] + howMuch;
-            History.SaveOperation(Operation.In(sourceName, howMuch));
+            _walletHistory.SaveOperation(Operation.In(sourceName, howMuch));
         }
 
         private void MakeSureSourceExists(string sourceName)
@@ -40,7 +39,7 @@
             MakeSureSourceExists(sourceName);
 
             _sources[sourceName] = _sources[sourceName] - howMuch;
-            History.SaveOperation(Operation.Out(sourceName, howMuch));
+            _walletHistory.SaveOperation(Operation.Out(sourceName, howMuch));
         }
 
         public void Transfer(string source, string destination, Moneyz howMuch)
@@ -50,7 +49,15 @@
 
             _sources[source] = _sources[source] - howMuch;
             _sources[destination] = _sources[destination] + howMuch;
-            History.SaveOperation(Operation.Transfer(source, destination, howMuch));
+            _walletHistory.SaveOperation(Operation.Transfer(source, destination, howMuch));
+        }
+
+        public History GetFullHistory()
+        {
+            return new History
+            {
+                Operations = _walletHistory.GetAll()
+            };
         }
     }
 }

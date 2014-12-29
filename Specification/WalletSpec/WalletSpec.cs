@@ -13,7 +13,7 @@
         [SetUp]
         public void Setup()
         {
-            _wallet = new Wallet();
+            _wallet = new Wallet(new InMemoryWalletHistory());
         }
 
         [Test]
@@ -71,7 +71,7 @@
             _wallet.Transfer(TestSourceName, someOtherSourceName, new Moneyz(1));
 
             //when
-            var fullHistory = _wallet.History;
+            var fullHistory = _wallet.GetFullHistory();
 
             //then
             Assert.That(fullHistory.Operations.Count, Is.EqualTo(3));

@@ -2,18 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class WalletHistory
+    public interface WalletHistory
     {
-        public IList<Operation> Operations { get; private set; }
-
-        public WalletHistory()
-        {
-            Operations = new List<Operation>();
-        }
-
-        public void SaveOperation(Operation toSave)
-        {
-            Operations.Add(toSave);
-        }
+        void SaveOperation(Operation toSave);
+        IList<Operation> GetAll();
     }
 }
