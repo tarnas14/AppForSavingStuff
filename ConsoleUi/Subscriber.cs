@@ -1,4 +1,4 @@
-namespace ConsoleUi
+namespace Ui
 {
     public interface Subscriber
     {

@@ -1,11 +1,11 @@
-namespace ConsoleUi
+namespace Ui
 {
-    public class Ui
+    public class ConsoleUi
     {
         private readonly UserCommandFactory _userCommandFactory;
         private readonly SubscriberStore _subscribers;
 
-        public Ui(UserCommandFactory userCommandFactory)
+        public ConsoleUi(UserCommandFactory userCommandFactory)
         {
             _userCommandFactory = userCommandFactory;
             _subscribers = new SubscriberStore();

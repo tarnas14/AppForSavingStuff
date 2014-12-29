@@ -1,4 +1,4 @@
-namespace ConsoleUi
+namespace Ui
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

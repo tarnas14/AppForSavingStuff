@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Specification", "Specificat
 		{3A62254B-5773-453A-B86C-56A2771FD456} = {3A62254B-5773-453A-B86C-56A2771FD456}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUi", "ConsoleUi\ConsoleUi.csproj", "{3A62254B-5773-453A-B86C-56A2771FD456}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ui", "ConsoleUi\Ui.csproj", "{3A62254B-5773-453A-B86C-56A2771FD456}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

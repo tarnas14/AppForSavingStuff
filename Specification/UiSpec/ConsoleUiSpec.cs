@@ -1,13 +1,13 @@
-﻿namespace Specification
+﻿namespace Specification.UiSpec
 {
-    using ConsoleUi;
     using Moq;
     using NUnit.Framework;
+    using Ui;
 
     [TestFixture]
     class ConsoleUiSpec
     {
-        private Ui _ui;
+        private ConsoleUi _consoleUi;
         private Mock<Subscriber> _subscriberMock;
         private Mock<Subscriber> _subscriberMock2;
         private Mock<Subscriber> _subscriberMock3;
@@ -17,7 +17,7 @@
         public void Setup()
         {
             _userCommandFactoryMock = new Mock<UserCommandFactory>();
-            _ui = new Ui(_userCommandFactoryMock.Object);
+            _consoleUi = new ConsoleUi(_userCommandFactoryMock.Object);
             _subscriberMock = new Mock<Subscriber>();
             _subscriberMock2 = new Mock<Subscriber>();
             _subscriberMock3 = new Mock<Subscriber>();
@@ -28,14 +28,14 @@
         {
             //given
             const string commandName = "someCommand";
-            _ui.Subscribe(_subscriberMock.Object, commandName);
-            _ui.Subscribe(_subscriberMock2.Object, "someOtherCommand");
-            _ui.Subscribe(_subscriberMock3.Object, commandName);
+            _consoleUi.Subscribe(_subscriberMock.Object, commandName);
+            _consoleUi.Subscribe(_subscriberMock2.Object, "someOtherCommand");
+            _consoleUi.Subscribe(_subscriberMock3.Object, commandName);
             _userCommandFactoryMock.Setup(mock => mock.CreateUserCommand(It.IsAny<string>()))
                 .Returns(new UserCommand {Name=commandName});
 
             //when
-            _ui.UserInput("/someCommand");
+            _consoleUi.UserInput("/someCommand");
 
             //then
             _subscriberMock.Verify(sub => sub.Execute(It.Is<UserCommand>(u => u.Name == commandName)), Times.Once);
@@ -50,10 +50,10 @@
             const string TestUserInput = "/someCommand some params";
             var expectedCommand = new UserCommand{Name = "someCommand"};
             _userCommandFactoryMock.Setup(mock => mock.CreateUserCommand(TestUserInput)).Returns(expectedCommand);
-            _ui.Subscribe(_subscriberMock.Object, "someCommand");
+            _consoleUi.Subscribe(_subscriberMock.Object, "someCommand");
 
             //when
-            _ui.UserInput(TestUserInput);
+            _consoleUi.UserInput(TestUserInput);
 
             //then
             _subscriberMock.Verify(mock => mock.Execute(expectedCommand), Times.Once);

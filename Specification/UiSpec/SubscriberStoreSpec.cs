@@ -1,9 +1,9 @@
-﻿namespace Specification
+﻿namespace Specification.UiSpec
 {
     using System.Linq;
-    using ConsoleUi;
     using Moq;
     using NUnit.Framework;
+    using Ui;
 
     [TestFixture]
     class SubscriberStoreSpec

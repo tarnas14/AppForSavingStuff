@@ -50,17 +50,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConsoleUiSpec.cs" />
-    <Compile Include="SubscriberStoreSpec.cs" />
-    <Compile Include="UserCommandFactorySpec.cs" />
+    <Compile Include="UiSpec\ConsoleUiSpec.cs" />
+    <Compile Include="UiSpec\SubscriberStoreSpec.cs" />
+    <Compile Include="UiSpec\UserCommandFactorySpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleUi\ConsoleUi.csproj">
+    <ProjectReference Include="..\ConsoleUi\Ui.csproj">
       <Project>{3a62254b-5773-453a-b86c-56a2771fd456}</Project>
-      <Name>ConsoleUi</Name>
+      <Name>Ui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
