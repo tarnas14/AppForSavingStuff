@@ -1,7 +1,10 @@
 ﻿namespace Specification.WalletSpec
 {
+    using System;
     using System.Linq;
+    using Modules;
     using Modules.MoneyTracking;
+    using Moq;
     using NUnit.Framework;
 
     [TestFixture]
@@ -9,11 +12,13 @@
     {
         private const string TestSourceName = "testSource";
         private Wallet _wallet;
+        private Mock<TimeMaster> _timeMasterMock;
 
         [SetUp]
         public void Setup()
         {
-            _wallet = new Wallet(new InMemoryWalletHistory());
+            _timeMasterMock = new Mock<TimeMaster>();
+            _wallet = new Wallet(new InMemoryWalletHistory(), new OperationFactory(_timeMasterMock.Object), _timeMasterMock.Object);
         }
 
         [Test]
@@ -83,6 +88,27 @@
             Assert.That(fullHistory.Operations[2].Type, Is.EqualTo(OperationType.Transfer));
             Assert.That(fullHistory.Operations[2].HowMuch, Is.EqualTo(new Moneyz(1)));
             Assert.That(fullHistory.Operations[2].Destination, Is.EqualTo(someOtherSourceName));
+        }
+
+        [Test]
+        public void ShouldProvideHistoryForTheMonth()
+        {
+            //given
+            var today = DateTime.Today;
+            var yesterMonth = today.Subtract(TimeSpan.FromDays(32));
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(yesterMonth);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(yesterMonth);
+            _wallet.Add(TestSourceName, new Moneyz(4));
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(today);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
+            _wallet.Add(TestSourceName, new Moneyz(5));
+
+            //when
+            var historyForThisMonth = _wallet.GetHistoryForThisMonth();
+
+            //then
+            Assert.That(historyForThisMonth.Operations.Count, Is.EqualTo(1));
+            Assert.That(historyForThisMonth.Operations.First().HowMuch, Is.EqualTo(new Moneyz(5)));
         }
     }
 }

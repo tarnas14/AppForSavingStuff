@@ -1,5 +1,7 @@
 ﻿namespace Modules.MoneyTracking
 {
+    using System;
+
     public class Moneyz
     {
 
@@ -35,6 +37,11 @@
         public override int GetHashCode()
         {
             return Value.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Value);
         }
     }
 }

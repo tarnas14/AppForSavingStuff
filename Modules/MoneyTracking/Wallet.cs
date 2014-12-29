@@ -6,10 +6,14 @@
     {
         private readonly IDictionary<string, Moneyz> _sources;
         private readonly WalletHistory _walletHistory;
+        private readonly OperationFactory _operationFactory;
+        private readonly TimeMaster _timeMaster;
 
-        public Wallet(WalletHistory walletHistory)
+        public Wallet(WalletHistory walletHistory, OperationFactory operationFactory, TimeMaster timeMaster)
         {
             _walletHistory = walletHistory;
+            _operationFactory = operationFactory;
+            _timeMaster = timeMaster;
             _sources = new Dictionary<string, Moneyz>();
         }
 
@@ -18,7 +22,7 @@
             MakeSureSourceExists(sourceName);
 
             _sources[sourceName] = _sources[sourceName] + howMuch;
-            _walletHistory.SaveOperation(Operation.In(sourceName, howMuch));
+            _walletHistory.SaveOperation(_operationFactory.GetInOperation(sourceName, howMuch));
         }
 
         private void MakeSureSourceExists(string sourceName)
@@ -39,7 +43,7 @@
             MakeSureSourceExists(sourceName);
 
             _sources[sourceName] = _sources[sourceName] - howMuch;
-            _walletHistory.SaveOperation(Operation.Out(sourceName, howMuch));
+            _walletHistory.SaveOperation(_operationFactory.GetOutOperation(sourceName, howMuch));
         }
 
         public void Transfer(string source, string destination, Moneyz howMuch)
@@ -49,7 +53,7 @@
 
             _sources[source] = _sources[source] - howMuch;
             _sources[destination] = _sources[destination] + howMuch;
-            _walletHistory.SaveOperation(Operation.Transfer(source, destination, howMuch));
+            _walletHistory.SaveOperation(_operationFactory.GetTransferOperation(source, destination, howMuch));
         }
 
         public History GetFullHistory()
@@ -57,6 +61,16 @@
             return new History
             {
                 Operations = _walletHistory.GetAll()
+            };
+        }
+
+        public History GetHistoryForThisMonth()
+        {
+            var today = _timeMaster.Today;
+
+            return new History
+            {
+                Operations = _walletHistory.GetForMonth(today.Year, today.Month)
             };
         }
     }

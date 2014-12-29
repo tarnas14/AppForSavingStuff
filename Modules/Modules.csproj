@@ -43,11 +43,13 @@
     <Compile Include="MoneyTracking\History.cs" />
     <Compile Include="MoneyTracking\Moneyz.cs" />
     <Compile Include="MoneyTracking\Operation.cs" />
+    <Compile Include="MoneyTracking\OperationFactory.cs" />
     <Compile Include="MoneyTracking\OperationType.cs" />
     <Compile Include="MoneyTracking\Wallet.cs" />
     <Compile Include="MoneyTracking\InMemoryWalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeMaster.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

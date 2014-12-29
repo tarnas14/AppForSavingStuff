@@ -53,6 +53,7 @@
     <Compile Include="UiSpec\ConsoleUiSpec.cs" />
     <Compile Include="UiSpec\SubscriberStoreSpec.cs" />
     <Compile Include="UiSpec\UserCommandFactorySpec.cs" />
+    <Compile Include="WalletSpec\OperationsFactorySpec.cs" />
     <Compile Include="WalletSpec\WalletSpec.cs" />
   </ItemGroup>
   <ItemGroup>

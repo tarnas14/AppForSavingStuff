@@ -1,6 +1,7 @@
 ﻿namespace Modules.MoneyTracking
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public class InMemoryWalletHistory : WalletHistory
     {
@@ -19,6 +20,11 @@
         public IList<Operation> GetAll()
         {
             return _operations;
+        }
+
+        public IList<Operation> GetForMonth(int year, int month)
+        {
+            return _operations.Where(operation => operation.When.Year == year && operation.When.Month == month).ToList();
         }
     }
 }

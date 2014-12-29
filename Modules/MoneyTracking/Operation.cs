@@ -1,13 +1,14 @@
 ﻿namespace Modules.MoneyTracking
 {
-    using System.Security.Cryptography;
+    using System;
 
     public class Operation
     {
-        public string Source { get; private set; }
-        public OperationType Type { get; private set; }
-        public Moneyz HowMuch { get; private set; }
-        public string Destination { get; private set; }
+        public string Source { get; set; }
+        public OperationType Type { get; set; }
+        public Moneyz HowMuch { get; set; }
+        public string Destination { get; set; }
+        public DateTime When { get; set; }
 
         public static Operation In(string sourceName, Moneyz howMuch)
         {
