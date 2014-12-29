@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,7 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MoneyTracking\Moneyz.cs" />
+    <Compile Include="MoneyTracking\Operation.cs" />
+    <Compile Include="MoneyTracking\OperationType.cs" />
     <Compile Include="MoneyTracking\Wallet.cs" />
+    <Compile Include="MoneyTracking\WalletHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
