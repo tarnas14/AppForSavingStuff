@@ -184,5 +184,44 @@
             Assert.That(testSourceBalance, Is.EqualTo(new Moneyz(8)));
             Assert.That(otherSourceBalance, Is.EqualTo(new Moneyz(7)));
         }
+
+        [Test]
+        public void ShouldReturnHistoryOrderedByDate()
+        {
+            //given
+            _timeMasterMock.SetupSequence(mock => mock.Now)
+                .Returns(new DateTime(2013, 12, 11))
+                .Returns(new DateTime(2013, 12, 10));
+            _wallet.Add(TestSourceName, new Moneyz(3));
+            _wallet.Transfer(TestSourceName, "destination", new Moneyz(1));
+
+            //when
+            var fullHistory = _wallet.GetFullHistory();
+
+            //then
+            Assert.That(fullHistory.Operations[0].When, Is.EqualTo(new DateTime(2013, 12, 10)));
+            Assert.That(fullHistory.Operations[1].When, Is.EqualTo(new DateTime(2013, 12, 11)));
+        }
+
+        [Test]
+        public void ShouldReturnHistoryForMonthOrderedByDate()
+        {
+            //given
+            _timeMasterMock.SetupSequence(mock => mock.Now)
+                .Returns(new DateTime(2013, 10, 12))
+                .Returns(new DateTime(2013, 12, 12))
+                .Returns(new DateTime(2013, 12, 11));
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(new DateTime(2013, 12, 14));
+            _wallet.Add(TestSourceName, new Moneyz(3));
+            _wallet.Subtract(TestSourceName, new Moneyz(2));
+            _wallet.Transfer(TestSourceName, "destination", new Moneyz(1));
+
+            //when
+            var fullHistory = _wallet.GetHistoryForThisMonth();
+
+            //then
+            Assert.That(fullHistory.Operations[0].When, Is.EqualTo(new DateTime(2013, 12, 11)));
+            Assert.That(fullHistory.Operations[1].When, Is.EqualTo(new DateTime(2013, 12, 12)));
+        }
     }
 }
