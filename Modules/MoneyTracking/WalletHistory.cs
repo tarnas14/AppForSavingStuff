@@ -7,5 +7,6 @@
         void SaveOperation(Operation toSave);
         IList<Operation> GetAll();
         IList<Operation> GetForMonth(int year, int month);
+        IEnumerable<Source> GetSources();
     }
 }

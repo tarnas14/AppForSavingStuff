@@ -43,6 +43,7 @@
     <Compile Include="MoneyTracking\History.cs" />
     <Compile Include="MoneyTracking\Moneyz.cs" />
     <Compile Include="MoneyTracking\Operation.cs" />
+    <Compile Include="MoneyTracking\Source.cs" />
     <Compile Include="MoneyTracking\Wallet.cs" />
     <Compile Include="MoneyTracking\InMemoryWalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />

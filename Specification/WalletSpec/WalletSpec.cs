@@ -1,6 +1,7 @@
 ﻿namespace Specification.WalletSpec
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Modules;
     using Modules.MoneyTracking;
@@ -156,6 +157,28 @@
             Assert.That(historyForThisMonth.Operations.Count, Is.EqualTo(1));
             Assert.That(historyForThisMonth.Operations.First().Before, Is.EqualTo(new Moneyz(0)));
             Assert.That(historyForThisMonth.Operations.First().After, Is.EqualTo(new Moneyz(5)));
+        }
+
+        [Test]
+        public void ShouldLoadCurrentBalanceFromHistoryOnInit()
+        {
+            //given
+            const string otherSourceName = "otherSourceBalance";
+            var walletHistoryMock = new Mock<WalletHistory>();
+            walletHistoryMock.Setup(mock => mock.GetSources()).Returns(new List<Source>()
+            {
+                new Source(TestSourceName, new Moneyz(8)),
+                new Source(otherSourceName, new Moneyz(7))
+            });
+            var wallet = new Wallet(walletHistoryMock.Object, Mock.Of<TimeMaster>());
+
+            //when
+            var testSourceBalance = wallet.GetBalance(TestSourceName);
+            var otherSourceBalance = wallet.GetBalance(otherSourceName);
+
+            //then
+            Assert.That(testSourceBalance, Is.EqualTo(new Moneyz(8)));
+            Assert.That(otherSourceBalance, Is.EqualTo(new Moneyz(7)));
         }
     }
 }

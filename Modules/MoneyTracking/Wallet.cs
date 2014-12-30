@@ -4,27 +4,41 @@
 
     public class Wallet
     {
-        private readonly IDictionary<string, Moneyz> _sources;
-        private readonly WalletHistory _walletHistory;
+        private readonly IDictionary<string, Source> _sources; 
+        private WalletHistory _walletHistory;
         private readonly TimeMaster _timeMaster;
 
         public Wallet(WalletHistory walletHistory, TimeMaster timeMaster)
         {
-            _walletHistory = walletHistory;
             _timeMaster = timeMaster;
-            _sources = new Dictionary<string, Moneyz>();
+            _sources = new Dictionary<string, Source>();
+            LoadHistory(walletHistory);
+        }
+
+        private void LoadHistory(WalletHistory walletHistory)
+        {
+            var sources = walletHistory.GetSources();
+
+            foreach (var source in sources)
+            {
+                _sources.Add(source.SourceName, source);
+            }
+
+            _walletHistory = walletHistory;
         }
 
         public void Add(string sourceName, Moneyz howMuch)
         {
             MakeSureSourceExists(sourceName);
 
-            var before = _sources[sourceName];
-            _sources[sourceName] = _sources[sourceName] + howMuch;
+            var source = _sources[sourceName];
+
+            var before = source.Balance;
+            source.SetBalance(before + howMuch);
             var operation = new Operation
             {
                 Before = before,
-                After = _sources[sourceName],
+                After = source.Balance,
                 Source = sourceName,
                 When = _timeMaster.Now
             };
@@ -35,25 +49,27 @@
         {
             if (!_sources.ContainsKey(sourceName))
             {
-                _sources.Add(sourceName, new Moneyz(0));
+                _sources.Add(sourceName, new Source(sourceName));
             }
         }
 
         public Moneyz GetBalance(string sourceName)
         {
-            return _sources[sourceName];
+            return _sources[sourceName].Balance;
         }
 
         public void Subtract(string sourceName, Moneyz howMuch)
         {
             MakeSureSourceExists(sourceName);
 
-            var before = _sources[sourceName];
-            _sources[sourceName] = _sources[sourceName] - howMuch;
+            var source = _sources[sourceName];
+            var before = source.Balance;
+            source.SetBalance(before - howMuch);
+
             var operation = new Operation()
             {
                 Before = before,
-                After = _sources[sourceName],
+                After = source.Balance,
                 Source = sourceName,
                 When = _timeMaster.Now
             };
