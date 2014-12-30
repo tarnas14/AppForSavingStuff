@@ -21,7 +21,7 @@
 
             foreach (var source in sources)
             {
-                _sources.Add(source.SourceName, source);
+                _sources.Add(source.Name, source);
             }
 
             _walletHistory = walletHistory;
@@ -35,13 +35,10 @@
 
             var before = source.Balance;
             source.SetBalance(before + howMuch);
-            var operation = new Operation
-            {
-                Before = before,
-                After = source.Balance,
-                Source = sourceName,
-                When = _timeMaster.Now
-            };
+
+            var operation = new Operation(_timeMaster.Now);
+            operation.AddChange(source.Name, before, source.Balance);
+
             _walletHistory.SaveOperation(operation);
         }
 
@@ -66,23 +63,32 @@
             var before = source.Balance;
             source.SetBalance(before - howMuch);
 
-            var operation = new Operation()
-            {
-                Before = before,
-                After = source.Balance,
-                Source = sourceName,
-                When = _timeMaster.Now
-            };
+            var operation = new Operation(_timeMaster.Now);
+            operation.AddChange(source.Name, before, source.Balance);
+
             _walletHistory.SaveOperation(operation);
         }
 
-        public void Transfer(string source, string destination, Moneyz howMuch)
+        public void Transfer(string sourceName, string destinationName, Moneyz howMuch)
         {
-            MakeSureSourceExists(source);
-            MakeSureSourceExists(destination);
+            MakeSureSourceExists(sourceName);
+            MakeSureSourceExists(destinationName);
 
-            Subtract(source, howMuch);
-            Add(destination, howMuch);
+            var operation = new Operation(_timeMaster.Now);
+
+            var source = _sources[sourceName];
+            var before = source.Balance;
+            source.SetBalance(before - howMuch);
+
+            operation.AddChange(source.Name, before, source.Balance);
+
+            var destination = _sources[destinationName];
+            before = destination.Balance;
+            destination.SetBalance(before + howMuch);
+
+            operation.AddChange(destination.Name, before, destination.Balance);
+
+            _walletHistory.SaveOperation(operation);
         }
 
         public History GetFullHistory()

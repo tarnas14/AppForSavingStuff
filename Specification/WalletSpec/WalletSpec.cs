@@ -78,14 +78,16 @@
 
             //when
             var fullHistory = _wallet.GetFullHistory();
-            var firstOperation = fullHistory.Operations.First();
 
             //then
             Assert.That(fullHistory.Operations.Count, Is.EqualTo(1));
-            Assert.That(firstOperation.Source, Is.EqualTo(TestSourceName));
-            Assert.That(firstOperation.When, Is.EqualTo(now));
-            Assert.That(firstOperation.Before, Is.EqualTo(new Moneyz(0)));
-            Assert.That(firstOperation.After, Is.EqualTo(howMuch));
+            var operation = fullHistory.Operations.First();
+            Assert.That(operation.When, Is.EqualTo(now));
+            Assert.That(operation.Changes.Count, Is.EqualTo(1));
+            var change = operation.Changes.First();
+            Assert.That(change.Source, Is.EqualTo(TestSourceName));
+            Assert.That(change.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(change.After, Is.EqualTo(howMuch));
         }
 
         [Test]
@@ -99,40 +101,43 @@
 
             //when
             var fullHistory = _wallet.GetFullHistory();
-            var firstOperation = fullHistory.Operations.First();
 
             //then
             Assert.That(fullHistory.Operations.Count, Is.EqualTo(1));
-            Assert.That(firstOperation.Source, Is.EqualTo(TestSourceName));
-            Assert.That(firstOperation.When, Is.EqualTo(now));
-            Assert.That(firstOperation.Before, Is.EqualTo(new Moneyz(0)));
-            Assert.That(firstOperation.After, Is.EqualTo(new Moneyz(-5)));
+            var operation = fullHistory.Operations.First();
+            Assert.That(operation.When, Is.EqualTo(now));
+            var change = operation.Changes.First();
+            Assert.That(change.Source, Is.EqualTo(TestSourceName));
+            Assert.That(change.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(change.After, Is.EqualTo(new Moneyz(-5)));
         }
 
         [Test]
         public void ShouldStoreTransferOperation()
         {
             //given
+            var when = new DateTime(2013, 12, 13);
             _timeMasterMock.SetupSequence(mock => mock.Now)
-                .Returns(new DateTime(2013, 12, 13))
-                .Returns(new DateTime(2013, 12, 14));
+                .Returns(when);
             const string destinationName = "destination";
-            var howMuch = new Moneyz(5);
-            _wallet.Transfer(TestSourceName, destinationName, howMuch);
+            _wallet.Transfer(TestSourceName, destinationName, new Moneyz(5));
 
             //when
             var fullHistory = _wallet.GetFullHistory();
 
             //then
-            Assert.That(fullHistory.Operations.Count, Is.EqualTo(2));
-            var firstOperation = fullHistory.Operations[0];
-            var secondOperation = fullHistory.Operations[1];
-            Assert.That(firstOperation.Before, Is.EqualTo(new Moneyz(0)));
-            Assert.That(firstOperation.After, Is.EqualTo(new Moneyz(-5)));
-            Assert.That(secondOperation.Before, Is.EqualTo(new Moneyz(0)));
-            Assert.That(secondOperation.After, Is.EqualTo(howMuch));
-            Console.WriteLine("{0} > {1}", secondOperation.When, firstOperation.When);
-            Assert.That(secondOperation.When > firstOperation.When);
+            Assert.That(fullHistory.Operations.Count, Is.EqualTo(1));
+            var operation = fullHistory.Operations[0];
+            Assert.That(operation.When, Is.EqualTo(when));
+            Assert.That(operation.Changes.Count, Is.EqualTo(2));
+            var firstChange = operation.Changes[0];
+            var secondChange = operation.Changes[1];
+            Assert.That(firstChange.Source, Is.EqualTo(TestSourceName));
+            Assert.That(firstChange.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(firstChange.After, Is.EqualTo(new Moneyz(-5)));
+            Assert.That(secondChange.Source, Is.EqualTo(destinationName));
+            Assert.That(secondChange.Before, Is.EqualTo(new Moneyz(0)));
+            Assert.That(secondChange.After, Is.EqualTo(new Moneyz(5)));
         }
 
         [Test]
@@ -155,8 +160,7 @@
 
             //then
             Assert.That(historyForThisMonth.Operations.Count, Is.EqualTo(1));
-            Assert.That(historyForThisMonth.Operations.First().Before, Is.EqualTo(new Moneyz(0)));
-            Assert.That(historyForThisMonth.Operations.First().After, Is.EqualTo(new Moneyz(5)));
+            Assert.That(historyForThisMonth.Operations.First().When.Month, Is.EqualTo(today.Month));
         }
 
         [Test]

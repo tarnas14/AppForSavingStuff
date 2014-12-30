@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MoneyTracking\Change.cs" />
     <Compile Include="MoneyTracking\History.cs" />
     <Compile Include="MoneyTracking\Moneyz.cs" />
     <Compile Include="MoneyTracking\Operation.cs" />

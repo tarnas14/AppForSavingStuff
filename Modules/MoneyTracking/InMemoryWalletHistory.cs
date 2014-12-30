@@ -1,7 +1,9 @@
 ﻿namespace Modules.MoneyTracking
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Net.NetworkInformation;
 
     public class InMemoryWalletHistory : WalletHistory
     {
@@ -29,13 +31,15 @@
 
         public IEnumerable<Source> GetSources()
         {
-            var sourcesInOperations = _operations.Select(operation => operation.Source).Distinct();
+            var changes = new List<Change>();
+            _operations.ForEach(operation => changes.AddRange(operation.Changes));
+            var sourcesInOperations = changes.Select(change => change.Source).Distinct();
 
-            foreach (var source in sourcesInOperations)
+            foreach (var sourceName in sourcesInOperations)
             {
-                var lastOperation = _operations.Last(operation => operation.Source == source);
+                var lastChange = changes.Last(change => change.Source == sourceName);
 
-                yield return new Source(source, lastOperation.After);
+                yield return new Source(sourceName, lastChange.After);
             }
         }
     }

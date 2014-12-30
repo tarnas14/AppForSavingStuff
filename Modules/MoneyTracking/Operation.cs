@@ -1,12 +1,27 @@
 ﻿namespace Modules.MoneyTracking
 {
     using System;
+    using System.Collections.Generic;
 
     public class Operation
     {
-        public string Source { get; set; }
-        public DateTime When { get; set; }
-        public Moneyz Before { get; set; }
-        public Moneyz After { get; set; }
+        public DateTime When { get; private set; }
+        public IList<Change> Changes { get; private set; }
+
+        public Operation(DateTime when)
+        {
+            When = when;
+            Changes = new List<Change>();
+        }
+
+        public void AddChange(string sourceName, Moneyz before, Moneyz after)
+        {
+            Changes.Add(new Change
+            {
+                Source = sourceName,
+                Before = before,
+                After = after
+            });
+        }
     }
 }
