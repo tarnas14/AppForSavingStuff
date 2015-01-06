@@ -40,42 +40,6 @@
             return _sources[sourceName].Balance;
         }
 
-        public void Subtract(string sourceName, Moneyz howMuch)
-        {
-            MakeSureSourceExists(sourceName);
-
-            var source = _sources[sourceName];
-            var before = source.Balance;
-            source.SetBalance(before - howMuch);
-
-            var operation = new Operation(_timeMaster.Now);
-            operation.AddChange(source.Name, before, source.Balance);
-
-            _walletHistory.SaveOperation(operation);
-        }
-
-        public void Transfer(string sourceName, string destinationName, Moneyz howMuch)
-        {
-            MakeSureSourceExists(sourceName);
-            MakeSureSourceExists(destinationName);
-
-            var operation = new Operation(_timeMaster.Now);
-
-            var source = _sources[sourceName];
-            var before = source.Balance;
-            source.SetBalance(before - howMuch);
-
-            operation.AddChange(source.Name, before, source.Balance);
-
-            var destination = _sources[destinationName];
-            before = destination.Balance;
-            destination.SetBalance(before + howMuch);
-
-            operation.AddChange(destination.Name, before, destination.Balance);
-
-            _walletHistory.SaveOperation(operation);
-        }
-
         public History GetFullHistory()
         {
             return new History
@@ -109,6 +73,50 @@
                 Tags = input.Tags
             };
             operation.AddChange(source.Name, before, source.Balance);
+
+            _walletHistory.SaveOperation(operation);
+        }
+
+        public void Subtract(string sourceName, OperationInput operationInput)
+        {
+            MakeSureSourceExists(sourceName);
+
+            var source = _sources[sourceName];
+            var before = source.Balance;
+            source.SetBalance(before - operationInput.HowMuch);
+
+            var operation = new Operation(_timeMaster.Now)
+            {
+                Description = operationInput.Description,
+                Tags = operationInput.Tags
+            };
+            operation.AddChange(source.Name, before, source.Balance);
+
+            _walletHistory.SaveOperation(operation);
+        }
+
+        public void Transfer(string sourceName, string destinationName, OperationInput operationInput)
+        {
+            MakeSureSourceExists(sourceName);
+            MakeSureSourceExists(destinationName);
+
+            var operation = new Operation(_timeMaster.Now)
+            {
+                Description = operationInput.Description,
+                Tags = operationInput.Tags
+            };
+
+            var source = _sources[sourceName];
+            var before = source.Balance;
+            source.SetBalance(before - operationInput.HowMuch);
+
+            operation.AddChange(source.Name, before, source.Balance);
+
+            var destination = _sources[destinationName];
+            before = destination.Balance;
+            destination.SetBalance(before + operationInput.HowMuch);
+
+            operation.AddChange(destination.Name, before, destination.Balance);
 
             _walletHistory.SaveOperation(operation);
         }
