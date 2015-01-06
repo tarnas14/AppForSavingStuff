@@ -27,21 +27,6 @@
             _walletHistory = walletHistory;
         }
 
-        public void Add(string sourceName, Moneyz howMuch)
-        {
-            MakeSureSourceExists(sourceName);
-
-            var source = _sources[sourceName];
-
-            var before = source.Balance;
-            source.SetBalance(before + howMuch);
-
-            var operation = new Operation(_timeMaster.Now);
-            operation.AddChange(source.Name, before, source.Balance);
-
-            _walletHistory.SaveOperation(operation);
-        }
-
         private void MakeSureSourceExists(string sourceName)
         {
             if (!_sources.ContainsKey(sourceName))
@@ -107,6 +92,25 @@
             {
                 Operations = _walletHistory.GetForMonth(today.Year, today.Month)
             };
+        }
+
+        public void Add(string sourceName, OperationInput input)
+        {
+            MakeSureSourceExists(sourceName);
+
+            var source = _sources[sourceName];
+
+            var before = source.Balance;
+            source.SetBalance(before + input.HowMuch);
+
+            var operation = new Operation(_timeMaster.Now)
+            {
+                Description = input.Description,
+                Tags = input.Tags
+            };
+            operation.AddChange(source.Name, before, source.Balance);
+
+            _walletHistory.SaveOperation(operation);
         }
     }
 }

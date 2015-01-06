@@ -7,6 +7,8 @@
     {
         public DateTime When { get; private set; }
         public IList<Change> Changes { get; private set; }
+        public string Description { get; set; }
+        public IList<Tag> Tags { get; set; }
 
         public Operation(DateTime when)
         {

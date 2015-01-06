@@ -29,7 +29,10 @@
             var howMuch = new Moneyz(6.66m);
 
             //when
-            _wallet.Add(TestSourceName, howMuch);
+            _wallet.Add(TestSourceName, new OperationInput
+            {
+                HowMuch = howMuch
+            });
             var currentBalance = _wallet.GetBalance(TestSourceName);
 
             //then
@@ -54,8 +57,8 @@
         public void ShouldTransferResourcesFromOneSourceToTheOther()
         {
             //given
-            _wallet.Add("source", new Moneyz(5));
-            _wallet.Add("destination", new Moneyz(2));
+            _wallet.Add("source", new OperationInput{ HowMuch = new Moneyz(5) });
+            _wallet.Add("destination", new OperationInput { HowMuch = new Moneyz(2) });
 
             //when
             _wallet.Transfer("source", "destination", new Moneyz(2));
@@ -74,7 +77,10 @@
             var now = new DateTime(2012, 12, 12);
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(now);
             var howMuch = new Moneyz(5);
-            _wallet.Add(TestSourceName, howMuch);
+            _wallet.Add(TestSourceName, new OperationInput
+            {
+                HowMuch = howMuch
+            });
 
             //when
             var fullHistory = _wallet.GetFullHistory();
@@ -88,6 +94,31 @@
             Assert.That(change.Source, Is.EqualTo(TestSourceName));
             Assert.That(change.Before, Is.EqualTo(new Moneyz(0)));
             Assert.That(change.After, Is.EqualTo(howMuch));
+        }
+
+        [Test]
+        public void ShouldStoreAdditionalMetadataOnAddOperation()
+        {
+            //given
+            var now = new DateTime(2012, 12, 12);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(now);
+            var howMuch = new Moneyz(5);
+            const string description = "test description";
+            var tags = new List<Tag> { new Tag("random"), new Tag("food") };
+            _wallet.Add(TestSourceName, new OperationInput
+            {
+                HowMuch = howMuch,
+                Description = description,
+                Tags = tags
+            });
+
+            //when
+            var fullHistory = _wallet.GetFullHistory();
+            var operation = fullHistory.Operations.First();
+
+            //then
+            Assert.That(operation.Description, Is.EqualTo(description));
+            Assert.That(operation.Tags, Is.EqualTo(tags));
         }
 
         [Test]
@@ -148,12 +179,12 @@
             var yesterMonth = today.Subtract(TimeSpan.FromDays(32));
             _timeMasterMock.SetupGet(mock => mock.Today).Returns(yesterMonth);
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(yesterMonth);
-            _wallet.Add(TestSourceName, new Moneyz(4));
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(4) });
             _wallet.Subtract(TestSourceName, new Moneyz(3));
             _wallet.Transfer(TestSourceName, "otherSource", new Moneyz(1));
             _timeMasterMock.SetupGet(mock => mock.Today).Returns(today);
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
-            _wallet.Add(TestSourceName, new Moneyz(5));
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(5) });
 
             //when
             var historyForThisMonth = _wallet.GetHistoryForThisMonth();
@@ -192,7 +223,7 @@
             _timeMasterMock.SetupSequence(mock => mock.Now)
                 .Returns(new DateTime(2013, 12, 11))
                 .Returns(new DateTime(2013, 12, 10));
-            _wallet.Add(TestSourceName, new Moneyz(3));
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(3) });
             _wallet.Transfer(TestSourceName, "destination", new Moneyz(1));
 
             //when
@@ -212,7 +243,7 @@
                 .Returns(new DateTime(2013, 12, 12))
                 .Returns(new DateTime(2013, 12, 11));
             _timeMasterMock.SetupGet(mock => mock.Today).Returns(new DateTime(2013, 12, 14));
-            _wallet.Add(TestSourceName, new Moneyz(3));
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(3) });
             _wallet.Subtract(TestSourceName, new Moneyz(2));
             _wallet.Transfer(TestSourceName, "destination", new Moneyz(1));
 
