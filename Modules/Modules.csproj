@@ -50,8 +50,16 @@
     <Compile Include="MoneyTracking\Wallet.cs" />
     <Compile Include="MoneyTracking\InMemoryWalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />
+    <Compile Include="MoneyTracking\WalletMainController.cs" />
+    <Compile Include="MoneyTracking\WalletUi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeMaster.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleUi\Ui.csproj">
+      <Project>{3A62254B-5773-453A-B86C-56A2771FD456}</Project>
+      <Name>Ui</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
