@@ -4,7 +4,7 @@
 
     public class Wallet
     {
-        private readonly IDictionary<string, Source> _sources; 
+        private readonly IDictionary<string, Source> _sources;
         private WalletHistory _walletHistory;
         private readonly TimeMaster _timeMaster;
 

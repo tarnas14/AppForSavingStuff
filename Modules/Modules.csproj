@@ -30,7 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Raven.Abstractions">
+      <HintPath>..\packages\RavenDB.Database.3.0.3528\lib\net45\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight">
+      <HintPath>..\packages\RavenDB.Client.3.0.3528\lib\net45\Raven.Client.Lightweight.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Database">
+      <HintPath>..\packages\RavenDB.Database.3.0.3528\lib\net45\Raven.Database.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +55,9 @@
     <Compile Include="MoneyTracking\Moneyz.cs" />
     <Compile Include="MoneyTracking\Operation.cs" />
     <Compile Include="MoneyTracking\OperationInput.cs" />
+    <Compile Include="MoneyTracking\Persistence\DocumentStoreProvider.cs" />
+    <Compile Include="MoneyTracking\Persistence\Operations_ByMonthYear.cs" />
+    <Compile Include="MoneyTracking\Persistence\RavenDocumentStoreWalletHistory.cs" />
     <Compile Include="MoneyTracking\Source.cs" />
     <Compile Include="MoneyTracking\Tag.cs" />
     <Compile Include="MoneyTracking\Wallet.cs" />
@@ -61,6 +74,9 @@
       <Project>{3A62254B-5773-453A-B86C-56A2771FD456}</Project>
       <Name>Ui</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
