@@ -269,7 +269,7 @@
         }
 
         [Test]
-        public void ShouldReturnHistoryOrderedByDate()
+        public void ShouldReturnFullHistoryOrderedByDate()
         {
             //given
             TimeMasterMock.SetupSequence(mock => mock.Now)

@@ -27,7 +27,17 @@
 
         public IList<Operation> GetAll()
         {
-            throw new System.NotImplementedException();
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                var query = session.Query<Operation>().OrderBy(operation => operation.When);
+
+                if (WaitForNonStale)
+                {
+                    query = query.Customize(x => x.WaitForNonStaleResults());
+                }
+
+                return query.ToList();
+            }
         }
 
         public IList<Operation> GetForMonth(int year, int month)
@@ -37,11 +47,12 @@
                 var date = new DateTime(year, month, 1);
                 var query =
                     session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>()
-                    .Where(operation => operation.MonthYear == date.ToString("MMyy"));
+                    .Where(result => result.MonthYear == date.ToString("MMyy"))
+                    .OrderBy(result => result.When);
 
                 if (WaitForNonStale)
                 {
-                    query = query.Customize(x => x.WaitForNonStaleResults(TimeSpan.FromSeconds(2)));
+                    query = query.Customize(x => x.WaitForNonStaleResults());
                 }
 
                 return query.OfType<Operation>().ToList();
