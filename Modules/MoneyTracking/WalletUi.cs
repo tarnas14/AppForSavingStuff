@@ -2,6 +2,6 @@
 {
     public interface WalletUi
     {
-        void DisplayBalance(string mbank, decimal balance);
+        void DisplayBalance(string sourceName, Moneyz balance);
     }
 }
