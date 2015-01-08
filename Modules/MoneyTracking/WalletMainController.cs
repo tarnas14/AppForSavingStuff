@@ -56,7 +56,7 @@
 
             return new OperationInput
             {
-                Description = (userCommand.Params.Count < descriptionIndex) ? string.Empty : userCommand.Params[descriptionIndex],
+                Description = (userCommand.Params.Count <= descriptionIndex) ? string.Empty : userCommand.Params[descriptionIndex],
                 Tags = tags,
                 HowMuch = new Moneyz(Convert.ToDecimal(userCommand.Params[howMuchIndex]))
             };

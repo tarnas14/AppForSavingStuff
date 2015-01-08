@@ -41,7 +41,8 @@
         {
             get
             {
-                yield return new TestCaseData("mbank", new List<string> { "/wallet add mbank 2 'my description' tag1 tag2" }, new Moneyz(2)).SetName("add 2");
+                yield return new TestCaseData("mbank", new List<string> { "/wallet add mbank 2" }, new Moneyz(2)).SetName("add 2");
+                yield return new TestCaseData("mbank", new List<string> { "/wallet add mbank 2 'my description' tag1 tag2" }, new Moneyz(2)).SetName("add 2 with description and tags");
                 yield return new TestCaseData("mbank", new List<string>
                 {
                     "/wallet add mbank 5 'my description' tag1 tag2",

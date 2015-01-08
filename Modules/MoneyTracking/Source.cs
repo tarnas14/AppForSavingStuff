@@ -2,9 +2,15 @@
 {
     public class Source
     {
+        public string Id { get; set; }
 
-        public string Name { get; private set; }
-        public Moneyz Balance { get; private set; }
+        public string Name { get; set; }
+        public Moneyz Balance { get; set; }
+
+        public Source()
+        {
+            
+        }
 
         public Source(string name) : this(name, new Moneyz(0))
         {

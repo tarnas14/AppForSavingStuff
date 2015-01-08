@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using Raven.Abstractions.Indexing;
     using Raven.Client.Indexes;
 
     class Operations_ByMonthYear : AbstractIndexCreationTask<Operation>

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Raven.Client;
     using Raven.Client.Linq;
 
     public class RavenDocumentStoreWalletHistory : WalletHistory
@@ -21,7 +22,24 @@
             using (var session = _storeProvider.Store.OpenSession())
             {
                 session.Store(toSave);
+                SaveSources(toSave.Changes, session);
                 session.SaveChanges();
+            }
+        }
+
+        private void SaveSources(IEnumerable<Change> changes, IDocumentSession session)
+        {
+            foreach (var change in changes)
+            {
+                var sources = session.Query<Source, Sources_ByName>().Where(src => src.Name == change.Source).ToList();
+                if (sources.Count == 1)
+                {
+                    sources.First().SetBalance(change.After);
+                }
+                else
+                {
+                    session.Store(new Source(change.Source, change.After));
+                }
             }
         }
 
