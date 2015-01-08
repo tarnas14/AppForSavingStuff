@@ -4,6 +4,7 @@
     using System.Linq;
     using Modules;
     using Modules.MoneyTracking;
+    using Modules.MoneyTracking.Persistence;
     using Moq;
     using NUnit.Framework;
     using Ui;
@@ -18,7 +19,11 @@
             //given
             var ui = new ConsoleUi(new CleverFactory());
             var walletUiMock = new Mock<WalletUi>();
-            var walletMainController = new WalletMainController(walletUiMock.Object, new Wallet(new InMemoryWalletHistory(), new SystemClockTimeMaster()));
+            var ravenHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider() {RunInMemory = true})
+            {
+                WaitForNonStale = true
+            };
+            var walletMainController = new WalletMainController(walletUiMock.Object, new Wallet(ravenHistory, new SystemClockTimeMaster()));
             ui.Subscribe(walletMainController, "wallet");
 
             //when

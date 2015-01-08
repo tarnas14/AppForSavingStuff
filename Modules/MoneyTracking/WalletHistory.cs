@@ -8,5 +8,6 @@
         IList<Operation> GetAll();
         IList<Operation> GetForMonth(int year, int month);
         IEnumerable<Source> GetSources();
+        Moneyz GetBalance(string sourceName);
     }
 }

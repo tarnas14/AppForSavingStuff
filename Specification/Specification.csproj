@@ -56,7 +56,6 @@
     <Compile Include="UiSpec\UserCommandFactorySpec.cs" />
     <Compile Include="WalletSpec\EndToEndWalletTests.cs" />
     <Compile Include="WalletSpec\WalletSpec.cs" />
-    <Compile Include="WalletSpec\WalletWithRavenRepoSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
