@@ -1,5 +1,6 @@
 ﻿namespace Specification.WalletSpec
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Modules;
@@ -12,26 +13,60 @@
     [TestFixture]
     class EndToEndWalletTests
     {
+        private ConsoleUi _ui;
+        private Mock<WalletUi> _walletUiMock;
+        private Mock<TimeMaster> _timeMasterMock;
+
+        [SetUp]
+        public void Setup()
+        {
+            _ui = new ConsoleUi(new CleverFactory());
+            _walletUiMock = new Mock<WalletUi>();
+            _timeMasterMock = new Mock<TimeMaster>();
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(() => DateTime.Now);
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(() => DateTime.Today);
+            var ravenHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider() { RunInMemory = true })
+            {
+                WaitForNonStale = true
+            };
+            var walletMainController = new WalletMainController(_walletUiMock.Object, new Wallet(ravenHistory, _timeMasterMock.Object));
+            _ui.Subscribe(walletMainController, "wallet");
+        }
+
         [Test]
         [TestCaseSource(typeof(TestCasesDataSource), "BasicOperations")]
         public void ShouldCorrectlyControlUserInputToBasicOperations(string source, IEnumerable<string> userCommands, Moneyz expectedBalance)
         {
             //given
-            var ui = new ConsoleUi(new CleverFactory());
-            var walletUiMock = new Mock<WalletUi>();
-            var ravenHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider() {RunInMemory = true})
-            {
-                WaitForNonStale = true
-            };
-            var walletMainController = new WalletMainController(walletUiMock.Object, new Wallet(ravenHistory, new SystemClockTimeMaster()));
-            ui.Subscribe(walletMainController, "wallet");
+            ExecuteCommands(_ui, userCommands);
 
             //when
-            ExecuteCommands(ui, userCommands);
-            ui.UserInput(string.Format("/wallet balance {0}", source));
+            _ui.UserInput(string.Format("/wallet balance {0}", source));
 
             //then
-            walletUiMock.Verify(mock => mock.DisplayBalance(source, expectedBalance), Times.Once);
+            _walletUiMock.Verify(mock => mock.DisplayBalance(source, expectedBalance), Times.Once);
+        }
+
+        [Test]
+        public void ShouldDisplayBalanceForCurrentMonth()
+        {
+            //given
+            const string source = "sourceName";
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(new DateTime(2000, 11, 30));
+            _ui.UserInput(string.Format("/wallet add {0} 4", source));
+
+            var today = new DateTime(2000, 12, 1);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
+            _ui.UserInput(string.Format("/wallet add {0} 2", source));
+
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(today);
+            var expectedBalance = new Moneyz(2);
+
+            //when
+            _ui.UserInput(string.Format("/wallet month balance {0}", source));
+
+            //then
+            _walletUiMock.Verify(mock => mock.DisplayBalance(source, expectedBalance), Times.Once);
         }
 
         private void ExecuteCommands(ConsoleUi ui, IEnumerable<string> userCommands)

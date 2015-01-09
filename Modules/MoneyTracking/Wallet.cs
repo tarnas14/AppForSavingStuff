@@ -77,5 +77,12 @@
 
             _walletHistory.SaveOperation(operation);
         }
+
+        public Moneyz DisplayMonthBalance(string sourceName)
+        {
+            var today = _timeMaster.Today;
+
+            return _walletHistory.GetSourceBalanceForThisMonth(sourceName, today.Year, today.Month);
+        }
     }
 }

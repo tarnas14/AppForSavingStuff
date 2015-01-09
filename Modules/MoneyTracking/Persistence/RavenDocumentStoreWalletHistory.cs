@@ -57,10 +57,15 @@
             {
                 var date = new DateTime(year, month, 1);
                 return
-                    WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
-                    .Where(result => result.MonthYear == date.ToString("MMyy"))
-                    .OrderBy(result => result.When).OfType<Operation>().ToList();
+                    GetMonthHistory(session, date);
             }
+        }
+
+        private IList<Operation> GetMonthHistory(IDocumentSession session, DateTime date)
+        {
+            return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
+                .Where(result => result.MonthYear == date.ToString("MMyy"))
+                .OrderBy(result => result.When).OfType<Operation>().ToList();
         }
 
         public IEnumerable<Source> GetSources()
@@ -83,6 +88,24 @@
                 }
 
                 return source.Balance;
+            }
+        }
+
+        public Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month)
+        {
+            var date = new DateTime(year, month, 1);
+
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                var monthHistory = GetMonthHistory(session, date);
+
+                var changesOnSourceThisMonth =
+                    monthHistory.SelectMany(operation => operation.Changes.Where(change => change.Source == sourceName));
+
+                var stateBeforeThisMonth = changesOnSourceThisMonth.First().Before;
+                var lastChangeInThisMonth = changesOnSourceThisMonth.Last().After;
+
+                return lastChangeInThisMonth - stateBeforeThisMonth;
             }
         }
 
