@@ -62,7 +62,6 @@
     <Compile Include="MoneyTracking\Source.cs" />
     <Compile Include="MoneyTracking\Tag.cs" />
     <Compile Include="MoneyTracking\Wallet.cs" />
-    <Compile Include="MoneyTracking\InMemoryWalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletMainController.cs" />
     <Compile Include="MoneyTracking\WalletOutboundUi.cs" />
