@@ -41,7 +41,7 @@
 
         public override string ToString()
         {
-            return Convert.ToString(Value);
+            return string.Format("{0:N2}", Value);
         }
     }
 }

@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Halp\ConsoleMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UiSpec\ConsoleUiSpec.cs" />
     <Compile Include="UiSpec\SubscriberStoreSpec.cs" />
