@@ -84,5 +84,10 @@
 
             return _walletHistory.GetSourceBalanceForThisMonth(sourceName, today.Year, today.Month);
         }
+
+        public void CreateSource(string sourceName)
+        {
+            _walletHistory.CreateSource(sourceName);
+        }
     }
 }

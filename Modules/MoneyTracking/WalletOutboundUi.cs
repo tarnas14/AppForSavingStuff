@@ -8,5 +8,10 @@
         {
             Console.WriteLine("\t{0}: {1}", sourceName, balance);
         }
+
+        public void DisplayError(WalletException exception)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

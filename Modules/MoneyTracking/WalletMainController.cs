@@ -17,34 +17,44 @@
 
         public void Execute(UserCommand userCommand)
         {
-            string command = userCommand.Params[0];
-            string sourceName = userCommand.Params[1];
-
-            switch (command)
+            try
             {
-                case "add":
-                    _wallet.Add(sourceName, GetOperationInput(userCommand));
-                    break;
-                case "sub":
+                string command = userCommand.Params[0];
+                string sourceName = userCommand.Params[1];
 
-                    _wallet.Subtract(sourceName, GetOperationInput(userCommand));
-                    break;
-                case "trans":
-                    string destinationName = userCommand.Params[2];
+                switch (command)
+                {
+                    case "add":
+                        _wallet.Add(sourceName, GetOperationInput(userCommand));
+                        break;
+                    case "sub":
 
-                    _wallet.Transfer(sourceName, destinationName, GetOperationInput(userCommand));
-                    break;
-                case "balance":
-                    var balance = _wallet.GetBalance(sourceName);
+                        _wallet.Subtract(sourceName, GetOperationInput(userCommand));
+                        break;
+                    case "trans":
+                        string destinationName = userCommand.Params[2];
 
-                    _walletUi.DisplayBalance(sourceName, balance);
-                    break;
-                case "month":
-                    string monthCommand = userCommand.Params[1];
-                    sourceName = userCommand.Params[2];
+                        _wallet.Transfer(sourceName, destinationName, GetOperationInput(userCommand));
+                        break;
+                    case "balance":
+                        var balance = _wallet.GetBalance(sourceName);
 
-                    _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
-                    break;
+                        _walletUi.DisplayBalance(sourceName, balance);
+                        break;
+                    case "month":
+                        string monthCommand = userCommand.Params[1];
+                        sourceName = userCommand.Params[2];
+
+                        _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
+                        break;
+                    case "source":
+                        _wallet.CreateSource(sourceName);
+                        break;
+                }
+            }
+            catch (WalletException e)
+            {
+                _walletUi.DisplayError(e);
             }
         }
 

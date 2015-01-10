@@ -60,8 +60,10 @@
     <Compile Include="MoneyTracking\Persistence\RavenDocumentStoreWalletHistory.cs" />
     <Compile Include="MoneyTracking\Persistence\Sources_ByName.cs" />
     <Compile Include="MoneyTracking\Source.cs" />
+    <Compile Include="MoneyTracking\SourceDoesNotExistException.cs" />
     <Compile Include="MoneyTracking\Tag.cs" />
     <Compile Include="MoneyTracking\Wallet.cs" />
+    <Compile Include="MoneyTracking\WalletException.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletMainController.cs" />
     <Compile Include="MoneyTracking\WalletOutboundUi.cs" />

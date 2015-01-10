@@ -52,6 +52,8 @@
         {
             //given
             const string source = "sourceName";
+            _ui.UserInput(string.Format("/wallet source {0}", source));
+
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(new DateTime(2000, 11, 30));
             _ui.UserInput(string.Format("/wallet add {0} 4", source));
 
@@ -69,6 +71,33 @@
             _walletUiMock.Verify(mock => mock.DisplayBalance(source, expectedBalance), Times.Once);
         }
 
+        [Test]
+        public void ShouldCreateSource()
+        {
+            //given
+            const string sourceName = "test";
+
+            //when
+            _ui.UserInput(string.Format("/wallet source {0}", sourceName));
+            _ui.UserInput(string.Format("/wallet balance {0}", sourceName));
+
+            //then
+            _walletUiMock.Verify(mock => mock.DisplayBalance(sourceName, new Moneyz(0)), Times.Once);
+        }
+
+        [Test]
+        public void ShouldNotifyUserWhenSourceDoesNotExist()
+        {
+            //given
+            const string sourceName = "testSource";
+
+            //when
+            _ui.UserInput(string.Format("/wallet balance {0}", sourceName));
+
+            //then
+            _walletUiMock.Verify(mock => mock.DisplayError(It.Is<SourceDoesNotExistException>(e => e.Message == string.Format("Source {0} does not exist.", sourceName))));
+        }
+
         private void ExecuteCommands(ConsoleUi ui, IEnumerable<string> userCommands)
         {
             userCommands.ToList().ForEach(ui.UserInput);
@@ -81,20 +110,25 @@
         {
             get
             {
-                yield return new TestCaseData("mbank", new List<string> { "/wallet add mbank 2" }, new Moneyz(2)).SetName("add 2");
-                yield return new TestCaseData("mbank", new List<string> { "/wallet add mbank 2 'my description' tag1 tag2" }, new Moneyz(2)).SetName("add 2 with description and tags");
+                yield return new TestCaseData("mbank", new List<string> { "/wallet source mbank", "/wallet add mbank 2" }, new Moneyz(2)).SetName("add 2");
+                yield return new TestCaseData("mbank", new List<string> { "/wallet source mbank", "/wallet add mbank 2 'my description' tag1 tag2" }, new Moneyz(2)).SetName("add 2 with description and tags");
                 yield return new TestCaseData("mbank", new List<string>
                 {
+                    "/wallet source mbank",
                     "/wallet add mbank 5 'my description' tag1 tag2",
                     "/wallet sub mbank 2 'my description' tag1 tag2"
                 }, new Moneyz(3)).SetName("add 5 subtract 2");
                 yield return new TestCaseData("mbank", new List<string>
                 {
+                    "/wallet source mbank",
+                    "/wallet source getin",
                     "/wallet add mbank 5 'my description' tag1 tag2",
                     "/wallet trans mbank getin 3 'my description' tag1 tag2"
                 }, new Moneyz(2)).SetName("add 5 to mbank transfer 3 to getin display mbank");
                 yield return new TestCaseData("getin", new List<string>
                 {
+                    "/wallet source mbank",
+                    "/wallet source getin",
                     "/wallet add mbank 5 'my description' tag1 tag2",
                     "/wallet trans mbank getin 3 'my description' tag1 tag2"
                 }, new Moneyz(3)).SetName("add 5 to mbank transfer 3 to getin display getin");

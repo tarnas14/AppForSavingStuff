@@ -84,7 +84,7 @@
 
                 if (source == null)
                 {
-                    return new Moneyz(0);
+                    throw new SourceDoesNotExistException(sourceName);
                 }
 
                 return source.Balance;
@@ -106,6 +106,15 @@
                 var lastChangeInThisMonth = changesOnSourceThisMonth.Last().After;
 
                 return lastChangeInThisMonth - stateBeforeThisMonth;
+            }
+        }
+
+        public void CreateSource(string sourceName)
+        {
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                session.Store(new Source(sourceName));
+                session.SaveChanges();
             }
         }
 
