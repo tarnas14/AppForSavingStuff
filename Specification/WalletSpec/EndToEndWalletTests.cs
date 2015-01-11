@@ -17,14 +17,16 @@
         private ConsoleUi _ui;
         private Mock<TimeMaster> _timeMasterMock;
         private ConsoleMock _consoleMock;
+        public DateTime Now { get; set; }
 
         [SetUp]
         public void Setup()
         {
+            Now = new DateTime(2015, 5, 24);
             _ui = new ConsoleUi(new CleverFactory());
             _timeMasterMock = new Mock<TimeMaster>();
-            _timeMasterMock.SetupGet(mock => mock.Now).Returns(() => DateTime.Now);
-            _timeMasterMock.SetupGet(mock => mock.Today).Returns(() => DateTime.Today);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(Now);
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(Now);
             var ravenHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider() { RunInMemory = true })
             {
                 WaitForNonStale = true
@@ -94,7 +96,7 @@
                 {
                     "/wallet balance mbank"
                 }, new List<string>{
-                    "Source mbank does not exist."
+                    "    Error: Source mbank does not exist."
                 }).SetName("balance - source does not exist");
                 yield return new TestCaseData(new List<string>
                 {
@@ -142,6 +144,25 @@
                 {
                     "    getin: 3.00"
                 }).SetName("add 5 to mbank transfer 3 to getin display getin");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source mbank",
+                    "/wallet add mbank 2.5",
+                    "/wallet sub mbank 0.4",
+                    "/wallet source getin",
+                    "/wallet add getin 1.9",
+                    "/wallet trans mbank getin 0.1",
+                    "/wallet add mbank 1000.01",
+                    "/wallet history"
+                }, new List<string>
+                {
+                    "    when        where    howMuch  valueAfter",
+                    "                                            ",
+                    "    2015-05-24  mbank      +2.50        2.50",
+                    "    2015-05-24  mbank      -0.40        2.10",
+                    "    2015-05-24  getin      +1.90        1.90",
+                    "    2015-05-24  mbank  +1,000.01    1,002.01",
+                }).SetName("display month history");
             }
         }
     }

@@ -20,23 +20,26 @@
             try
             {
                 string command = userCommand.Params[0];
-                string sourceName = userCommand.Params[1];
+                string sourceName = string.Empty;
 
                 switch (command)
                 {
                     case "add":
+                        sourceName = userCommand.Params[1];
                         _wallet.Add(sourceName, GetOperationInput(userCommand));
                         break;
                     case "sub":
-
+                        sourceName = userCommand.Params[1];
                         _wallet.Subtract(sourceName, GetOperationInput(userCommand));
                         break;
                     case "trans":
+                        sourceName = userCommand.Params[1];
                         string destinationName = userCommand.Params[2];
 
                         _wallet.Transfer(sourceName, destinationName, GetOperationInput(userCommand));
                         break;
                     case "balance":
+                        sourceName = userCommand.Params[1];
                         var balance = _wallet.GetBalance(sourceName);
 
                         _walletUi.DisplayBalance(sourceName, balance);
@@ -48,7 +51,11 @@
                         _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
                         break;
                     case "source":
+                        sourceName = userCommand.Params[1];
                         _wallet.CreateSource(sourceName);
+                        break;
+                    case "history":
+                        _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth());
                         break;
                 }
             }
