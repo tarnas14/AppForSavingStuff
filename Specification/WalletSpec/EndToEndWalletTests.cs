@@ -179,6 +179,17 @@
                     "                mbank           -1.00        1.00",
                     "                getin           +1.00        1.00"
                 }).SetName("display month history with transfer");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source mbank",
+                    "/wallet add mbank 2 oneWordDescription",
+                    "/wallet history"
+                }, new List<string>
+                {
+                    "    when        where         howMuch  valueAfter",
+                    "                                                 ",
+                    "    2015-05-24  mbank           +2.00        2.00",
+                }).SetName("display month history with transfer");
             }
         }
     }

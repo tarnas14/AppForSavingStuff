@@ -71,5 +71,20 @@
             Assert.That(userCommand.Params[2], Is.EqualTo("multi word 2"));
             Assert.That(userCommand.Params[3], Is.EqualTo("param2"));
         }
+
+        [Test]
+        public void ShouldRecognizeFlagByTwoDashes()
+        {
+            //given
+            const string userInput = "/testName --flag";
+
+            //when
+            var userCommand = _factory.CreateUserCommand(userInput);
+
+            //then
+            Assert.That(userCommand.Params.Count, Is.EqualTo(0));
+            Assert.That(userCommand.Flags.Count, Is.EqualTo(1));
+            Assert.That(userCommand.Flags, Contains.Item("flag"));
+        }
     }
 }

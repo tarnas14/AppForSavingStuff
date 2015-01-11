@@ -6,5 +6,6 @@ namespace Ui
     {
         public string Name { get; set; }
         public IList<string> Params { get; set; }
+        public IList<string> Flags { get; set; }
     }
 }

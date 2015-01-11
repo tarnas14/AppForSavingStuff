@@ -23,13 +23,21 @@ namespace Ui
             }
 
             var name = expressions.First();
-            var commandParams = expressions.Skip(1).ToList();
+            var flags = expressions.Skip(1).Where(IsFlag).ToList();
+            flags.ForEach(flag => expressions.Remove(flag));
+            var commandParams = expressions.Skip(1);
 
             return new UserCommand
             {
                 Name = name,
-                Params = commandParams
+                Params = commandParams.ToList(),
+                Flags = flags.Select(flag => flag.Substring(2)).ToList()
             };
+        }
+
+        private bool IsFlag(string arg)
+        {
+            return arg.StartsWith("--");
         }
     }
 }
