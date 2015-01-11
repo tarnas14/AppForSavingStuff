@@ -11,13 +11,13 @@
         static void Main(string[] args)
         {
             var consoleUi = new ConsoleUi(new CleverFactory());
-            var wallet = new WalletMainController(new WalletOutboundUi(), new Wallet(new RavenDocumentStoreWalletHistory(new DocumentStoreProvider()), new SystemClockTimeMaster()));
+            var wallet = new WalletMainController(new WalletUi(new SystemConsole()), new Wallet(new RavenDocumentStoreWalletHistory(new DocumentStoreProvider()), new SystemClockTimeMaster()));
             consoleUi.Subscribe(wallet, "wallet");
 
             string input = string.Empty;
             while (input != "/quit")
             {
-                input = Console.ReadLine();
+                input = System.Console.ReadLine();
                 consoleUi.UserInput(input);
             }
         }
