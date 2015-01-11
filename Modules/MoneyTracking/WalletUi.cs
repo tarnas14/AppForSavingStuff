@@ -71,8 +71,35 @@
                     rows.Add(new []{
                         operation.When.ToString("yyyy-MM-dd"),
                         change.Source,
-                        CalculateValueChange(change),
+                        SignedValueChange(change),
                         change.After.ToString()
+                        });
+                }
+                else if (operation.Changes.Count == 2)
+                {
+                    var from = operation.Changes[0];
+                    var to = operation.Changes[1];
+
+                    rows.Add(new []
+                    {
+                        operation.When.ToString("yyyy-MM-dd"),
+                        from.Source + "->" + to.Source,
+                        UnsignedValueChange(from),
+                        string.Empty
+                    });
+
+                    rows.Add(new[]{
+                        string.Empty,
+                        from.Source,
+                        SignedValueChange(from),
+                        from.After.ToString()
+                        });
+
+                    rows.Add(new[]{
+                        string.Empty,
+                        to.Source,
+                        SignedValueChange(to),
+                        to.After.ToString()
                         });
                 }
             }
@@ -80,7 +107,18 @@
             return rows;
         }
 
-        private string CalculateValueChange(Change change)
+        private string UnsignedValueChange(Change change)
+        {
+            var valueDiff = change.After - change.Before;
+            if (valueDiff.Value < 0)
+            {
+                valueDiff = new Moneyz(-valueDiff.Value);
+            }
+
+            return valueDiff.ToString();
+        }
+
+        private string SignedValueChange(Change change)
         {
             var valueDiff = change.After - change.Before;
 

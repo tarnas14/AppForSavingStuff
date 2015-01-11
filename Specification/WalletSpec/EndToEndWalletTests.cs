@@ -46,6 +46,7 @@
             ExecuteCommands(_ui, userCommands);
 
             //then
+            _consoleMock.Lines.ToList().ForEach(System.Console.WriteLine);
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
         }
 
@@ -151,7 +152,6 @@
                     "/wallet sub mbank 0.4",
                     "/wallet source getin",
                     "/wallet add getin 1.9",
-                    "/wallet trans mbank getin 0.1",
                     "/wallet add mbank 1000.01",
                     "/wallet history"
                 }, new List<string>
@@ -161,8 +161,24 @@
                     "    2015-05-24  mbank      +2.50        2.50",
                     "    2015-05-24  mbank      -0.40        2.10",
                     "    2015-05-24  getin      +1.90        1.90",
-                    "    2015-05-24  mbank  +1,000.01    1,002.01",
-                }).SetName("display month history");
+                    "    2015-05-24  mbank  +1,000.01    1,002.11",
+                }).SetName("display month history without transfers");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source mbank",
+                    "/wallet add mbank 2",
+                    "/wallet source getin",
+                    "/wallet trans mbank getin 1",
+                    "/wallet history"
+                }, new List<string>
+                {
+                    "    when        where         howMuch  valueAfter",
+                    "                                                 ",
+                    "    2015-05-24  mbank           +2.00        2.00",
+                    "    2015-05-24  mbank->getin     1.00            ",
+                    "                mbank           -1.00        1.00",
+                    "                getin           +1.00        1.00"
+                }).SetName("display month history with transfer");
             }
         }
     }
