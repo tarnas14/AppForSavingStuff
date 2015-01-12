@@ -45,7 +45,6 @@
                         _walletUi.DisplayBalance(sourceName, balance);
                         break;
                     case "month":
-                        string monthCommand = userCommand.Params[1];
                         sourceName = userCommand.Params[2];
 
                         _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
@@ -55,7 +54,11 @@
                         _wallet.CreateSource(sourceName);
                         break;
                     case "history":
-                        _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth());
+                        var verbosity = new HistoryDisplayVerbosity
+                        {
+                            Tags = userCommand.Flags.Contains("t")
+                        };
+                        _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth(), verbosity);
                         break;
                 }
             }

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Console.cs" />
     <Compile Include="MoneyTracking\Change.cs" />
+    <Compile Include="MoneyTracking\HistoryDisplayVerbosity.cs" />
     <Compile Include="MoneyTracking\History.cs" />
     <Compile Include="MoneyTracking\Moneyz.cs" />
     <Compile Include="MoneyTracking\Operation.cs" />

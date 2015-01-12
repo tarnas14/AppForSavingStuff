@@ -182,14 +182,19 @@
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank",
-                    "/wallet add mbank 2 oneWordDescription",
-                    "/wallet history"
+                    "/wallet add mbank 2 description tag2 tag3",
+                    "/wallet source getin",
+                    "/wallet trans mbank getin 1 'another description' tag3 taggg",
+                    "/wallet history --t"
                 }, new List<string>
                 {
-                    "    when        where         howMuch  valueAfter",
-                    "                                                 ",
-                    "    2015-05-24  mbank           +2.00        2.00",
-                }).SetName("display month history with transfer");
+                    "    when        where         howMuch  valueAfter  -- tags       ",
+                    "                                                                 ",
+                    "    2015-05-24  mbank           +2.00        2.00  -- tag2, tag3 ",
+                    "    2015-05-24  mbank->getin     1.00              -- tag3, taggg",
+                    "                mbank           -1.00        1.00                ",
+                    "                getin           +1.00        1.00                "
+                }).SetName("display month history with tags");
             }
         }
     }
