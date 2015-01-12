@@ -111,11 +111,21 @@
 
         public void CreateSource(string sourceName)
         {
+            if (Exists(sourceName))
+            {
+                throw new SourceAlreadyExistsException(sourceName);
+            }
+
             using (var session = _storeProvider.Store.OpenSession())
             {
                 session.Store(new Source(sourceName));
                 session.SaveChanges();
             }
+        }
+
+        private bool Exists(string sourceName)
+        {
+            return null != GetSourceByName(sourceName);
         }
 
         private Source GetSourceByName(string sourceName)

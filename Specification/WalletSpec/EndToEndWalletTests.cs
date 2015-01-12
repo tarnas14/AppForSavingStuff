@@ -95,6 +95,14 @@
                 }).SetName("creating source");
                 yield return new TestCaseData(new List<string>
                 {
+                    "/wallet source mbank",
+                    "/wallet source mbank"
+                }, new List<string>
+                {
+                    "    Error: Source mbank already exists."
+                }).SetName("creating source that alredy exists");
+                yield return new TestCaseData(new List<string>
+                {
                     "/wallet balance mbank"
                 }, new List<string>{
                     "    Error: Source mbank does not exist."
