@@ -1,6 +1,6 @@
 ﻿namespace Application
 {
-    using Modules;
+    using Ui;
 
     internal class SystemConsole : Console
     {

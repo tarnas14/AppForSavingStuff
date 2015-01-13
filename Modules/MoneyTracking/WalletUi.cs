@@ -4,8 +4,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
-    using Raven.Database.Linq.PrivateExtensions;
-    using Console = Console;
+    using Console = Ui.Console;
 
     public class WalletUi
     {

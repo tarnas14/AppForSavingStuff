@@ -50,7 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Console.cs" />
     <Compile Include="MoneyTracking\Change.cs" />
     <Compile Include="MoneyTracking\HistoryDisplayVerbosity.cs" />
     <Compile Include="MoneyTracking\History.cs" />

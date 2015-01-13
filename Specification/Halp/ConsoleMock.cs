@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using Modules;
+    using Ui;
 
     class ConsoleMock : Console
     {

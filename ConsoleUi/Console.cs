@@ -1,4 +1,4 @@
-﻿namespace Modules
+﻿namespace Ui
 {
     public interface Console
     {
