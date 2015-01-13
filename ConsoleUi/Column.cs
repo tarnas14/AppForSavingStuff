@@ -23,9 +23,15 @@ namespace Ui
             get { return Data.Count + 1; }
         }
 
+        public string Prefix { get; set; }
+        public string Suffix { get; set; }
+
         public IEnumerable<string> GetRows()
         {
-            throw new System.NotImplementedException();
+            for (int i = 0; i < Height; ++i)
+            {
+                yield return GetRow(i);
+            }
         }
 
         public string GetRow(int rowId)
@@ -45,7 +51,8 @@ namespace Ui
 
         private string Format(string data)
         {
-            return string.Format("{0,-" + Width + "}", data);
+            var wholeRow = Prefix + data + Suffix;
+            return string.Format("{0,-" + Width + "}", wholeRow);
         }
     }
 }

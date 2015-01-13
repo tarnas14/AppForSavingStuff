@@ -22,7 +22,7 @@
         }
 
         [Test]
-        public void ShouldGiveWidthWithData()
+        public void ShouldGiveWidthWithDataLongerThanHeader()
         {
             //given
             var column = new Column
@@ -60,7 +60,7 @@
         }
 
         [Test]
-        public void ShouldGiveHeaderAsFistRow()
+        public void ShouldGiveHeaderAsFirstRow()
         {
             //given
             var column = new Column
@@ -122,5 +122,46 @@
             Assert.That(tooHighIdRow.Length, Is.EqualTo(10));
             Assert.That(string.IsNullOrWhiteSpace(tooHighIdRow));
         }
+
+        [Test]
+        public void ShouldAddPrefixToEachColumn()
+        {
+            //given
+            var column = new Column
+            {
+                Prefix = "--",
+                Header = "1234567890",
+                Data = new List<string>
+                {
+                    "123456789"
+                }
+            };
+
+            //when
+
+            //then
+            Assert.That(column.GetRows().All(row => row.StartsWith(column.Prefix)));
+        }
+
+        [Test]
+        public void ShouldAddSuffixToEachColumn()
+        {
+            //given
+            var column = new Column
+            {
+                Suffix = "--",
+                Header = "1234567890",
+                Data = new List<string>
+                {
+                    "123456789"
+                }
+            };
+
+            //when
+
+            //then
+            Assert.That(column.GetRows().All(row => row.EndsWith(column.Suffix)));
+        }
+
     }
 }
