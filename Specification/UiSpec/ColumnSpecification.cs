@@ -183,5 +183,27 @@
             Assert.That(column.GetRow(1), Is.EqualTo(" 123456789"));
         }
 
+        [Test]
+        public void ShouldAddSuffixAfterRightAlignment()
+        {
+            //given
+            var column = new Column
+            {
+                Header = "1234567890",
+                Data = new List<string>
+                {
+                    "1234"
+                },
+                AlignRight = true,
+                Suffix = "--"
+            };
+
+            //when
+
+            //then
+            Assert.That(column.GetRow(0), Is.EqualTo("1234567890--"));
+            Assert.That(column.GetRow(1), Is.EqualTo("      1234--"));
+            }
+
     }
 }

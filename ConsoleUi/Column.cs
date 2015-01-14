@@ -52,8 +52,7 @@ namespace Ui
 
         private string Format(string data)
         {
-            var wholeRow = Prefix + data + Suffix;
-            return string.Format("{0," + ((!AlignRight) ? "-" : string.Empty) + Width + "}", wholeRow);
+            return string.Format("{0}{1," + ((!AlignRight) ? "-" : string.Empty) + Width + "}{2}", Prefix, data, Suffix);
         }
     }
 }
