@@ -165,7 +165,7 @@
                 }, new List<string>
                 {
                     "    when        where    howMuch  valueAfter",
-                    "                                            ",
+                    string.Empty,
                     "    2015-05-24  mbank      +2.50        2.50",
                     "    2015-05-24  mbank      -0.40        2.10",
                     "    2015-05-24  getin      +1.90        1.90",
@@ -181,7 +181,7 @@
                 }, new List<string>
                 {
                     "    when        where         howMuch  valueAfter",
-                    "                                                 ",
+                    string.Empty,
                     "    2015-05-24  mbank           +2.00        2.00",
                     "    2015-05-24  mbank->getin     1.00            ",
                     "                mbank           -1.00        1.00",
@@ -197,7 +197,7 @@
                 }, new List<string>
                 {
                     "    when        where         howMuch  valueAfter  tags       ",
-                    "                                                              ",
+                    string.Empty,
                     "    2015-05-24  mbank           +2.00        2.00  tag2, tag3 ",
                     "    2015-05-24  mbank->getin     1.00              tag3, taggg",
                     "                mbank           -1.00        1.00             ",

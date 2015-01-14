@@ -95,5 +95,37 @@
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
         }
+
+        [Test]
+        public void ShouldSeparateHeaderFromTableData()
+        {
+            //given
+            _tableDisplay.AddColumns(new List<Column>
+            {
+                new Column
+                {
+                    Header = "First header",
+                    Data = new List<string>
+                    {
+                        "row1",
+                        "row2"
+                    }
+                }
+            });
+            _tableDisplay.SeparateHeader = true;
+            var expectedLines = new List<string>
+            {
+                "First header",
+                string.Empty,
+                "row1        ",
+                "row2        "
+            };
+
+            //when
+            _tableDisplay.Display();
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
     }
 }

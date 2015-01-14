@@ -40,7 +40,7 @@
         }
 
         [Test]
-        public void ShouldGiveColumnHeight()
+        public void ShouldGiveColumnHeightAsCountOfDataRows()
         {
             //given
             var column = new Column
@@ -48,7 +48,8 @@
                 Header = "123456789",
                 Data = new List<string>
                 {
-                    "1234567890"
+                    "1234567890",
+                    "asdf"
                 }
             };
 
@@ -60,7 +61,26 @@
         }
 
         [Test]
-        public void ShouldGiveHeaderAsFirstRow()
+        public void ShouldGiveHeader()
+        {
+            //given
+            var columnLeftAlign = new Column
+            {
+                Header = "123456789",
+                Prefix = "-",
+                Suffix = "-",
+                Data = new[] { "1234567890" }
+            };
+
+            //when
+            var header = columnLeftAlign.GetHeader();
+
+            //then
+            Assert.That(header, Is.EqualTo("-123456789 -"));
+        }
+
+        [Test]
+        public void ShouldNotGiveHeaderAsFirstRow()
         {
             //given
             var column = new Column
@@ -73,10 +93,10 @@
             };
 
             //when
-            var firstRow = column.GetRow(0);
+            var firstRow = column.GetDataRow(0);
 
             //then
-            Assert.That(firstRow, Is.EqualTo("123456789 "));
+            Assert.That(firstRow, Is.EqualTo("1234567890"));
         }
 
         [Test]
@@ -93,7 +113,7 @@
             };
 
             //when
-            var firstRow = column.GetRow(1);
+            var firstRow = column.GetDataRow(0);
 
             //then
             Assert.That(firstRow, Is.EqualTo("123456789 "));
@@ -113,8 +133,8 @@
             };
 
             //when
-            var negativeRow = column.GetRow(-1);
-            var tooHighIdRow = column.GetRow(2);
+            var negativeRow = column.GetDataRow(-1);
+            var tooHighIdRow = column.GetDataRow(2);
 
             //then
             Assert.That(negativeRow.Length, Is.EqualTo(10));
@@ -140,7 +160,7 @@
             //when
 
             //then
-            Assert.That(column.GetRows().All(row => row.StartsWith(column.Prefix)));
+            Assert.That(column.GetDataRows().All(row => row.StartsWith(column.Prefix)));
         }
 
         [Test]
@@ -160,7 +180,7 @@
             //when
 
             //then
-            Assert.That(column.GetRows().All(row => row.EndsWith(column.Suffix)));
+            Assert.That(column.GetDataRows().All(row => row.EndsWith(column.Suffix)));
         }
 
         [Test]
@@ -180,7 +200,7 @@
             //when
 
             //then
-            Assert.That(column.GetRow(1), Is.EqualTo(" 123456789"));
+            Assert.That(column.GetDataRow(0), Is.EqualTo(" 123456789"));
         }
 
         [Test]
@@ -201,8 +221,8 @@
             //when
 
             //then
-            Assert.That(column.GetRow(0), Is.EqualTo("1234567890--"));
-            Assert.That(column.GetRow(1), Is.EqualTo("      1234--"));
+            Assert.That(column.GetHeader(), Is.EqualTo("1234567890--"));
+            Assert.That(column.GetDataRow(0), Is.EqualTo("      1234--"));
         }
     }
 }

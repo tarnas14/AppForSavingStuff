@@ -20,39 +20,39 @@ namespace Ui
 
         public int Height
         {
-            get { return Data.Count + 1; }
+            get { return Data.Count; }
         }
 
         public string Prefix { get; set; }
         public string Suffix { get; set; }
         public bool AlignRight { get; set; }
 
-        public IEnumerable<string> GetRows()
+        public IEnumerable<string> GetDataRows()
         {
             for (int i = 0; i < Height; ++i)
             {
-                yield return GetRow(i);
+                yield return GetDataRow(i);
             }
         }
 
-        public string GetRow(int rowId)
+        public string GetDataRow(int rowId)
         {
             if (rowId < 0 || rowId >= Height)
             {
                 return Format(string.Empty);
             }
 
-            if (rowId == 0)
-            {
-                return Format(Header);
-            }
-
-            return Format(Data[rowId - 1]);
+            return Format(Data[rowId]);
         }
 
         private string Format(string data)
         {
             return string.Format("{0}{1," + ((!AlignRight) ? "-" : string.Empty) + Width + "}{2}", Prefix, data, Suffix);
+        }
+
+        public string GetHeader()
+        {
+            return Format(Header);
         }
     }
 }

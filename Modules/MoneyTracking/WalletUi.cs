@@ -28,7 +28,10 @@
 
         public void DisplayHistory(History history, HistoryDisplayVerbosity verbosity)
         {
-            var tableDisplay = new TableDisplay(_console);
+            var tableDisplay = new TableDisplay(_console)
+            {
+                SeparateHeader = true
+            };
             tableDisplay.AddColumns(RequiredDataToColumns(history.Operations));
 
             if (verbosity.Tags)
@@ -44,8 +47,7 @@
             var column = new Column
             {
                 Header = "tags",
-                Prefix = "  ",
-                Data = new List<string> {string.Empty}
+                Prefix = "  "
             };
 
             foreach (var operation in operations)
@@ -70,26 +72,22 @@
                 {
                     Header = "when",
                     Prefix = "    ",
-                    Suffix = "  ",
-                    Data = new List<string>{string.Empty}
+                    Suffix = "  "
                 },
                 new Column
                 {
                     Header = "where",
-                    Suffix = "  ",
-                    Data = new List<string>{string.Empty}
+                    Suffix = "  "
                 },
                 new Column
                 {
                     Header = "howMuch",
                     Suffix = "  ",
-                    Data = new List<string>{string.Empty},
                     AlignRight = true
                 },
                 new Column
                 {
                     Header = "valueAfter",
-                    Data = new List<string>{string.Empty},
                     AlignRight = true
                 }
             };
