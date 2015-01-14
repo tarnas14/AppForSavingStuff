@@ -25,6 +25,7 @@ namespace Ui
 
         public string Prefix { get; set; }
         public string Suffix { get; set; }
+        public bool AlignRight { get; set; }
 
         public IEnumerable<string> GetRows()
         {
@@ -52,7 +53,7 @@ namespace Ui
         private string Format(string data)
         {
             var wholeRow = Prefix + data + Suffix;
-            return string.Format("{0,-" + Width + "}", wholeRow);
+            return string.Format("{0," + ((!AlignRight) ? "-" : string.Empty) + Width + "}", wholeRow);
         }
     }
 }

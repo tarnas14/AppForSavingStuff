@@ -163,5 +163,25 @@
             Assert.That(column.GetRows().All(row => row.EndsWith(column.Suffix)));
         }
 
+        [Test]
+        public void ShouldAlignColumnsToTheRight()
+        {
+            //given
+            var column = new Column
+            {
+                Header = "1234567890",
+                Data = new List<string>
+                {
+                    "123456789"
+                },
+                AlignRight = true
+            };
+
+            //when
+
+            //then
+            Assert.That(column.GetRow(1), Is.EqualTo(" 123456789"));
+        }
+
     }
 }
