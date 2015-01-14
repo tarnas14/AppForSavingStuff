@@ -196,12 +196,12 @@
                     "/wallet history --t"
                 }, new List<string>
                 {
-                    "    when        where         howMuch  valueAfter  -- tags       ",
-                    "                                                                 ",
-                    "    2015-05-24  mbank           +2.00        2.00  -- tag2, tag3 ",
-                    "    2015-05-24  mbank->getin     1.00              -- tag3, taggg",
-                    "                mbank           -1.00        1.00                ",
-                    "                getin           +1.00        1.00                "
+                    "    when        where         howMuch  valueAfter  tags       ",
+                    "                                                              ",
+                    "    2015-05-24  mbank           +2.00        2.00  tag2, tag3 ",
+                    "    2015-05-24  mbank->getin     1.00              tag3, taggg",
+                    "                mbank           -1.00        1.00             ",
+                    "                getin           +1.00        1.00             "
                 }).SetName("display month history with tags");
             }
         }

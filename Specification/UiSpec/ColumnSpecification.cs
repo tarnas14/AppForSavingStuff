@@ -203,7 +203,6 @@
             //then
             Assert.That(column.GetRow(0), Is.EqualTo("1234567890--"));
             Assert.That(column.GetRow(1), Is.EqualTo("      1234--"));
-            }
-
+        }
     }
 }
