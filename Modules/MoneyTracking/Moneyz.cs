@@ -43,5 +43,31 @@
         {
             return string.Format("{0:N2}", Value);
         }
+
+        public string SignedString
+        {
+            get
+            {
+                string plus = Value > 0 ? "+" : string.Empty;
+                return string.Format("{0}{1:N2}", plus, Value);
+            }
+        }
+
+        public string UnsignedString
+        {
+            get
+            {
+                var value = Value < 0 ? -Value : Value;
+                return string.Format("{0:N2}", value);
+            }
+        }
+
+        public string SignString
+        {
+            get
+            {
+                return Value >= 0 ? "+" : "-";
+            }
+        }
     }
 }
