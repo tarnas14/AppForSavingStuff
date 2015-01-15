@@ -1,5 +1,9 @@
 ﻿namespace Modules.MoneyTracking
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Raven.Abstractions.Extensions;
+
     public class Wallet
     {
         private readonly WalletHistory _walletHistory;
@@ -94,7 +98,26 @@
         {
             var today = _timeMaster.Today;
 
-            return _walletHistory.GetTagHistoryForThisMonth(tagName, today.Year, today.Month);
+            var operationsHistory =
+                _walletHistory.GetTagHistoryForThisMonth(tagName, today.Year, today.Month);
+            var changesBySource = operationsHistory.SelectMany(operation => operation.Changes)
+                    .GroupBy(change => change.Source);
+
+            var history = new Dictionary<string, Moneyz>();
+
+            foreach (var changeGroup in changesBySource)
+            {
+                var combinedValue = changeGroup.Select(change => change.After - change.Before)
+                    .Aggregate(new Moneyz(0), (m1, m2) => m1 + m2);
+
+                history.Add(changeGroup.Key, combinedValue);
+            }
+
+            return new TagHistory
+            {
+                Tag = new Tag(tagName),
+                Operations = history
+            };
         }
     }
 }

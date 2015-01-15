@@ -203,6 +203,22 @@
                     "                mbank           -1.00        1.00             ",
                     "                getin           +1.00        1.00             "
                 }).SetName("display month history with tags");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source mbank",
+                    "/wallet source getinBank",
+                    "/wallet add getinBank 20",
+                    "/wallet add mbank 2 biedra tag1 tag2",
+                    "/wallet add mbank 10 'za pizze' tag1",
+                    "/wallet sub getinBank 10 orient tag1",
+                    "/wallet balance --t tag1"
+                }, new List<string>
+                {
+                    "    month balance for tag1:",
+                    "        mbank      +12.00",
+                    "        getinBank  -10.00",
+                    "                   + 2.00"
+                }).SetName("display balance for tags");
             }
         }
     }

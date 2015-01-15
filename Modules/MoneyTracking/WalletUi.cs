@@ -150,20 +150,47 @@
 
         private string UnsignedValueChange(Change change)
         {
-            var valueDiff = change.After - change.Before;
-            if (valueDiff.Value < 0)
-            {
-                valueDiff = new Moneyz(-valueDiff.Value);
-            }
-
-            return valueDiff.ToString();
+            return (change.After - change.Before).UnsignedString;
         }
 
         private string SignedValueChange(Change change)
         {
-            var valueDiff = change.After - change.Before;
+            return (change.After - change.Before).SignedString;
+        }
 
-            return valueDiff.Value < 0 ? valueDiff.ToString() : "+" + valueDiff;
+        public void DisplayHistory(TagHistory history)
+        {
+            var header = string.Format("    month balance for {0}:", history.Tag.Value);
+            var tableDisplay = new TableDisplay(_console);
+
+            var sourceColumn = new Column
+            {
+                Prefix = "        ",
+                Data = history.Operations.Select(balance => balance.Key).ToList()
+            };
+
+            var balances = history.Operations.Select(balance => balance.Value);
+
+            var signColumn = new Column
+            {
+                Prefix = "  ",
+                Data = balances.Select(balance => balance.SignString).ToList()
+            };
+
+            var balancesColumn = new Column()
+            {
+                AlignRight = true,
+                Data = balances.Select(balance => balance.UnsignedString).ToList()
+            };
+
+            var combinedBalance = balances.Aggregate(new Moneyz(0), (m1, m2) => m1 + m2);
+            signColumn.Data.Add(combinedBalance.SignString);
+            balancesColumn.Data.Add(combinedBalance.UnsignedString);
+
+            tableDisplay.AddColumns(new[] { sourceColumn, signColumn, balancesColumn });
+
+            _console.WriteLine(header);
+            tableDisplay.DisplayHeaderless();
         }
     }
 }

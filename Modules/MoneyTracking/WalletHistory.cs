@@ -11,6 +11,6 @@
         Moneyz GetBalance(string sourceName);
         Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month);
         void CreateSource(string sourceName);
-        TagHistory GetTagHistoryForThisMonth(string tagName, int year, int month);
+        IList<Operation> GetTagHistoryForThisMonth(string tagName, int year, int month);
     }
 }

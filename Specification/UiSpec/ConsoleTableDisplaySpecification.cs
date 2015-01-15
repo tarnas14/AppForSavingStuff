@@ -127,5 +127,70 @@
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
         }
+
+        [Test]
+        public void ShouldDisplayTableHeaderless()
+        {
+            //given
+            _tableDisplay.AddColumns(new List<Column>
+            {
+                new Column
+                {
+                    Data = new List<string>
+                    {
+                        "row1",
+                        "row2"
+                    }
+                }
+            });
+            _tableDisplay.SeparateHeader = true;
+            var expectedLines = new List<string>
+            {
+                "row1",
+                "row2"
+            };
+
+            //when
+            _tableDisplay.DisplayHeaderless();
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
+
+        [Test]
+        public void ShouldFillColumnsWithEmptyStringsWhenDifferentHeightHeaderless()
+        {
+            //given
+            _tableDisplay.AddColumns(new List<Column>
+            {
+                new Column
+                {
+                    Data = new List<string>
+                    {
+                        "row1"
+                    }
+                },
+                new Column
+                {
+                    Data = new List<string>
+                    {
+                        "row1",
+                        "row2"
+                    }
+                }
+            });
+            _tableDisplay.SeparateHeader = true;
+            var expectedLines = new List<string>
+            {
+                "row1row1",
+                "    row2"
+            };
+
+            //when
+            _tableDisplay.DisplayHeaderless();
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
     }
 }

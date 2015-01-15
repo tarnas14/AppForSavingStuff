@@ -8,6 +8,7 @@ namespace Ui
         public Column()
         {
             Data = new List<string>();
+            Header = string.Empty;
         }
 
         public string Header { get; set; }

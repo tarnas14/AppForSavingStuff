@@ -40,6 +40,23 @@
         }
 
         [Test]
+        public void ShouldCalculateWidthWithoutHeader()
+        {
+            //given
+            var column = new Column
+            {
+                Data = new List<string>
+                {
+                    "1234567890",
+                    "1234"
+                }
+            };
+
+            //then
+            Assert.That(column.Width, Is.EqualTo(10));
+        }
+
+        [Test]
         public void ShouldGiveColumnHeightAsCountOfDataRows()
         {
             //given

@@ -39,10 +39,14 @@
                         _wallet.Transfer(sourceName, destinationName, GetOperationInput(userCommand));
                         break;
                     case "balance":
-                        sourceName = userCommand.Params[1];
-                        var balance = _wallet.GetBalance(sourceName);
-
-                        _walletUi.DisplayBalance(sourceName, balance);
+                        if (userCommand.Flags.Contains("t"))
+                        {
+                            DisplayBalanceForTag(userCommand.Params[1]);
+                        }
+                        else
+                        {
+                            DisplayBalanceForSource(userCommand.Params[1]);
+                        }
                         break;
                     case "month":
                         sourceName = userCommand.Params[2];
@@ -66,6 +70,20 @@
             {
                 _walletUi.DisplayError(e);
             }
+        }
+
+        private void DisplayBalanceForSource(string sourceName)
+        {
+            var balance = _wallet.GetBalance(sourceName);
+
+            _walletUi.DisplayBalance(sourceName, balance);
+        }
+
+        private void DisplayBalanceForTag(string tag)
+        {
+            var history = _wallet.GetTagHistoryForThisMonth(tag);
+
+            _walletUi.DisplayHistory(history);
         }
 
         private OperationInput GetOperationInput(UserCommand userCommand)
