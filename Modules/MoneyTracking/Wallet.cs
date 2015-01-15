@@ -89,5 +89,12 @@
         {
             _walletHistory.CreateSource(sourceName);
         }
+
+        public TagHistory GetTagHistoryForThisMonth(string tagName)
+        {
+            var today = _timeMaster.Today;
+
+            return _walletHistory.GetTagHistoryForThisMonth(tagName, today.Year, today.Month);
+        }
     }
 }

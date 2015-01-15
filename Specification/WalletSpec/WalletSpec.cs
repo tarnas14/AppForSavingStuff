@@ -290,5 +290,30 @@
             Assert.That(fullHistory.Operations[0].When, Is.EqualTo(new DateTime(2013, 12, 11)));
             Assert.That(fullHistory.Operations[1].When, Is.EqualTo(new DateTime(2013, 12, 12)));
         }
+
+        [Test]
+        public void ShouldReturnThisMonthsBasicHistoryForTag()
+        {
+            //given
+            _timeMasterMock.SetupSequence(mock => mock.Now)
+                        .Returns(new DateTime(2013, 10, 12))
+                        .Returns(new DateTime(2013, 10, 12))
+                        .Returns(new DateTime(2013, 12, 12))
+                        .Returns(new DateTime(2013, 12, 11));
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(new DateTime(2013, 12, 14));
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(20) });
+            _wallet.Add(TestDestinationName, new OperationInput { HowMuch = new Moneyz(15) });
+            var tag1 = new Tag("tag1");
+            _wallet.Subtract(TestSourceName, new OperationInput() { HowMuch = new Moneyz(15), Tags = new List<Tag>{ tag1 }});
+            _wallet.Add(TestDestinationName, new OperationInput() { HowMuch = new Moneyz(10), Tags = new List<Tag> { tag1 } });
+            _wallet.Subtract(TestDestinationName, new OperationInput() { HowMuch = new Moneyz(30), Tags = new List<Tag> { new Tag("otherTag") } });
+
+            //when
+            var tagMonthHistory = _wallet.GetTagHistoryForThisMonth("tag1");
+
+            //then
+            Assert.That(tagMonthHistory.Tag.Value, Is.EqualTo("tag1"));
+            Assert.That(tagMonthHistory.Operations.Count(), Is.EqualTo(2));
+        }
     }
 }

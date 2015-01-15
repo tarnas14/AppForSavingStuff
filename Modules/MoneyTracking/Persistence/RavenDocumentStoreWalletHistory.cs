@@ -123,6 +123,26 @@
             }
         }
 
+        public TagHistory GetTagHistoryForThisMonth(string tagName, int year, int month)
+        {
+            var date = new DateTime(year, month, 1);
+
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                var tagOperations = WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
+                    .Where(result => result.MonthYear == date.ToString("MMyy") && result.TagNames.Any(tag => tag == tagName))
+                    .OrderBy(result => result.When).OfType<Operation>();
+
+                var history = new TagHistory
+                {
+                    Tag = new Tag(tagName),
+                    Operations = tagOperations
+                };
+
+                return history;
+            }
+        }
+
         private bool Exists(string sourceName)
         {
             return null != GetSourceByName(sourceName);

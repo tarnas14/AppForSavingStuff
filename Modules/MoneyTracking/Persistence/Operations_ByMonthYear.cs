@@ -1,6 +1,7 @@
 ﻿namespace Modules.MoneyTracking.Persistence
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Raven.Client.Indexes;
 
@@ -20,6 +21,7 @@
         {
             public string MonthYear { get; set; }
             public DateTime When { get; set; }
+            public IEnumerable<string> TagNames { get; set; }
         }
 
         public Operations_ByMonthYear()
@@ -28,7 +30,8 @@
                 select new Result
                 {
                     When = operation.When,
-                    MonthYear = operation.When.ToString("MMyy")
+                    MonthYear = operation.When.ToString("MMyy"),
+                    TagNames = operation.Tags.Select(tag => tag.Value)
                 };
         }
     }
