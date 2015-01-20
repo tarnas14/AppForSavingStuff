@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Ui;
-    using Console = Ui.Console;
+    using Tarnas.ConsoleUi;
+    using Console = Tarnas.ConsoleUi.Console;
 
     public class WalletUi
     {

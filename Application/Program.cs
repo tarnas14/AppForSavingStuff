@@ -1,10 +1,9 @@
 ﻿namespace Application
 {
-    using System;
     using Modules;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Persistence;
-    using Ui;
+    using Tarnas.ConsoleUi;
 
     class Program
     {

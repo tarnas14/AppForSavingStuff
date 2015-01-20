@@ -39,6 +39,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tarnas.ConsoleUi">
+      <HintPath>..\Tarnas.ConsoleUi.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -49,10 +52,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleUi\Ui.csproj">
-      <Project>{3A62254B-5773-453A-B86C-56A2771FD456}</Project>
-      <Name>Ui</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Modules\Modules.csproj">
       <Project>{F9FDEF7D-3B49-4080-992B-88972D3BC7B6}</Project>
       <Name>Modules</Name>

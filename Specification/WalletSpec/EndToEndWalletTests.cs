@@ -9,7 +9,7 @@
     using Modules.MoneyTracking.Persistence;
     using Moq;
     using NUnit.Framework;
-    using Ui;
+    using Tarnas.ConsoleUi;
 
     [TestFixture]
     class EndToEndWalletTests

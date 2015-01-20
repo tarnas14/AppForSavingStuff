@@ -48,6 +48,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tarnas.ConsoleUi">
+      <HintPath>..\Tarnas.ConsoleUi.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MoneyTracking\Change.cs" />
@@ -73,12 +76,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemClockTimeMaster.cs" />
     <Compile Include="TimeMaster.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConsoleUi\Ui.csproj">
-      <Project>{3A62254B-5773-453A-B86C-56A2771FD456}</Project>
-      <Name>Ui</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

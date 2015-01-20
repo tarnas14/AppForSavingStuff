@@ -1,8 +1,7 @@
 ﻿namespace Specification.Halp
 {
     using System.Collections.Generic;
-    using Modules;
-    using Ui;
+    using Console = Tarnas.ConsoleUi.Console;
 
     class ConsoleMock : Console
     {

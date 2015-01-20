@@ -1,6 +1,6 @@
 ﻿namespace Application
 {
-    using Ui;
+    using Tarnas.ConsoleUi;
 
     internal class SystemConsole : Console
     {

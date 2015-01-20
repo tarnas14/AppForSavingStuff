@@ -48,15 +48,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tarnas.ConsoleUi">
+      <HintPath>..\Tarnas.ConsoleUi.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Halp\ConsoleMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UiSpec\ColumnSpecification.cs" />
-    <Compile Include="UiSpec\ConsoleTableDisplaySpecification.cs" />
-    <Compile Include="UiSpec\ConsoleUiSpec.cs" />
-    <Compile Include="UiSpec\SubscriberStoreSpec.cs" />
-    <Compile Include="UiSpec\UserCommandFactorySpec.cs" />
     <Compile Include="WalletSpec\EndToEndWalletTests.cs" />
     <Compile Include="WalletSpec\MoneyzSpec.cs" />
     <Compile Include="WalletSpec\WalletSpec.cs" />
@@ -65,10 +63,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleUi\Ui.csproj">
-      <Project>{3a62254b-5773-453a-b86c-56a2771fd456}</Project>
-      <Name>Ui</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Modules\Modules.csproj">
       <Project>{f9fdef7d-3b49-4080-992b-88972d3bc7b6}</Project>
       <Name>Modules</Name>

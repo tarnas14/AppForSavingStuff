@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Ui;
+    using Tarnas.ConsoleUi;
 
     public class WalletMainController : Subscriber
     {
