@@ -16,5 +16,10 @@
         {
             Lines.Add(line);
         }
+
+        public string ReadLine()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

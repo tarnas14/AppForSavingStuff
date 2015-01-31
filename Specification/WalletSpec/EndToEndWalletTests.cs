@@ -23,7 +23,7 @@
         public void Setup()
         {
             Now = new DateTime(2015, 5, 24);
-            _ui = new ConsoleUi(new CleverFactory());
+            _ui = new ConsoleUi();
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(Now);
             _timeMasterMock.SetupGet(mock => mock.Today).Returns(Now);
