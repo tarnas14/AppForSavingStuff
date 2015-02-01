@@ -91,7 +91,30 @@
 
         public void CreateSource(string sourceName)
         {
+            ValidateSourceName(sourceName);
+
             _walletHistory.CreateSource(sourceName);
+        }
+
+        private void ValidateSourceName(string sourceName)
+        {
+            if (ReservedWords.Contains(sourceName))
+            {
+                var errorMessage = string.Format("'{0}' is a reserved word and cannot be used as a source name.", sourceName);
+
+                throw new WalletException(errorMessage);
+            }
+        }
+
+        public IList<string> ReservedWords
+        {
+            get { 
+                return new List<string>
+                {
+                    "tags",
+                    "all"
+                };
+            }
         }
 
         public TagHistory GetTagHistoryForThisMonth(string tagName)

@@ -95,6 +95,20 @@
                 }).SetName("creating source");
                 yield return new TestCaseData(new List<string>
                 {
+                    "/wallet source tags"
+                }, new List<string>
+                {
+                    "    Error: 'tags' is a reserved word and cannot be used as a source name."
+                }).SetName("'tags' should be a reserved word");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source all"
+                }, new List<string>
+                {
+                    "    Error: 'all' is a reserved word and cannot be used as a source name."
+                }).SetName("'all' should be a reserved word");
+                yield return new TestCaseData(new List<string>
+                {
                     "/wallet source mbank",
                     "/wallet source mbank"
                 }, new List<string>
