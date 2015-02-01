@@ -242,6 +242,17 @@
                     "        getinBank  -10.00",
                     "                   + 2.00"
                 }).SetName("display balance for tags");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source mbank",
+                    "/wallet add mbank 20 asdf tag1",
+                    "/wallet sub mbank 2 qwer tag3 tag2",
+                    "/wallet tags"
+                },
+                new List<string>
+                {
+                    "tag1, tag2, tag3"
+                }).SetName("should display tags");
             }
         }
     }

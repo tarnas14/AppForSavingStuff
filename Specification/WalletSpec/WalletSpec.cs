@@ -242,8 +242,6 @@
             _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
             _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(5) });
 
-            Thread.Sleep(2000);
-
             //when
             var historyForThisMonth = _wallet.GetHistoryForThisMonth();
 
@@ -321,6 +319,28 @@
             Assert.That(tagMonthHistory.Operations[TestDestinationName], Is.EqualTo(new Moneyz(10)));
             Assert.That(tagMonthHistory.Operations.ContainsKey(TestSourceName));
             Assert.That(tagMonthHistory.Operations[TestSourceName], Is.EqualTo(new Moneyz(-30)));
+        }
+
+        [Test]
+        public void ShouldProvideTagsForTheMonth()
+        {
+            //given
+            var today = DateTime.Today;
+            var yesterMonth = today.Subtract(TimeSpan.FromDays(32));
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(yesterMonth);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(yesterMonth);
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(4), Tags = new []{new Tag("oldTag"), } });
+            _timeMasterMock.SetupGet(mock => mock.Today).Returns(today);
+            _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
+            _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(5), Tags = new []{new Tag("newTag"), new Tag("newTag2")} });
+
+            //when
+            var tagsUsedThisMonth = _wallet.GetTagsUsedThisMonth();
+
+            //then
+            Assert.That(tagsUsedThisMonth.Count(), Is.EqualTo(2));
+            Assert.That(tagsUsedThisMonth.Count(tag => tag.Value == "newTag"), Is.EqualTo(1));
+            Assert.That(tagsUsedThisMonth.Count(tag => tag.Value == "newTag2"), Is.EqualTo(1));
         }
     }
 }

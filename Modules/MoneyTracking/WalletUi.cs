@@ -214,5 +214,12 @@
 
             tableDisplay.DisplayHeaderless();
         }
+
+        public void DisplayTags(IEnumerable<Tag> tagsUsedThisMonth)
+        {
+            var ordered = tagsUsedThisMonth.OrderBy(tag => tag.Value).Select(tag => tag.Value);
+
+            _console.WriteLine(string.Join(", ", ordered.ToList()));
+        }
     }
 }

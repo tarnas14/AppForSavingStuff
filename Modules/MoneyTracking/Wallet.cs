@@ -147,5 +147,11 @@
         {
             return _walletHistory.GetSources();
         }
+
+        public IEnumerable<Tag> GetTagsUsedThisMonth()
+        {
+            var today = _timeMaster.Today;
+            return _walletHistory.GetTagsForMonth(today.Year, today.Month);
+        }
     }
 }

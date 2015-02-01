@@ -68,11 +68,11 @@
                 .OrderBy(result => result.When).OfType<Operation>().ToList();
         }
 
-        public IEnumerable<Source> GetSources()
+        public IList<Source> GetSources()
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                return session.Query<Source>();
+                return session.Query<Source>().ToList();
             }
         }
 
@@ -132,6 +132,18 @@
                 return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
                     .Where(result => result.MonthYear == date.ToString("MMyy") && result.TagNames.Any(tag => tag == tagName))
                     .OrderBy(result => result.When).OfType<Operation>().ToList();
+            }
+        }
+
+        public IList<Tag> GetTagsForMonth(int year, int month)
+        {
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                var thisMonthOperations = GetForMonth(year, month);
+
+                var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
+
+                return tagsInOperations.ToList();
             }
         }
 

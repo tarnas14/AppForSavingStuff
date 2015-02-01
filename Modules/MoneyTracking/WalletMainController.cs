@@ -69,6 +69,10 @@
                         };
                         _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth(), verbosity);
                         break;
+                    case "tags":
+                        var tagsUsedThisMonth = _wallet.GetTagsUsedThisMonth();
+                        _walletUi.DisplayTags(tagsUsedThisMonth);
+                        break;
                 }
             }
             catch (WalletException e)
