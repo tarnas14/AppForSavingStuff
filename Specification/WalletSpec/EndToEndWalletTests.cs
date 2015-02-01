@@ -251,7 +251,7 @@
                 },
                 new List<string>
                 {
-                    "tag1, tag2, tag3"
+                    "#tag1, #tag2, #tag3"
                 }).SetName("should display tags");
             }
         }
