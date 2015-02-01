@@ -142,5 +142,10 @@
                 Operations = history
             };
         }
+
+        public IEnumerable<Source> GetAllSources()
+        {
+            return _walletHistory.GetSources();
+        }
     }
 }

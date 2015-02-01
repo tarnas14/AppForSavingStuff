@@ -95,6 +95,15 @@
                 }).SetName("creating source");
                 yield return new TestCaseData(new List<string>
                 {
+                    "/wallet source mbank",
+                    "/wallet source otherSource",
+                    "/wallet balance all"
+                }, new List<string>{
+                    "    mbank        0.00",
+                    "    otherSource  0.00"
+                }).SetName("should display balances of all sources");
+                yield return new TestCaseData(new List<string>
+                {
                     "/wallet source tags"
                 }, new List<string>
                 {

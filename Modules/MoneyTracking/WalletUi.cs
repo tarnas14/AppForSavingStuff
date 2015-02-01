@@ -192,5 +192,27 @@
             _console.WriteLine(header);
             tableDisplay.DisplayHeaderless();
         }
+
+        public void DisplayMultipleBalances(IEnumerable<Source> sources)
+        {
+            var nameColumn = new Column
+            {
+                Prefix = Tab,
+                Data = sources.Select(source => source.Name).ToList()
+            };
+
+            var balanceColumn = new Column
+            {
+                Prefix = "  ",
+                AlignRight = true,
+                Data = sources.Select(source => source.Balance.UnsignedString).ToList()
+            };
+
+            var tableDisplay = new TableDisplay(_console);
+            tableDisplay.AddColumn(nameColumn);
+            tableDisplay.AddColumn(balanceColumn);
+
+            tableDisplay.DisplayHeaderless();
+        }
     }
 }

@@ -39,7 +39,12 @@
                         _wallet.Transfer(sourceName, destinationName, GetOperationInput(userCommand));
                         break;
                     case "balance":
-                        if (userCommand.Flags.Contains("t"))
+                        if (userCommand.Params[1] == "all")
+                        {
+                            var sources = _wallet.GetAllSources();
+                            _walletUi.DisplayMultipleBalances(sources);
+                        }
+                        else if (userCommand.Flags.Contains("t"))
                         {
                             DisplayBalanceForTag(userCommand.Params[1]);
                         }
