@@ -245,6 +245,23 @@
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank",
+                    "/wallet add mbank 2 description tag2 tag3",
+                    "/wallet source getin",
+                    "/wallet add getin 2",
+                    "/wallet trans mbank getin 1 'another description' tag3 taggg",
+                    "/wallet history getin"
+                }, new List<string>
+                {
+                    "    when        where         howMuch  valueAfter",
+                    string.Empty,
+                    "    2015-05-24  getin           +2.00        2.00",
+                    "    2015-05-24  mbank->getin     1.00            ",
+                    "                mbank           -1.00        1.00",
+                    "                getin           +1.00        3.00"
+                }).SetName("display month history for specific source");
+                yield return new TestCaseData(new List<string>
+                {
+                    "/wallet source mbank",
                     "/wallet add mbank 20 asdf tag1",
                     "/wallet sub mbank 2 qwer tag3 tag2",
                     "/wallet tags"

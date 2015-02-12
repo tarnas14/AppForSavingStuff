@@ -243,7 +243,7 @@
             _wallet.Add(TestSourceName, new OperationInput { HowMuch = new Moneyz(5) });
 
             //when
-            var historyForThisMonth = _wallet.GetHistoryForThisMonth();
+            var historyForThisMonth = _wallet.GetHistoryForThisMonth(new HistoryDisplayFilter());
 
             //then
             Assert.That(historyForThisMonth.Operations.Count, Is.EqualTo(1));
@@ -282,7 +282,7 @@
             _wallet.Transfer(TestSourceName, TestDestinationName, new OperationInput { HowMuch = new Moneyz(1) });
 
             //when
-            var fullHistory = _wallet.GetHistoryForThisMonth();
+            var fullHistory = _wallet.GetHistoryForThisMonth(new HistoryDisplayFilter());
 
             //then
             Assert.That(fullHistory.Operations[0].When, Is.EqualTo(new DateTime(2013, 12, 11)));

@@ -28,14 +28,27 @@
             };
         }
 
-        public History GetHistoryForThisMonth()
+        public History GetHistoryForThisMonth(HistoryDisplayFilter filters)
         {
             var today = _timeMaster.Today;
 
+            if (filters != null)
+            {
+                SanitizeFilter(filters);
+            }
+
             return new History
             {
-                Operations = _walletHistory.GetForMonth(today.Year, today.Month)
+                Operations = _walletHistory.GetForMonth(today.Year, today.Month, filters)
             };
+        }
+
+        private void SanitizeFilter(HistoryDisplayFilter filters)
+        {
+            if (!_walletHistory.Exists(filters.Source))
+            {
+                filters.Source = string.Empty;
+            }
         }
 
         public void Add(string sourceName, OperationInput input)

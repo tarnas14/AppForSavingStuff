@@ -51,17 +51,24 @@
             }
         }
 
-        public IList<Operation> GetForMonth(int year, int month)
+        public IList<Operation> GetForMonth(int year, int month, HistoryDisplayFilter filters)
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
                 var date = new DateTime(year, month, 1);
                 return
-                    GetMonthHistory(session, date);
+                    string.IsNullOrEmpty(filters.Source) ? GetMonthHistory(session, date).ToList() : GetMonthHistoryForSource(session, date, filters.Source);
             }
         }
 
-        private IList<Operation> GetMonthHistory(IDocumentSession session, DateTime date)
+        private IList<Operation> GetMonthHistoryForSource(IDocumentSession session, DateTime date, string source)
+        {
+            return
+                GetMonthHistory(session, date)
+                    .Where(operation => operation.Changes.Any(change => change.Source == source)).ToList();
+        }
+
+        private IEnumerable<Operation> GetMonthHistory(IDocumentSession session, DateTime date)
         {
             return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
                 .Where(result => result.MonthYear == date.ToString("MMyy"))
@@ -137,17 +144,14 @@
 
         public IList<Tag> GetTagsForMonth(int year, int month)
         {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                var thisMonthOperations = GetForMonth(year, month);
+            var thisMonthOperations = GetForMonth(year, month, new HistoryDisplayFilter());
 
-                var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
+            var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
 
-                return tagsInOperations.ToList();
-            }
+            return tagsInOperations.ToList();
         }
 
-        private bool Exists(string sourceName)
+        public bool Exists(string sourceName)
         {
             return null != GetSourceByName(sourceName);
         }
