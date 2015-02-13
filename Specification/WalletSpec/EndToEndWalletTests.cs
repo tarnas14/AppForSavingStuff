@@ -14,26 +14,26 @@
     [TestFixture]
     class EndToEndWalletTests
     {
-        private ConsoleUi _ui;
-        private Mock<TimeMaster> _timeMasterMock;
-        private ConsoleMock _consoleMock;
+        protected ConsoleUi Ui;
+        protected Mock<TimeMaster> TimeMasterMock;
+        protected ConsoleMock ConsoleMock;
         public DateTime Now { get; set; }
 
         [SetUp]
-        public void Setup()
+        public virtual void Setup()
         {
             Now = new DateTime(2015, 5, 24);
-            _ui = new ConsoleUi();
-            _timeMasterMock = new Mock<TimeMaster>();
-            _timeMasterMock.SetupGet(mock => mock.Now).Returns(Now);
-            _timeMasterMock.SetupGet(mock => mock.Today).Returns(Now);
+            Ui = new ConsoleUi();
+            TimeMasterMock = new Mock<TimeMaster>();
+            TimeMasterMock.SetupGet(mock => mock.Now).Returns(Now);
+            TimeMasterMock.SetupGet(mock => mock.Today).Returns(Now);
             var ravenHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider() { RunInMemory = true })
             {
                 WaitForNonStale = true
             };
-            _consoleMock = new ConsoleMock();
-            var walletMainController = new WalletMainController(new WalletUi(_consoleMock), new Wallet(ravenHistory, _timeMasterMock.Object));
-            _ui.Subscribe(walletMainController, "wallet");
+            ConsoleMock = new ConsoleMock();
+            var walletMainController = new WalletMainController(new WalletUi(ConsoleMock), new Wallet(ravenHistory, TimeMasterMock.Object));
+            Ui.Subscribe(walletMainController, "wallet");
         }
 
         [Test]
@@ -43,11 +43,11 @@
             //given
             
             //when
-            ExecuteCommands(_ui, userCommands);
+            ExecuteCommands(Ui, userCommands);
 
             //then
-            _consoleMock.Lines.ToList().ForEach(System.Console.WriteLine);
-            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
+            ConsoleMock.Lines.ToList().ForEach(System.Console.WriteLine);
+            Assert.That(ConsoleMock.Lines, Is.EquivalentTo(expectedOutput));
         }
 
         [Test]
@@ -55,26 +55,26 @@
         {
             //given
             const string source = "sourceName";
-            _ui.UserInput(string.Format("/wallet source {0}", source));
+            Ui.UserInput(string.Format("/wallet source {0}", source));
 
-            _timeMasterMock.SetupGet(mock => mock.Now).Returns(new DateTime(2000, 11, 30));
-            _ui.UserInput(string.Format("/wallet add {0} 4", source));
+            TimeMasterMock.SetupGet(mock => mock.Now).Returns(new DateTime(2000, 11, 30));
+            Ui.UserInput(string.Format("/wallet add {0} 4", source));
 
             var today = new DateTime(2000, 12, 1);
-            _timeMasterMock.SetupGet(mock => mock.Now).Returns(today);
-            _ui.UserInput(string.Format("/wallet add {0} 2", source));
+            TimeMasterMock.SetupGet(mock => mock.Now).Returns(today);
+            Ui.UserInput(string.Format("/wallet add {0} 2", source));
 
-            _timeMasterMock.SetupGet(mock => mock.Today).Returns(today);
+            TimeMasterMock.SetupGet(mock => mock.Today).Returns(today);
 
             //when
-            _ui.UserInput(string.Format("/wallet month balance {0}", source));
+            Ui.UserInput(string.Format("/wallet month balance {0}", source));
             var expectedOutput = new List<string> {"    sourceName: 2.00"};
 
             //then
-            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
+            Assert.That(ConsoleMock.Lines, Is.EquivalentTo(expectedOutput));
         }
 
-        private void ExecuteCommands(ConsoleUi ui, IEnumerable<string> userCommands)
+        protected void ExecuteCommands(ConsoleUi ui, IEnumerable<string> userCommands)
         {
             userCommands.ToList().ForEach(ui.UserInput);
         }
