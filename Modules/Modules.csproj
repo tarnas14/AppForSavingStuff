@@ -54,6 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MoneyTracking\Change.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\AddCommand.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\AddCommandHandler.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\CommandHandler.cs" />
     <Compile Include="MoneyTracking\HistoryDisplayFilter.cs" />
     <Compile Include="MoneyTracking\HistoryDisplayVerbosity.cs" />
     <Compile Include="MoneyTracking\History.cs" />
