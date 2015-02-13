@@ -69,5 +69,15 @@
                 return Value >= 0 ? "+" : "-";
             }
         }
+
+        public Moneyz Absolute
+        {
+            get
+            {
+                var value = (Value < 0) ? -Value : Value;
+
+                return new Moneyz(value);
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 namespace Modules.MoneyTracking.CommandHandlers
 {
-    internal interface Command
+    public interface Command
     {
     }
 }

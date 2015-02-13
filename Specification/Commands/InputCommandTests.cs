@@ -47,19 +47,44 @@
             commandHandler.Execute(command);
 
             //then
-            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command) && HasChangeDescribingAddition(operation, command))), Times.Once);
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingAddition(operation, command.Source, command.OperationInput))), Times.Once);
         }
 
-        private bool HasGoodOperationData(Operation operation, AddCommand command)
+        [Test]
+        public void ShouldStoreSubtractOperation()
         {
-            var goodDescription = operation.Description == command.OperationInput.Description;
+            //given
+            const string testSource = "someSource";
+            const string testDescription = "test description";
+            var testHowMuch = new Moneyz(2);
+            var command = new SubtractCommand
+            {
+                Source = testSource,
+                OperationInput = new OperationInput
+                {
+                    Description = testDescription,
+                    HowMuch = testHowMuch
+                }
+            };
+            var commandHandler = new SubtractCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+
+            //when
+            commandHandler.Execute(command);
+
+            //then
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingAddition(operation, command.Source, command.OperationInput))), Times.Once);
+        }
+
+        private bool HasGoodOperationData(Operation operation, OperationInput input)
+        {
+            var goodDescription = operation.Description == input.Description;
 
             Console.WriteLine("description: {0}", operation.Description);
 
             return goodDescription;
         }
 
-        private bool HasChangeDescribingAddition(Operation operation, AddCommand command)
+        private bool HasChangeDescribingAddition(Operation operation, string sourceName, OperationInput input)
         {
             var onlyOneChange = operation.Changes.Count == 1;
 
@@ -70,8 +95,8 @@
             }
 
             var change = operation.Changes.First();
-            var addedGoodAmount = (change.After - change.Before).Equals(command.OperationInput.HowMuch);
-            var properSource = change.Source == command.Source;
+            var addedGoodAmount = (change.After - change.Before).Absolute.Equals(input.HowMuch);
+            var properSource = change.Source == sourceName;
 
             Console.WriteLine("amount: {0}, source: {1}", addedGoodAmount, properSource);
 
