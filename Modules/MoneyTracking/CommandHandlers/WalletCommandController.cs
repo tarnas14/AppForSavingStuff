@@ -63,7 +63,15 @@
 
                         break;
                     case "balance":
-                        throw new NotImplementedException();
+                        sourceName = userCommand.Params[1];
+
+                        var displayBalanceCommand = new DisplayBalanceCommand
+                        {
+                            SourceName = sourceName
+                        };
+                        new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
+
+                        break;
                     case "month":
                         throw new NotImplementedException();
                     case "source":
