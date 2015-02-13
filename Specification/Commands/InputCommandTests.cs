@@ -47,7 +47,7 @@
             commandHandler.Execute(command);
 
             //then
-            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingAddition(operation, command.Source, command.OperationInput))), Times.Once);
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingOperation(operation, command.Source, command.OperationInput))), Times.Once);
         }
 
         [Test]
@@ -72,7 +72,59 @@
             commandHandler.Execute(command);
 
             //then
-            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingAddition(operation, command.Source, command.OperationInput))), Times.Once);
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingOperation(operation, command.Source, command.OperationInput))), Times.Once);
+        }
+
+        [Test]
+        public void ShouldStoreTransferOperation()
+        {
+            //given
+            const string testSource = "someSource";
+            const string testDestination = "someDestination";
+            const string testDescription = "test description";
+            var testHowMuch = new Moneyz(2);
+            var command = new TransferCommand
+            {
+                Source = testSource,
+                Destination = testDestination,
+                OperationInput = new OperationInput
+                {
+                    Description = testDescription,
+                    HowMuch = testHowMuch
+                }
+            };
+            var commandHandler = new TransferCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+
+            //when
+            commandHandler.Execute(command);
+
+            //then
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangesDescribingTransfer(operation, command))), Times.Once);
+        }
+
+        private bool HasChangesDescribingTransfer(Operation operation, TransferCommand command)
+        {
+            var twoChanges = operation.Changes.Count == 2;
+
+            if (!twoChanges)
+            {
+                Console.WriteLine("expected 2 changes");
+                return false;
+            }
+
+            var firstChange = operation.Changes[0];
+            var secondChange = operation.Changes[1];
+
+            var firstChangeRemovesFromSource = firstChange.Source == command.Source &&
+                                               (firstChange.Before - firstChange.After).Equals(
+                                                   command.OperationInput.HowMuch);
+            var secondChangeAddsToDestination = secondChange.Source == command.Destination &&
+                                                (secondChange.After - secondChange.Before).Equals(
+                                                    command.OperationInput.HowMuch);
+
+            Console.WriteLine("firstChange: {0}, secondChange: {1}", firstChangeRemovesFromSource, secondChangeAddsToDestination);
+
+            return firstChangeRemovesFromSource && secondChangeAddsToDestination;
         }
 
         private bool HasGoodOperationData(Operation operation, OperationInput input)
@@ -84,7 +136,7 @@
             return goodDescription;
         }
 
-        private bool HasChangeDescribingAddition(Operation operation, string sourceName, OperationInput input)
+        private bool HasChangeDescribingOperation(Operation operation, string sourceName, OperationInput input)
         {
             var onlyOneChange = operation.Changes.Count == 1;
 
