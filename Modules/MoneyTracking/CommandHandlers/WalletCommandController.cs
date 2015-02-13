@@ -67,7 +67,13 @@
                     case "month":
                         throw new NotImplementedException();
                     case "source":
-                        throw new NotImplementedException();
+                        sourceName = userCommand.Params[1];
+                        var newSourceCommand = new CreateSourceCommand
+                        {
+                            Name = sourceName
+                        };
+                        new CreateSourceCommandHandler(_ravenHistory, new HardcodedReservedWordsStore()).Execute(newSourceCommand);
+                        break;
                     case "history":
                         throw new NotImplementedException();
                     case "tags":

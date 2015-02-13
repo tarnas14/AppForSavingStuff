@@ -1,6 +1,6 @@
 ﻿namespace Modules.MoneyTracking
 {
-    using System;
+    using Raven.Imports.Newtonsoft.Json;
 
     public class Moneyz
     {
@@ -69,7 +69,8 @@
                 return Value >= 0 ? "+" : "-";
             }
         }
-
+        
+        [JsonIgnore]
         public Moneyz Absolute
         {
             get

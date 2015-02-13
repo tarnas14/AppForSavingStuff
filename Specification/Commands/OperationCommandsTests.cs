@@ -9,19 +9,24 @@
     using NUnit.Framework;
 
     [TestFixture]
-    class InputCommandTests
+    class OperationCommandsTests
     {
         private Mock<TimeMaster> _timeMasterMock;
         private Mock<WalletHistory> _walletHistoryMock;
+        private Mock<ReservedWordsStore> _reservedWordsStoreMock;
 
         [SetUp]
         public void Setup()
         {
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(timeMaster => timeMaster.Now).Returns(DateTime.Now);
+
             _walletHistoryMock = new Mock<WalletHistory>();
             _walletHistoryMock.Setup(walletHistory => walletHistory.GetBalance(It.IsAny<string>()))
                 .Returns(new Moneyz(2));
+
+            _reservedWordsStoreMock = new Mock<ReservedWordsStore>();
+            _reservedWordsStoreMock.Setup(mock => mock.IsReserved(It.IsAny<string>())).Returns(false);
         }
 
         [Test]
@@ -100,6 +105,42 @@
 
             //then
             _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangesDescribingTransfer(operation, command))), Times.Once);
+        }
+
+        [Test]
+        public void ShouldSetupANewSource()
+        {
+            //given
+            const string sourceName = "sourceName";
+            var command = new CreateSourceCommand
+            {
+                Name = sourceName
+            };
+            var commandHandler = new CreateSourceCommandHandler(_walletHistoryMock.Object, _reservedWordsStoreMock.Object);
+
+            //when
+            commandHandler.Execute(command);
+
+            //then
+            _walletHistoryMock.Verify(mock => mock.CreateSource(sourceName), Times.Once);
+        }
+
+        [Test]
+        public void ShouldNotCreateSourceWithNameFromReservedWords()
+        {
+            //given
+            _reservedWordsStoreMock.Setup(store => store.IsReserved(It.IsAny<string>())).Returns(true);
+            var commandHandler = new CreateSourceCommandHandler(_walletHistoryMock.Object, _reservedWordsStoreMock.Object);
+            var command = new CreateSourceCommand
+            {
+                Name = "testName"
+            };
+
+            //when
+            TestDelegate result = () => commandHandler.Execute(command);
+
+            //then
+            Assert.Throws<WalletException>(result);
         }
 
         private bool HasChangesDescribingTransfer(Operation operation, TransferCommand command)

@@ -58,6 +58,9 @@
     <Compile Include="MoneyTracking\CommandHandlers\AddCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\CommandHandler.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\CreateSourceCommand.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\CreateSourceCommandHandler.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\HardcodedReservedWordsStore.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\SubtractCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\SubtractCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\TransferCommand.cs" />
@@ -74,6 +77,7 @@
     <Compile Include="MoneyTracking\Persistence\RavenDocumentStoreWalletHistory.cs" />
     <Compile Include="MoneyTracking\Persistence\SourceAlreadyExistsException.cs" />
     <Compile Include="MoneyTracking\Persistence\Sources_ByName.cs" />
+    <Compile Include="MoneyTracking\ReservedWordsStore.cs" />
     <Compile Include="MoneyTracking\Source.cs" />
     <Compile Include="MoneyTracking\Persistence\SourceDoesNotExistException.cs" />
     <Compile Include="MoneyTracking\Tag.cs" />
