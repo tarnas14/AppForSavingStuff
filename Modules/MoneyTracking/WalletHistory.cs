@@ -1,6 +1,7 @@
 ﻿namespace Modules.MoneyTracking
 {
     using System.Collections.Generic;
+    using Presentation;
 
     public interface WalletHistory
     {

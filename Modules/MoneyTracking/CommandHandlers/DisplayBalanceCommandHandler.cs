@@ -1,5 +1,7 @@
 ﻿namespace Modules.MoneyTracking.CommandHandlers
 {
+    using Presentation;
+
     public class DisplayBalanceCommandHandler : CommandHandler<DisplayBalanceCommand>
     {
         private readonly WalletHistory _walletHistory;

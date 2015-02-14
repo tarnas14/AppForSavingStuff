@@ -7,6 +7,7 @@
     using Modules;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Persistence;
+    using Modules.MoneyTracking.Presentation;
     using Moq;
     using NUnit.Framework;
     using Tarnas.ConsoleUi;

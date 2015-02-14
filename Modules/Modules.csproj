@@ -68,8 +68,9 @@
     <Compile Include="MoneyTracking\CommandHandlers\TransferCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\TransferCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\WalletCommandController.cs" />
-    <Compile Include="MoneyTracking\HistoryDisplayFilter.cs" />
-    <Compile Include="MoneyTracking\HistoryDisplayVerbosity.cs" />
+    <Compile Include="MoneyTracking\Presentation\Balances.cs" />
+    <Compile Include="MoneyTracking\Presentation\HistoryDisplayFilter.cs" />
+    <Compile Include="MoneyTracking\Presentation\HistoryDisplayVerbosity.cs" />
     <Compile Include="MoneyTracking\History.cs" />
     <Compile Include="MoneyTracking\Moneyz.cs" />
     <Compile Include="MoneyTracking\Operation.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="MoneyTracking\WalletException.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletMainController.cs" />
-    <Compile Include="MoneyTracking\WalletUi.cs" />
+    <Compile Include="MoneyTracking\Presentation\WalletUi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemClockTimeMaster.cs" />
     <Compile Include="TimeMaster.cs" />

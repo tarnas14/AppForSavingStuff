@@ -1,4 +1,4 @@
-﻿namespace Modules.MoneyTracking
+﻿namespace Modules.MoneyTracking.Presentation
 {
     public class HistoryDisplayFilter
     {

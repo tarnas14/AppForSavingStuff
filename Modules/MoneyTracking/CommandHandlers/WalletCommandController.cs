@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Persistence;
+    using Presentation;
     using Tarnas.ConsoleUi;
 
     public class WalletCommandController : Subscriber

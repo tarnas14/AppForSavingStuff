@@ -1,20 +1,31 @@
-﻿namespace Modules.MoneyTracking
+﻿namespace Modules.MoneyTracking.Presentation
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
+    using Raven.Abstractions.Extensions;
     using Tarnas.ConsoleUi;
-    using Console = Tarnas.ConsoleUi.Console;
 
     public class WalletUi
     {
         private readonly Console _console;
-        private const string Tab = "    ";
+
+        private string Tab
+        {
+            get
+            {
+                return new string(' ', TabSize);
+            }
+        }
 
         public WalletUi(Console console)
         {
             _console = console;
+            TabSize = 4;
         }
+
+        public int TabSize { get; set; }
 
         public void DisplayBalance(string sourceName, Moneyz balance)
         {
@@ -220,6 +231,38 @@
             var ordered = tagsUsedThisMonth.OrderBy(tag => tag.Value).Select(tag => "#" + tag.Value);
 
             _console.WriteLine(string.Join(", ", ordered.ToList()));
+        }
+
+        public void DisplayBalance(Balances balancesToDisplay)
+        {
+            var displayNameColumn = new Column
+            {
+                Prefix = Tab,
+                Suffix = ": ",
+                AlignRight = true
+            };
+            var valuesColumn = new Column
+            {
+                AlignRight = true
+            };
+
+            var balancesDictionary = balancesToDisplay.GetBalances();
+            balancesDictionary.ForEach(pair =>
+            {
+                displayNameColumn.Data.Add(pair.Key);
+                valuesColumn.Data.Add(pair.Value.ToString());
+            });
+
+            if (balancesDictionary.Count > 1)
+            {
+                valuesColumn.Data.Add(balancesToDisplay.TotalBalance.ToString());
+            }
+
+            var table = new TableDisplay(_console);
+            table.AddColumn(displayNameColumn);
+            table.AddColumn(valuesColumn);
+
+            table.DisplayHeaderless();
         }
     }
 }
