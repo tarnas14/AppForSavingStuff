@@ -26,5 +26,10 @@
         {
             get { return _balances.Aggregate(new Moneyz(0), (m1, m2) => m1 + m2.Value); }
         }
+
+        public void AddBalance(Source source)
+        {
+            AddBalance(source.Name, source.Balance);
+        }
     }
 }

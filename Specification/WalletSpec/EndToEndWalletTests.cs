@@ -100,8 +100,9 @@
                     "/wallet source otherSource",
                     "/wallet balance all"
                 }, new List<string>{
-                    "    mbank        0.00",
-                    "    otherSource  0.00"
+                    "          mbank: 0.00",
+                    "    otherSource: 0.00",
+                    "               : 0.00"
                 }).SetName("should display balances of all sources");
                 yield return new TestCaseData(new List<string>
                 {

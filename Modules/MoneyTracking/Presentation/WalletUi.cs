@@ -209,15 +209,20 @@
             var nameColumn = new Column
             {
                 Prefix = Tab,
+                AlignRight = true,
                 Data = sources.Select(source => source.Name).ToList()
             };
 
             var balanceColumn = new Column
             {
-                Prefix = "  ",
+                Prefix = ": ",
                 AlignRight = true,
                 Data = sources.Select(source => source.Balance.UnsignedString).ToList()
             };
+
+            var totalBalance = sources.Aggregate(new Moneyz(0), (s1, s2) => s1 + s2.Balance);
+
+            balanceColumn.Data.Add(totalBalance.ToString());
 
             var tableDisplay = new TableDisplay(_console);
             tableDisplay.AddColumn(nameColumn);
