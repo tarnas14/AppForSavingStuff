@@ -1,6 +1,7 @@
 ﻿namespace Modules.MoneyTracking.CommandHandlers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Presentation;
     using Raven.Abstractions.Extensions;
 
@@ -18,17 +19,21 @@
         public void Execute(DisplayBalanceCommand command)
         {
             var balancesToDisplay = new Balances();
-            if (command.SourceName == "all")
+            if (ShouldDisplayAllSources(command))
             {
                 LoadAllSources(balancesToDisplay);
             }
             else
             {
-                var balance = _walletHistory.GetBalance(command.SourceName);
-                balancesToDisplay.AddBalance(command.SourceName, balance);
+                command.Sources.ForEach(sourceName => balancesToDisplay.AddBalance(sourceName, _walletHistory.GetBalance(sourceName)));
             }
 
             _walletUi.DisplayBalance(balancesToDisplay);
+        }
+
+        private bool ShouldDisplayAllSources(DisplayBalanceCommand command)
+        {
+            return command.Sources.First() == "all";
         }
 
         private void LoadAllSources(Balances balancesToDisplay)

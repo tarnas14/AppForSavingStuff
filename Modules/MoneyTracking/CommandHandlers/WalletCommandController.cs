@@ -68,7 +68,7 @@
 
                         var displayBalanceCommand = new DisplayBalanceCommand
                         {
-                            SourceName = sourceName
+                            Sources = new[] { sourceName }
                         };
                         new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
 
