@@ -171,36 +171,29 @@
 
         public void DisplayHistory(TagHistory history)
         {
-            var header = string.Format("    month balance for {0}:", history.Tag.Value);
             var tableDisplay = new TableDisplay(_console);
 
             var sourceColumn = new Column
             {
-                Prefix = "        ",
+                Prefix = "    ",
+                Suffix = ": ",
+                AlignRight = true,
                 Data = history.Operations.Select(balance => balance.Key).ToList()
             };
 
             var balances = history.Operations.Select(balance => balance.Value);
 
-            var signColumn = new Column
-            {
-                Prefix = "  ",
-                Data = balances.Select(balance => balance.SignString).ToList()
-            };
-
             var balancesColumn = new Column()
             {
                 AlignRight = true,
-                Data = balances.Select(balance => balance.UnsignedString).ToList()
+                Data = balances.Select(balance => balance.ToString()).ToList()
             };
 
             var combinedBalance = balances.Aggregate(new Moneyz(0), (m1, m2) => m1 + m2);
-            signColumn.Data.Add(combinedBalance.SignString);
-            balancesColumn.Data.Add(combinedBalance.UnsignedString);
+            balancesColumn.Data.Add(combinedBalance.ToString());
 
-            tableDisplay.AddColumns(new[] { sourceColumn, signColumn, balancesColumn });
+            tableDisplay.AddColumns(new[] { sourceColumn, balancesColumn });
 
-            _console.WriteLine(header);
             tableDisplay.DisplayHeaderless();
         }
 

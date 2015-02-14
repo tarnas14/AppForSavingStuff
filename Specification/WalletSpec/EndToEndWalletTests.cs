@@ -239,10 +239,9 @@
                     "/wallet balance --t tag1"
                 }, new List<string>
                 {
-                    "    month balance for tag1:",
-                    "        mbank      +12.00",
-                    "        getinBank  -10.00",
-                    "                   + 2.00"
+                    "        mbank:  12.00",
+                    "    getinBank: -10.00",
+                    "             :   2.00"
                 }).SetName("display balance for tags");
                 yield return new TestCaseData(new List<string>
                 {
