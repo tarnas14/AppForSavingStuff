@@ -6,7 +6,7 @@
     public interface WalletHistory
     {
         void SaveOperation(Operation toSave);
-        IList<Operation> GetAll();
+        IList<Operation> GetFullHistory();
         IList<Operation> GetForMonth(int year, int month, HistoryDisplayFilter filters);
         IList<Source> GetSources();
         Moneyz GetBalance(string sourceName);

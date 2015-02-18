@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\DisplayBalanceTests.cs" />
+    <Compile Include="Commands\DisplayHistoryTests.cs" />
     <Compile Include="Commands\OperationCommandsTests.cs" />
     <Compile Include="Halp\ConsoleMock.cs" />
     <Compile Include="Presentation\BalancesViewModelTests.cs" />

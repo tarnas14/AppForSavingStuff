@@ -68,7 +68,7 @@
             TimeMasterMock.SetupGet(mock => mock.Today).Returns(today);
 
             //when
-            Ui.UserInput(string.Format("/wallet month balance {0}", source));
+            Ui.UserInput(string.Format("/wallet month {0}", source));
             var expectedOutput = new List<string> {"    sourceName: 2.00"};
 
             //then
@@ -195,7 +195,7 @@
                     "    2015-05-24  mbank      -0.40        2.10",
                     "    2015-05-24  getin      +1.90        1.90",
                     "    2015-05-24  mbank  +1,000.01    1,002.11",
-                }).SetName("display month history without transfers");
+                }).SetName("display month add sub operation history");
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank",
@@ -236,7 +236,7 @@
                     "/wallet add mbank 2 biedra tag1 tag2",
                     "/wallet add mbank 10 'za pizze' tag1",
                     "/wallet sub getinBank 10 orient tag1",
-                    "/wallet balance --t tag1"
+                    "/wallet month --t tag1"
                 }, new List<string>
                 {
                     "        mbank:  12.00",

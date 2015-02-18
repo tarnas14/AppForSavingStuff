@@ -84,7 +84,11 @@
                         new CreateSourceCommandHandler(_ravenHistory, new HardcodedReservedWordsStore()).Execute(newSourceCommand);
                         break;
                     case "history":
-                        throw new NotImplementedException();
+                        var displayHistoryCommand = new DisplayHistoryCommand();
+
+                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi).Execute(displayHistoryCommand);
+
+                        break;
                     case "tags":
                         throw new NotImplementedException();
                 }

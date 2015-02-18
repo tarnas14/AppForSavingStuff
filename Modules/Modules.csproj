@@ -62,6 +62,8 @@
     <Compile Include="MoneyTracking\CommandHandlers\CreateSourceCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayBalanceCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayBalanceCommandHandler.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\DisplayHistoryCommand.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\DisplayHistoryCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\HardcodedReservedWordsStore.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\SubtractCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\SubtractCommandHandler.cs" />

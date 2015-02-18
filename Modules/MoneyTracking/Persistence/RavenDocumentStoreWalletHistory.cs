@@ -44,7 +44,7 @@
             }
         }
 
-        public IList<Operation> GetAll()
+        public IList<Operation> GetFullHistory()
         {
             using (var session = _storeProvider.Store.OpenSession())
             {

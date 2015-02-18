@@ -45,19 +45,23 @@
                             var sources = _wallet.GetAllSources();
                             _walletUi.DisplayMultipleBalances(sources);
                         }
-                        else if (userCommand.Flags.Contains("t"))
-                        {
-                            DisplayBalanceForTag(userCommand.Params[1]);
-                        }
                         else
                         {
                             DisplayBalanceForSource(userCommand.Params[1]);
                         }
                         break;
                     case "month":
-                        sourceName = userCommand.Params[2];
+                        sourceName = userCommand.Params[1];
 
-                        _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
+                        if (userCommand.Flags.Contains("t"))
+                        {
+                            DisplayBalanceForTag(userCommand.Params[1]);
+                        }
+                        else
+                        {
+                            _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
+                        }
+
                         break;
                     case "source":
                         sourceName = userCommand.Params[1];

@@ -25,7 +25,7 @@
         {
             return new History
             {
-                Operations = _walletHistory.GetAll()
+                Operations = _walletHistory.GetFullHistory()
             };
         }
 
