@@ -72,11 +72,21 @@
                         {
                             Tags = userCommand.Flags.Contains("t")
                         };
+
                         var filters = new HistoryDisplayFilter
                         {
                             Source = userCommand.Params.Count == 2 ? userCommand.Params[1] : string.Empty
                         };
-                        _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth(filters), verbosity);
+
+                        if (userCommand.Flags.Contains("m"))
+                        {
+                            _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth(filters), verbosity);
+                        }
+                        else
+                        {
+                            _walletUi.DisplayHistory(_wallet.GetFullHistory(), verbosity);
+                        }
+
                         break;
                     case "tags":
                         var tagsUsedThisMonth = _wallet.GetTagsUsedThisMonth();
