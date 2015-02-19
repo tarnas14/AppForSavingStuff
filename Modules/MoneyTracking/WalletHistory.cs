@@ -7,7 +7,7 @@
     {
         void SaveOperation(Operation toSave);
         IList<Operation> GetFullHistory();
-        IList<Operation> GetForMonth(int year, int month, HistoryDisplayFilter filters);
+        IList<Operation> GetForMonth(int year, int month);
         IList<Source> GetSources();
         Moneyz GetBalance(string sourceName);
         Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month);

@@ -236,7 +236,7 @@
                     "    2015-05-24  mbank->getin     1.00              tag3, taggg",
                     "                mbank           -1.00        1.00             ",
                     "                getin           +1.00        1.00             "
-                }).SetName("display month history with tags");
+                }).SetName("display history with tags");
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank",
@@ -259,7 +259,7 @@
                     "/wallet source getin",
                     "/wallet add getin 2",
                     "/wallet trans mbank getin 1 'another description' tag3 taggg",
-                    "/wallet history getin --m"
+                    "/wallet history getin"
                 }, new List<string>
                 {
                     "    when        where         howMuch  valueAfter",
@@ -268,7 +268,7 @@
                     "    2015-05-24  mbank->getin     1.00            ",
                     "                mbank           -1.00        1.00",
                     "                getin           +1.00        3.00"
-                }).SetName("display month history for specific source");
+                }).SetName("display history for specific source");
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank",

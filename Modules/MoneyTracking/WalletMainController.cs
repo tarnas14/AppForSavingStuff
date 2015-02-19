@@ -96,30 +96,21 @@
                         new CreateSourceCommandHandler(_ravenHistory, new HardcodedReservedWordsStore()).Execute(newSourceCommand);
                         break;
                     case "history":
-                        var displayHistoryCommand = new DisplayHistoryCommand();
-
-                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi).Execute(displayHistoryCommand);
-
-                        break;
-
-                        var verbosity = new HistoryDisplayVerbosity
+                        var displayHistoryCommand = new DisplayHistoryCommand
                         {
-                            Tags = userCommand.Flags.Contains("t")
+                            Monthly = userCommand.Flags.Contains("m"),
+                            Verbosity = new HistoryDisplayVerbosity
+                            {
+                                Tags = userCommand.Flags.Contains("t")
+                            }
                         };
 
-                        var filters = new HistoryDisplayFilter
+                        if (userCommand.Params.Count == 2)
                         {
-                            Source = userCommand.Params.Count == 2 ? userCommand.Params[1] : string.Empty
-                        };
+                            displayHistoryCommand.Sources = new[] {userCommand.Params[1]};
+                        }
 
-                        if (userCommand.Flags.Contains("m"))
-                        {
-                            _walletUi.DisplayHistory(_wallet.GetHistoryForThisMonth(filters), verbosity);
-                        }
-                        else
-                        {
-                            _walletUi.DisplayHistory(_wallet.GetFullHistory(), verbosity);
-                        }
+                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster).Execute(displayHistoryCommand);
 
                         break;
                     case "tags":
@@ -132,13 +123,6 @@
             {
                 _walletUi.DisplayError(e);
             }
-        }
-
-        private void DisplayBalanceForSource(string sourceName)
-        {
-            var balance = _wallet.GetBalance(sourceName);
-
-            _walletUi.DisplayBalance(sourceName, balance);
         }
 
         private void DisplayBalanceForTag(string tag)

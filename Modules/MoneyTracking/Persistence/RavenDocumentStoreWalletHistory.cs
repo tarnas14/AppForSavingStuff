@@ -52,13 +52,12 @@
             }
         }
 
-        public IList<Operation> GetForMonth(int year, int month, HistoryDisplayFilter filters)
+        public IList<Operation> GetForMonth(int year, int month)
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
                 var date = new DateTime(year, month, 1);
-                return
-                    string.IsNullOrEmpty(filters.Source) ? GetMonthHistory(session, date).ToList() : GetMonthHistoryForSource(session, date, filters.Source);
+                return GetMonthHistory(session, date).ToList();
             }
         }
 
@@ -145,7 +144,7 @@
 
         public IList<Tag> GetTagsForMonth(int year, int month)
         {
-            var thisMonthOperations = GetForMonth(year, month, new HistoryDisplayFilter());
+            var thisMonthOperations = GetForMonth(year, month);
 
             var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
 

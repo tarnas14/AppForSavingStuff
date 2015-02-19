@@ -40,7 +40,7 @@
 
             return new History
             {
-                Operations = _walletHistory.GetForMonth(today.Year, today.Month, filters)
+                Operations = _walletHistory.GetForMonth(today.Year, today.Month)
             };
         }
 
