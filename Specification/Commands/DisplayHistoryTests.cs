@@ -8,8 +8,6 @@
     using Modules.MoneyTracking.Presentation;
     using Moq;
     using NUnit.Framework;
-    using Tarnas.ConsoleUi;
-    using Console = Tarnas.ConsoleUi.Console;
 
     [TestFixture]
     class DisplayHistoryTests
@@ -28,7 +26,7 @@
         }
 
         [Test]
-        public void ShouldDisplayHistoryOfBasicOperations()
+        public void ShouldDisplayHistoryOfOperations()
         {
             //given
             var command = new DisplayHistoryCommand();

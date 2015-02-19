@@ -33,7 +33,7 @@
                 WaitForNonStale = true
             };
             ConsoleMock = new ConsoleMock();
-            var walletMainController = new WalletMainController(new WalletUi(ConsoleMock), new Wallet(ravenHistory, TimeMasterMock.Object));
+            var walletMainController = new WalletMainController(new WalletUi(ConsoleMock), new Wallet(ravenHistory, TimeMasterMock.Object), ravenHistory, TimeMasterMock.Object);
             Ui.Subscribe(walletMainController, "wallet");
         }
 
@@ -52,7 +52,7 @@
         }
 
         [Test]
-        public void ShouldDisplayBalanceForCurrentMonth()
+        public void ShouldDisplayHistoryForCurrentMonth()
         {
             //given
             const string source = "sourceName";

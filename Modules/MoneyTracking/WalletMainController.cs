@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using CommandHandlers;
     using Presentation;
     using Tarnas.ConsoleUi;
 
@@ -9,11 +10,15 @@
     {
         private readonly WalletUi _walletUi;
         private readonly Wallet _wallet;
+        private readonly WalletHistory _ravenHistory;
+        private readonly TimeMaster _timeMaster;
 
-        public WalletMainController(WalletUi walletUi, Wallet wallet)
+        public WalletMainController(WalletUi walletUi, Wallet wallet, WalletHistory ravenHistory, TimeMaster timeMaster)
         {
             _walletUi = walletUi;
             _wallet = wallet;
+            _ravenHistory = ravenHistory;
+            _timeMaster = timeMaster;
         }
 
         public void Execute(UserCommand userCommand)
@@ -27,28 +32,47 @@
                 {
                     case "add":
                         sourceName = userCommand.Params[1];
-                        _wallet.Add(sourceName, GetOperationInput(userCommand));
+
+                        var addCommand = new AddCommand
+                        {
+                            Source = sourceName,
+                            OperationInput = GetOperationInput(userCommand)
+                        };
+                        new AddCommandHandler(_ravenHistory, _timeMaster).Execute(addCommand);
                         break;
                     case "sub":
                         sourceName = userCommand.Params[1];
-                        _wallet.Subtract(sourceName, GetOperationInput(userCommand));
+
+                        var subCommand = new SubtractCommand
+                        {
+                            Source = sourceName,
+                            OperationInput = GetOperationInput(userCommand)
+                        };
+                        new SubtractCommandHandler(_ravenHistory, _timeMaster).Execute(subCommand);
+
                         break;
                     case "trans":
                         sourceName = userCommand.Params[1];
                         string destinationName = userCommand.Params[2];
 
-                        _wallet.Transfer(sourceName, destinationName, GetOperationInput(userCommand));
+                        var transCommand = new TransferCommand
+                        {
+                            Source = sourceName,
+                            Destination = destinationName,
+                            OperationInput = GetOperationInput(userCommand)
+                        };
+                        new TransferCommandHandler(_ravenHistory, _timeMaster).Execute(transCommand);
+
                         break;
                     case "balance":
-                        if (userCommand.Params[1] == "all")
+                        sourceName = userCommand.Params[1];
+
+                        var displayBalanceCommand = new DisplayBalanceCommand
                         {
-                            var sources = _wallet.GetAllSources();
-                            _walletUi.DisplayMultipleBalances(sources);
-                        }
-                        else
-                        {
-                            DisplayBalanceForSource(userCommand.Params[1]);
-                        }
+                            Sources = new[] { sourceName }
+                        };
+                        new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
+
                         break;
                     case "month":
                         sourceName = userCommand.Params[1];
@@ -65,9 +89,19 @@
                         break;
                     case "source":
                         sourceName = userCommand.Params[1];
-                        _wallet.CreateSource(sourceName);
+                        var newSourceCommand = new CreateSourceCommand
+                        {
+                            Name = sourceName
+                        };
+                        new CreateSourceCommandHandler(_ravenHistory, new HardcodedReservedWordsStore()).Execute(newSourceCommand);
                         break;
                     case "history":
+                        var displayHistoryCommand = new DisplayHistoryCommand();
+
+                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi).Execute(displayHistoryCommand);
+
+                        break;
+
                         var verbosity = new HistoryDisplayVerbosity
                         {
                             Tags = userCommand.Flags.Contains("t")

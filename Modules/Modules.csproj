@@ -69,7 +69,6 @@
     <Compile Include="MoneyTracking\CommandHandlers\SubtractCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\TransferCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\TransferCommandHandler.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\WalletCommandController.cs" />
     <Compile Include="MoneyTracking\Presentation\Balances.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayFilter.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayVerbosity.cs" />

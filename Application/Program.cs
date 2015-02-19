@@ -11,7 +11,9 @@
         static void Main(string[] args)
         {
             var consoleUi = new ConsoleUi();
-            var wallet = new WalletMainController(new WalletUi(new SystemConsole()), new Wallet(new RavenDocumentStoreWalletHistory(new DocumentStoreProvider()), new SystemClockTimeMaster()));
+            var ravenDocumentStoreWalletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider());
+            var systemClockTimeMaster = new SystemClockTimeMaster();
+            var wallet = new WalletMainController(new WalletUi(new SystemConsole()), new Wallet(ravenDocumentStoreWalletHistory, systemClockTimeMaster), ravenDocumentStoreWalletHistory, systemClockTimeMaster);
             consoleUi.Subscribe(wallet, "wallet");
 
             new InputLoop(consoleUi).Loop();
