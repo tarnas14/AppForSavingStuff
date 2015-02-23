@@ -69,5 +69,33 @@
             //then
             Assert.That(actual, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void ShouldBeCastedToDecimal()
+        {
+            //given
+            const decimal expectedValue = 6.4m;
+            var moneyz = new Moneyz(expectedValue);
+
+            //when
+            decimal actualValue = moneyz;
+
+            //then
+            Assert.That(actualValue, Is.EqualTo(expectedValue));
+        }
+
+        [Test]
+        public void ShouldBeCastableFromDecimal()
+        {
+            //given
+
+            const decimal expectedValue = 6.54m;
+
+            //when
+            Moneyz moneyz = expectedValue;
+
+            //then
+            Assert.That(moneyz.Value, Is.EqualTo(expectedValue));
+        }
     }
 }

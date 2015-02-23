@@ -20,6 +20,7 @@
         {
             Changes.Add(new Change
             {
+                Difference = after - before,
                 Source = sourceName,
                 Before = before,
                 After = after

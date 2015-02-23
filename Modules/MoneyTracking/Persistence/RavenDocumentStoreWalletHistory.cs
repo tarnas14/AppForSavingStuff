@@ -23,7 +23,6 @@
             using (var session = _storeProvider.Store.OpenSession())
             {
                 session.Store(toSave);
-                SaveSources(toSave.Changes, session);
                 session.SaveChanges();
             }
         }
@@ -85,17 +84,14 @@
 
         public Moneyz GetBalance(string sourceName)
         {
-            using (var session = _storeProvider.Store.OpenSession())
+            var source = GetSourceByName(sourceName);
+
+            if (source == null)
             {
-                var source = GetSourceByName(sourceName);
-
-                if (source == null)
-                {
-                    throw new SourceDoesNotExistException(sourceName);
-                }
-
-                return source.Balance;
+                return new Moneyz(0);
             }
+
+            return source.Balance;
         }
 
         public Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month)
@@ -160,7 +156,7 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             { 
-                var sources = WaitForQueryIfNecessary(session.Query<Source, Sources_ByName>()).Where(src => src.Name == sourceName).ToList();
+                var sources = WaitForQueryIfNecessary(session.Query<Source, Sources_Balances>()).ToList();
 
                 if (sources.Count == 1)
                 {

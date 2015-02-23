@@ -5,5 +5,6 @@
         public string Source { get; set; }
         public Moneyz Before { get; set; }
         public Moneyz After { get; set; }
+        public Moneyz Difference { get; set; }
     }
 }

@@ -175,6 +175,7 @@
                 }, new List<string>{
                     "    Error: Source mbank does not exist."
                 }).SetName("balance - source does not exist");
+
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank", "/wallet add mbank 2", "/wallet balance mbank"
@@ -182,6 +183,7 @@
                 {
                     "    mbank: 2.00"
                 }).SetName("add 2");
+
                 yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank", "/wallet add mbank 2 'my description' tag1 tag2", "/wallet balance mbank"
