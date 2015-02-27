@@ -60,7 +60,9 @@
     <Compile Include="Presentation\BalancesViewModelTests.cs" />
     <Compile Include="Presentation\WalletUiTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WalletSpec\EndToEndWalletTests.cs" />
+    <Compile Include="WalletSpec\EndToEnd\EndToEndBaseFixture.cs" />
+    <Compile Include="WalletSpec\EndToEnd\BasicOperationTests.cs" />
+    <Compile Include="WalletSpec\EndToEnd\HistoryCommandTests.cs" />
     <Compile Include="WalletSpec\MoneyzSpec.cs" />
     <Compile Include="WalletSpec\WalletSpec.cs" />
   </ItemGroup>
@@ -73,6 +75,7 @@
       <Name>Modules</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
