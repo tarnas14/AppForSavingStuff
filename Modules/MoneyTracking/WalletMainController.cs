@@ -31,37 +31,36 @@
                 switch (command)
                 {
                     case "add":
-                        sourceName = userCommand.Params[1];
-
-                        var addCommand = new AddCommand
+                        var addCommand = new OperationCommand
                         {
-                            Source = sourceName,
-                            OperationInput = GetOperationInput(userCommand)
+                            Source = userCommand.Params[1],
+                            Description = (userCommand.Params.Count <= 3) ? string.Empty : userCommand.Params[3],
+                            HowMuch = new Moneyz(Convert.ToDecimal(userCommand.Params[2])),
+                            Tags = GetTags(userCommand, 4)
                         };
-                        new AddCommandHandler(_ravenHistory, _timeMaster).Execute(addCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(addCommand);
                         break;
                     case "sub":
-                        sourceName = userCommand.Params[1];
-
-                        var subCommand = new SubtractCommand
+                        var subCommand = new OperationCommand
                         {
-                            Source = sourceName,
-                            OperationInput = GetOperationInput(userCommand)
+                            Source = userCommand.Params[1],
+                            Description = (userCommand.Params.Count <= 3) ? string.Empty : userCommand.Params[3],
+                            HowMuch = new Moneyz(-Convert.ToDecimal(userCommand.Params[2])),
+                            Tags = GetTags(userCommand, 4)
                         };
-                        new SubtractCommandHandler(_ravenHistory, _timeMaster).Execute(subCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(subCommand);
 
                         break;
                     case "trans":
-                        sourceName = userCommand.Params[1];
-                        string destinationName = userCommand.Params[2];
-
-                        var transCommand = new TransferCommand
+                        var transCommand = new OperationCommand
                         {
-                            Source = sourceName,
-                            Destination = destinationName,
-                            OperationInput = GetOperationInput(userCommand)
-                        };
-                        new TransferCommandHandler(_ravenHistory, _timeMaster).Execute(transCommand);
+                            Source = userCommand.Params[1],
+                            Destination = userCommand.Params[2],
+                            Description = (userCommand.Params.Count <= 4) ? string.Empty : userCommand.Params[4],
+                            HowMuch = new Moneyz(Convert.ToDecimal(userCommand.Params[3])),
+                            Tags = GetTags(userCommand, 5)
+                        };;
+                        new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(transCommand);
 
                         break;
                     case "balance":
@@ -132,27 +131,43 @@
             _walletUi.DisplayHistory(history);
         }
 
-        private OperationInput GetOperationInput(UserCommand userCommand)
+        private OperationCommand GetOperationCommand(UserCommand userCommand)
         {
-            int howMuchIndex = 2;
             int descriptionIndex = 3;
             int tagsFromIndex = 4;
 
-            if (userCommand.Params[0] == "trans")
+            var howMuch = Convert.ToDecimal(userCommand.Params[2]);
+
+            bool isTransferCommand = userCommand.Params[0] == "trans";
+            if (isTransferCommand)
             {
-                howMuchIndex++;
                 descriptionIndex++;
                 tagsFromIndex++;
+                howMuch = -Convert.ToDecimal(userCommand.Params[3]);
+            }
+
+            bool isSubOperation = userCommand.Params[0] == "sub";
+            if (isSubOperation)
+            {
+                howMuch = -howMuch;
             }
 
             var tags = GetTags(userCommand, tagsFromIndex);
 
-            return new OperationInput
+            var operationCommand = new OperationCommand
             {
+                Source = userCommand.Params[1],
                 Description = (userCommand.Params.Count <= descriptionIndex) ? string.Empty : userCommand.Params[descriptionIndex],
                 Tags = tags,
-                HowMuch = new Moneyz(Convert.ToDecimal(userCommand.Params[howMuchIndex]))
+                HowMuch = new Moneyz(howMuch)
             };
+
+            if (isTransferCommand)
+            {
+                operationCommand.Destination = userCommand.Params[2];
+            }
+
+            return operationCommand;
         }
 
         private IList<Tag> GetTags(UserCommand userCommand, int tagsFrom)

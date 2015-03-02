@@ -54,8 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MoneyTracking\Change.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\AddCommand.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\AddCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\CommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\CreateSourceCommand.cs" />
@@ -65,10 +63,8 @@
     <Compile Include="MoneyTracking\CommandHandlers\DisplayHistoryCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayHistoryCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\HardcodedReservedWordsStore.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\SubtractCommand.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\SubtractCommandHandler.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\TransferCommand.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\TransferCommandHandler.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\OperationCommand.cs" />
+    <Compile Include="MoneyTracking\CommandHandlers\OperationCommandHandler.cs" />
     <Compile Include="MoneyTracking\Presentation\Balances.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayFilter.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayVerbosity.cs" />

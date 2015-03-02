@@ -30,29 +30,26 @@
         }
 
         [Test]
-        public void ShouldStoreAddOperation()
+        public void ShouldStorePositiveOperation()
         {
             //given
             const string testSource = "someSource";
             const string testDescription = "test description";
             var testHowMuch = new Moneyz(2);
 
-            var command = new AddCommand
+            var command = new OperationCommand
             {
                 Source = testSource,
-                OperationInput = new OperationInput
-                {
-                    Description = testDescription,
-                    HowMuch = testHowMuch
-                }
+                Description = testDescription,
+                HowMuch = testHowMuch
             };
-            var commandHandler = new AddCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+            var commandHandler = new OperationCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
 
             //when
             commandHandler.Execute(command);
 
             //then
-            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingOperation(operation, command.Source, command.OperationInput))), Times.Once);
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command) && HasChangeDescribingOperation(operation, command.Source, command))), Times.Once);
         }
 
         [Test]
@@ -61,23 +58,20 @@
             //given
             const string testSource = "someSource";
             const string testDescription = "test description";
-            var testHowMuch = new Moneyz(2);
-            var command = new SubtractCommand
+            var testHowMuch = new Moneyz(-2);
+            var command = new OperationCommand
             {
                 Source = testSource,
-                OperationInput = new OperationInput
-                {
-                    Description = testDescription,
-                    HowMuch = testHowMuch
-                }
+                Description = testDescription,
+                HowMuch = testHowMuch
             };
-            var commandHandler = new SubtractCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+            var commandHandler = new OperationCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
 
             //when
             commandHandler.Execute(command);
 
             //then
-            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangeDescribingOperation(operation, command.Source, command.OperationInput))), Times.Once);
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command) && HasChangeDescribingOperation(operation, command.Source, command))), Times.Once);
         }
 
         [Test]
@@ -88,23 +82,20 @@
             const string testDestination = "someDestination";
             const string testDescription = "test description";
             var testHowMuch = new Moneyz(2);
-            var command = new TransferCommand
+            var command = new OperationCommand
             {
                 Source = testSource,
                 Destination = testDestination,
-                OperationInput = new OperationInput
-                {
-                    Description = testDescription,
-                    HowMuch = testHowMuch
-                }
+                Description = testDescription,
+                HowMuch = testHowMuch
             };
-            var commandHandler = new TransferCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+            var commandHandler = new OperationCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
 
             //when
             commandHandler.Execute(command);
 
             //then
-            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command.OperationInput) && HasChangesDescribingTransfer(operation, command))), Times.Once);
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasGoodOperationData(operation, command) && HasChangesDescribingTransfer(operation, command))), Times.Once);
         }
 
         [Test]
@@ -143,7 +134,7 @@
             Assert.Throws<WalletException>(result);
         }
 
-        private bool HasChangesDescribingTransfer(Operation operation, TransferCommand command)
+        private bool HasChangesDescribingTransfer(Operation operation, OperationCommand command)
         {
             var twoChanges = operation.Changes.Count == 2;
 
@@ -158,26 +149,17 @@
 
             var firstChangeRemovesFromSource = firstChange.Source == command.Source &&
                                                (firstChange.Before - firstChange.After).Equals(
-                                                   command.OperationInput.HowMuch);
+                                                   command.HowMuch);
             var secondChangeAddsToDestination = secondChange.Source == command.Destination &&
                                                 (secondChange.After - secondChange.Before).Equals(
-                                                    command.OperationInput.HowMuch);
+                                                    command.HowMuch);
 
             Console.WriteLine("firstChange: {0}, secondChange: {1}", firstChangeRemovesFromSource, secondChangeAddsToDestination);
 
             return firstChangeRemovesFromSource && secondChangeAddsToDestination;
         }
 
-        private bool HasGoodOperationData(Operation operation, OperationInput input)
-        {
-            var goodDescription = operation.Description == input.Description;
-
-            Console.WriteLine("description: {0}", operation.Description);
-
-            return goodDescription;
-        }
-
-        private bool HasChangeDescribingOperation(Operation operation, string sourceName, OperationInput input)
+        private bool HasChangeDescribingOperation(Operation operation, string sourceName, OperationCommand command)
         {
             var onlyOneChange = operation.Changes.Count == 1;
 
@@ -188,12 +170,21 @@
             }
 
             var change = operation.Changes.First();
-            var addedGoodAmount = (change.After - change.Before).Absolute.Equals(input.HowMuch);
+            var addedGoodAmount = (change.After - change.Before).Equals(command.HowMuch);
             var properSource = change.Source == sourceName;
 
             Console.WriteLine("amount: {0}, source: {1}", addedGoodAmount, properSource);
 
             return properSource && addedGoodAmount;
+        }
+
+        private bool HasGoodOperationData(Operation operation, OperationCommand command)
+        {
+            var goodDescription = operation.Description == command.Description;
+
+            Console.WriteLine("description: {0}", operation.Description);
+
+            return goodDescription;
         }
     }
 }
