@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Presentation;
     using Raven.Client;
     using Raven.Client.Linq;
 
@@ -59,13 +58,6 @@
                 var date = new DateTime(year, month, 1);
                 return GetMonthHistory(session, date).ToList();
             }
-        }
-
-        private IList<Operation> GetMonthHistoryForSource(IDocumentSession session, DateTime date, string source)
-        {
-            return
-                GetMonthHistory(session, date)
-                    .Where(operation => operation.Changes.Any(change => change.Source == source)).ToList();
         }
 
         private IEnumerable<Operation> GetMonthHistory(IDocumentSession session, DateTime date)
@@ -149,6 +141,15 @@
             var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
 
             return tagsInOperations.ToList();
+        }
+
+        public IList<Tag> GetAllTags()
+        {
+            var historyOperations = GetFullHistory();
+
+            var tags = historyOperations.SelectMany(operation => operation.Tags).Distinct();
+
+            return tags.ToList();
         }
 
         public bool Exists(string sourceName)

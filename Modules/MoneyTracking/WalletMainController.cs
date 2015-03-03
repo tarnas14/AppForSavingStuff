@@ -113,7 +113,7 @@
 
                         break;
                     case "tags":
-                        var tagsUsedThisMonth = _wallet.GetTagsUsedThisMonth();
+                        var tagsUsedThisMonth = _ravenHistory.GetAllTags();
                         _walletUi.DisplayTags(tagsUsedThisMonth);
                         break;
                 }
@@ -129,45 +129,6 @@
             var history = _wallet.GetTagHistoryForThisMonth(tag);
 
             _walletUi.DisplayHistory(history);
-        }
-
-        private OperationCommand GetOperationCommand(UserCommand userCommand)
-        {
-            int descriptionIndex = 3;
-            int tagsFromIndex = 4;
-
-            var howMuch = Convert.ToDecimal(userCommand.Params[2]);
-
-            bool isTransferCommand = userCommand.Params[0] == "trans";
-            if (isTransferCommand)
-            {
-                descriptionIndex++;
-                tagsFromIndex++;
-                howMuch = -Convert.ToDecimal(userCommand.Params[3]);
-            }
-
-            bool isSubOperation = userCommand.Params[0] == "sub";
-            if (isSubOperation)
-            {
-                howMuch = -howMuch;
-            }
-
-            var tags = GetTags(userCommand, tagsFromIndex);
-
-            var operationCommand = new OperationCommand
-            {
-                Source = userCommand.Params[1],
-                Description = (userCommand.Params.Count <= descriptionIndex) ? string.Empty : userCommand.Params[descriptionIndex],
-                Tags = tags,
-                HowMuch = new Moneyz(howMuch)
-            };
-
-            if (isTransferCommand)
-            {
-                operationCommand.Destination = userCommand.Params[2];
-            }
-
-            return operationCommand;
         }
 
         private IList<Tag> GetTags(UserCommand userCommand, int tagsFrom)

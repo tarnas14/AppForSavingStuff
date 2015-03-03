@@ -1,7 +1,6 @@
 ﻿namespace Modules.MoneyTracking
 {
     using System.Collections.Generic;
-    using Presentation;
 
     public interface WalletHistory
     {
@@ -14,6 +13,7 @@
         void CreateSource(string sourceName);
         IList<Operation> GetTagHistoryForThisMonth(string tagName, int year, int month);
         IList<Tag> GetTagsForMonth(int year, int month);
+        IList<Tag> GetAllTags(); 
         bool Exists(string sourceName);
     }
 }

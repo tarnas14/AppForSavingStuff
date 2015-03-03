@@ -1,9 +1,7 @@
 ﻿namespace Specification.Commands
 {
-    using System;
     using System.Collections.Generic;
     using Halp;
-    using Modules;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.CommandHandlers;
     using Modules.MoneyTracking.Presentation;
