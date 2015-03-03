@@ -121,6 +121,23 @@
                         "                mbank           -1.00        1.00",
                         "                getin           +1.00        3.00"
                     }).SetName("display history for specific source");
+
+                    yield return new TestCaseData(new []
+                    {
+                        "/wallet source src1",
+                        "/wallet source src2",
+                        "/wallet source src3",
+                        "/wallet add src1 1",
+                        "/wallet add src2 2",
+                        "/wallet add src3 3",
+                        "/wallet history src1 src3"
+                    }, new []
+                    {
+                        "    when        where  howMuch  valueAfter",
+                        string.Empty,
+                        "    2015-05-24  src1     +1.00        1.00",
+                        "    2015-05-24  src3     +3.00        3.00",
+                    }).SetName("display history for multiple sources");
                 }
             }
         }

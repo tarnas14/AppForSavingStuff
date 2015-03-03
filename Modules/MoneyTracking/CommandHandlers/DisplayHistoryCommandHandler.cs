@@ -23,7 +23,7 @@ namespace Modules.MoneyTracking.CommandHandlers
 
             if (command.Sources.Any())
             {
-                operations = operations.Where(operation => FilterBySources(operation, command.Sources)).ToList();
+                operations = operations.Where(operation => OperationDealsWithAnySource(operation, command.Sources)).ToList();
             }
 
             _walletUi.DisplayHistory(new History()
@@ -37,7 +37,7 @@ namespace Modules.MoneyTracking.CommandHandlers
             return _walletHistory.GetForMonth(_timeMaster.Today.Year, _timeMaster.Today.Month);
         }
 
-        private bool FilterBySources(Operation operation, ICollection<string> sources)
+        private bool OperationDealsWithAnySource(Operation operation, ICollection<string> sources)
         {
             return operation.Changes.Select(change => change.Source).Any(sources.Contains);
         }

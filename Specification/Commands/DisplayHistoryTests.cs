@@ -36,8 +36,8 @@
         {
             var testDate = new DateTime(2014, 5, 25);
             var monthEarlier = new DateTime(2014, 4, 25);
-            var operation = new Operation(monthEarlier);
-            var op1 = operation;
+
+            var op1 = new Operation(monthEarlier);
             op1.AddChange("mbank", new Moneyz(0), new Moneyz(2.5m));
             var op2 = new Operation(testDate);
             op2.AddChange("mbank", new Moneyz(2.5m), new Moneyz(2.1m));
@@ -46,8 +46,10 @@
             var op4 = new Operation(testDate);
             op4.AddChange("mbank", new Moneyz(2.1m), new Moneyz(2));
             op4.AddChange("getin", new Moneyz(0.01m), new Moneyz(0.11m));
+            var op5 = new Operation(testDate);
+            op5.AddChange("src", new Moneyz(0), new Moneyz(69) );
 
-            _walletHistory.Setup(history => history.GetFullHistory()).Returns(new [] {op1, op2, op3, op4});
+            _walletHistory.Setup(history => history.GetFullHistory()).Returns(new [] {op1, op2, op3, op4, op5});
             _walletHistory.Setup(history => history.GetForMonth(2014, 5)).Returns(new[] {op2, op3, op4});
         }
 
@@ -65,7 +67,8 @@
                 "    2014-05-25  getin           +0.01        0.01",
                 "    2014-05-25  mbank->getin     0.10            ",
                 "                mbank           -0.10        2.00",
-                "                getin           +0.10        0.11"
+                "                getin           +0.10        0.11",
+                "    2014-05-25  src            +69.00       69.00"
             };
 
             //when
@@ -119,6 +122,34 @@
                 "    2014-05-25  mbank->getin     0.10            ",
                 "                mbank           -0.10        2.00",
                 "                getin           +0.10        0.11"
+            };
+
+            //when
+            _handler.Execute(command);
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
+
+        [Test]
+        public void ShouldDisplayHistoryForMultipleSources()
+        {
+            //given
+            var command = new DisplayHistoryCommand
+            {
+                Sources = new[] { "mbank", "src" }
+            };
+
+            var expectedLines = new List<string>
+            {
+                "    when        where         howMuch  valueAfter",
+                string.Empty,
+                "    2014-04-25  mbank           +2.50        2.50",
+                "    2014-05-25  mbank           -0.40        2.10",
+                "    2014-05-25  mbank->getin     0.10            ",
+                "                mbank           -0.10        2.00",
+                "                getin           +0.10        0.11",
+                "    2014-05-25  src            +69.00       69.00"
             };
 
             //when

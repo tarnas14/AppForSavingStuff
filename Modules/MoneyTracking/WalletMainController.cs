@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using CommandHandlers;
     using Presentation;
     using Tarnas.ConsoleUi;
@@ -104,10 +105,7 @@
                             }
                         };
 
-                        if (userCommand.Params.Count == 2)
-                        {
-                            displayHistoryCommand.Sources = new[] {userCommand.Params[1]};
-                        }
+                        displayHistoryCommand.Sources = GetParamsFrom(1, userCommand.Params);
 
                         new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster).Execute(displayHistoryCommand);
 
@@ -121,6 +119,11 @@
             {
                 _walletUi.DisplayError(e);
             }
+        }
+
+        private IList<string> GetParamsFrom(int startIndex, IList<string> parameters)
+        {
+            return Enumerable.Range(startIndex, parameters.Count - startIndex).Select(index => parameters[index]).ToList();
         }
 
         private void DisplayBalanceForTag(string tag)
