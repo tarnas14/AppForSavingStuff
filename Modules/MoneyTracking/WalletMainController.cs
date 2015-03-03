@@ -113,8 +113,7 @@
 
                         break;
                     case "tags":
-                        var tagsUsedThisMonth = _ravenHistory.GetAllTags();
-                        _walletUi.DisplayTags(tagsUsedThisMonth);
+                        new DisplayTagsCommandHandler(_ravenHistory, _walletUi).Execute(new DisplayTagsCommand());
                         break;
                 }
             }

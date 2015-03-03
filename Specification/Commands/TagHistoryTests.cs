@@ -46,25 +46,4 @@
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
         }
     }
-
-    public class DisplayTagsCommandHandler : CommandHandler<DisplayTagsCommand>
-    {
-        private readonly WalletHistory _walletHistory;
-        private readonly WalletUi _walletUi;
-
-        public DisplayTagsCommandHandler(WalletHistory walletHistory, WalletUi walletUi)
-        {
-            _walletHistory = walletHistory;
-            _walletUi = walletUi;
-        }
-
-        public void Execute(DisplayTagsCommand command)
-        {
-            _walletUi.DisplayTags(_walletHistory.GetAllTags());
-        }
-    }
-
-    public class DisplayTagsCommand : Command
-    {
-    }
 }
