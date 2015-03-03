@@ -129,7 +129,7 @@
                     "    getinBank: -10.00",
                     "             :   2.00"
                 }).SetName("display balance for tags");
-                    yield return new TestCaseData(new List<string>
+                yield return new TestCaseData(new List<string>
                 {
                     "/wallet source mbank",
                     "/wallet add mbank 20 asdf tag1",

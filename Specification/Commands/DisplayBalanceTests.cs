@@ -17,7 +17,7 @@
 
         [SetUp]
         public void Setup()
-        {
+        {   
             _consoleMock = new ConsoleMock();
 
             _walletHistoryMock = new Mock<WalletHistory>();
