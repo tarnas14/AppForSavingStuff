@@ -30,6 +30,58 @@
         }
 
         [Test]
+        public void ShouldAddOperationWithDateGivenInCommand()
+        {
+            //given
+            const string testSource = "someSource";
+            const string testDescription = "test description";
+            var testHowMuch = new Moneyz(2);
+
+            var command = new OperationCommand
+            {
+                Source = testSource,
+                Description = testDescription,
+                HowMuch = testHowMuch,
+                When = DateTime.Now
+            };
+            var commandHandler = new OperationCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+
+            //when
+            commandHandler.Execute(command);
+
+            //then
+            _walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasDate(operation, command.When.Value))));
+        }
+
+        [Test]
+        public void ShouldUseTimeMasterObjectIfDateIsNotGivenInCommand()
+        {
+            //given
+            const string testSource = "someSource";
+            const string testDescription = "test description";
+            var testHowMuch = new Moneyz(2);
+
+            var command = new OperationCommand
+            {
+                Source = testSource,
+                Description = testDescription,
+                HowMuch = testHowMuch
+            };
+            var commandHandler = new OperationCommandHandler(_walletHistoryMock.Object, _timeMasterMock.Object);
+
+            //when
+            commandHandler.Execute(command);
+
+            //then
+            _timeMasterMock.Verify(mock => mock.Today, Times.Once);
+        }
+
+        private bool HasDate(Operation operation, DateTime when)
+        {
+            return operation.When == when;
+        }
+
+        [Test]
         public void ShouldStorePositiveOperation()
         {
             //given

@@ -13,14 +13,10 @@
             //given
             const string source = "sourceName";
             Ui.UserInput(string.Format("/wallet source {0}", source));
-
-            TimeMasterMock.SetupGet(mock => mock.Now).Returns(new DateTime(2000, 11, 30));
-            Ui.UserInput(string.Format("/wallet add {0} 4", source));
+            Ui.UserInput(string.Format("/wallet add {0} 4 -date 2000-11-30", source));
+            Ui.UserInput(string.Format("/wallet add {0} 2 -date 2000-12-01", source));
 
             var today = new DateTime(2000, 12, 1);
-            TimeMasterMock.SetupGet(mock => mock.Now).Returns(today);
-            Ui.UserInput(string.Format("/wallet add {0} 2", source));
-
             TimeMasterMock.SetupGet(mock => mock.Today).Returns(today);
 
             //when
@@ -44,16 +40,12 @@
             const string otherSource = "diffSource";
             Ui.UserInput(string.Format("/wallet source {0}", source));
             Ui.UserInput(string.Format("/wallet source {0}", otherSource));
-
-            TimeMasterMock.SetupGet(mock => mock.Now).Returns(new DateTime(2000, 11, 30));
-            Ui.UserInput(string.Format("/wallet add {0} 4", source));
+            Ui.UserInput(string.Format("/wallet add {0} 4 -date 2000-11-30", source));
+            Ui.UserInput(string.Format("/wallet add {0} 2 -date 2000-12-01", source));
+            Ui.UserInput(string.Format("/wallet sub {0} 1 -date 2000-12-01", source));
+            Ui.UserInput(string.Format("/wallet trans {0} {1} 1 -date 2000-12-01", source, otherSource));
 
             var today = new DateTime(2000, 12, 1);
-            TimeMasterMock.SetupGet(mock => mock.Now).Returns(today);
-            Ui.UserInput(string.Format("/wallet add {0} 2", source));
-            Ui.UserInput(string.Format("/wallet sub {0} 1", source));
-            Ui.UserInput(string.Format("/wallet trans {0} {1} 1", source, otherSource));
-
             TimeMasterMock.SetupGet(mock => mock.Today).Returns(today);
 
             //when

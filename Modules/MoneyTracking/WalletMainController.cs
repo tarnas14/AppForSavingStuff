@@ -37,7 +37,8 @@
                             Source = userCommand.Params[1],
                             Description = (userCommand.Params.Count <= 3) ? string.Empty : userCommand.Params[3],
                             HowMuch = new Moneyz(Convert.ToDecimal(userCommand.Params[2])),
-                            Tags = GetTags(userCommand, 4)
+                            Tags = GetTags(userCommand, 4),
+                            When = GetDate(userCommand)
                         };
                         new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(addCommand);
                         break;
@@ -47,7 +48,8 @@
                             Source = userCommand.Params[1],
                             Description = (userCommand.Params.Count <= 3) ? string.Empty : userCommand.Params[3],
                             HowMuch = new Moneyz(-Convert.ToDecimal(userCommand.Params[2])),
-                            Tags = GetTags(userCommand, 4)
+                            Tags = GetTags(userCommand, 4),
+                            When = GetDate(userCommand)
                         };
                         new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(subCommand);
 
@@ -59,7 +61,8 @@
                             Destination = userCommand.Params[2],
                             Description = (userCommand.Params.Count <= 4) ? string.Empty : userCommand.Params[4],
                             HowMuch = new Moneyz(Convert.ToDecimal(userCommand.Params[3])),
-                            Tags = GetTags(userCommand, 5)
+                            Tags = GetTags(userCommand, 5),
+                            When = GetDate(userCommand)
                         };;
                         new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(transCommand);
 
@@ -119,6 +122,17 @@
             {
                 _walletUi.DisplayError(e);
             }
+        }
+
+        private DateTime GetDate(UserCommand userCommand)
+        {
+            string dateString = string.Empty;
+            if (userCommand.TryGetParam("date", out dateString))
+            {
+                return Convert.ToDateTime(dateString);
+            }
+
+            return _timeMaster.Today;
         }
 
         private IList<string> GetParamsFrom(int startIndex, IList<string> parameters)

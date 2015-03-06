@@ -13,7 +13,9 @@ namespace Modules.MoneyTracking.CommandHandlers
 
         public void Execute(OperationCommand command)
         {
-            var operation = new Operation(_timeMaster.Now)
+            var when = command.When ?? _timeMaster.Today;
+
+            var operation = new Operation(when)
             {
                 Description = command.Description,
                 Tags = command.Tags
