@@ -32,7 +32,7 @@
 
         private bool ShouldDisplayAllSources(DisplayBalanceCommand command)
         {
-            return command.Sources.First() == "all";
+            return !command.Sources.Any();
         }
 
         private void LoadAllSources(Balances balancesToDisplay)

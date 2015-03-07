@@ -74,12 +74,12 @@
         }
 
         [Test]
-        public void ShouldDisplayAllSourceBalancesWhenFirstSourceSpecifiedAsAll()
+        public void ShouldDisplayAllSourceBalancesWhenNoSourcesSpecified()
         {
             //given
             var command = new DisplayBalanceCommand
             {
-                Sources = new List<string> { "all" }
+                Sources = new List<string>()
             };
 
             _walletHistoryMock.Setup(mock => mock.GetSources()).Returns(new List<Source>

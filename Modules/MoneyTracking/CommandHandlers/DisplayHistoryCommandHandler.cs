@@ -29,7 +29,11 @@ namespace Modules.MoneyTracking.CommandHandlers
             _walletUi.DisplayHistory(new History()
             {
                 Operations = operations
-            }, command.Verbosity);
+            }, new HistoryDisplayVerbosity
+            {
+                Descriptions = command.DisplayDescriptions,
+                Tags = command.DisplayTags
+            });
         }
 
         private IList<Operation> GetOperationsForThisMonth()

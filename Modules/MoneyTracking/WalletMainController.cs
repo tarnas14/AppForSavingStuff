@@ -10,14 +10,12 @@
     public class WalletMainController : Subscriber
     {
         private readonly WalletUi _walletUi;
-        private readonly Wallet _wallet;
         private readonly WalletHistory _ravenHistory;
         private readonly TimeMaster _timeMaster;
 
-        public WalletMainController(WalletUi walletUi, Wallet wallet, WalletHistory ravenHistory, TimeMaster timeMaster)
+        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster)
         {
             _walletUi = walletUi;
-            _wallet = wallet;
             _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
         }
@@ -68,26 +66,11 @@
 
                         break;
                     case "balance":
-                        sourceName = userCommand.Params[1];
-
                         var displayBalanceCommand = new DisplayBalanceCommand
                         {
-                            Sources = new[] { sourceName }
+                            Sources = GetParamsFrom(1, userCommand.Params)
                         };
                         new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
-
-                        break;
-                    case "month":
-                        sourceName = userCommand.Params[1];
-
-                        if (userCommand.Flags.Contains("t"))
-                        {
-                            DisplayBalanceForTag(userCommand.Params[1]);
-                        }
-                        else
-                        {
-                            _walletUi.DisplayBalance(sourceName, _wallet.DisplayMonthBalance(sourceName));
-                        }
 
                         break;
                     case "source":
@@ -102,11 +85,8 @@
                         var displayHistoryCommand = new DisplayHistoryCommand
                         {
                             Monthly = userCommand.Flags.Contains("m"),
-                            Verbosity = new HistoryDisplayVerbosity
-                            {
-                                Tags = userCommand.Flags.Contains("t"),
-                                Descriptions = userCommand.Flags.Contains("d")
-                            }
+                            DisplayTags = userCommand.Flags.Contains("t"),
+                            DisplayDescriptions = userCommand.Flags.Contains("d")
                         };
 
                         displayHistoryCommand.Sources = GetParamsFrom(1, userCommand.Params);
@@ -138,14 +118,12 @@
 
         private IList<string> GetParamsFrom(int startIndex, IList<string> parameters)
         {
+            if (parameters.Count <= startIndex)
+            {
+                return new List<string>();
+            }
+
             return Enumerable.Range(startIndex, parameters.Count - startIndex).Select(index => parameters[index]).ToList();
-        }
-
-        private void DisplayBalanceForTag(string tag)
-        {
-            var history = _wallet.GetTagHistoryForThisMonth(tag);
-
-            _walletUi.DisplayHistory(history);
         }
 
         private IList<Tag> GetTags(UserCommand userCommand, int tagsFrom)

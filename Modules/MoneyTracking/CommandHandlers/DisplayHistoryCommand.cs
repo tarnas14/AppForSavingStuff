@@ -8,11 +8,11 @@ namespace Modules.MoneyTracking.CommandHandlers
         public DisplayHistoryCommand()
         {
             Sources = new string[] {};
-            Verbosity = new HistoryDisplayVerbosity();
         }
 
         public IList<string> Sources { get; set; }
         public bool Monthly { get; set; }
-        public HistoryDisplayVerbosity Verbosity { get; set; }
+        public bool DisplayTags { get; set; }
+        public bool DisplayDescriptions { get; set; }
     }
 }
