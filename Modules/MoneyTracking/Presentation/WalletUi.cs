@@ -44,14 +44,14 @@
             };
             tableDisplay.AddColumns(RequiredDataToColumns(history.Operations));
 
-            if (verbosity.Tags)
-            {
-                tableDisplay.AddColumn(GetTagColumn(history.Operations));
-            }
-
             if (verbosity.Descriptions)
             {
                 tableDisplay.AddColumn(GetDescriptionColumn(history.Operations));
+            }
+
+            if (verbosity.Tags)
+            {
+                tableDisplay.AddColumn(GetTagColumn(history.Operations));
             }
 
             tableDisplay.Display();
@@ -77,6 +77,27 @@
             }
 
             return column;
+        }
+
+        private string GetTagString(Operation operation)
+        {
+            if (operation.Tags.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var sBuilder = new StringBuilder();
+
+            for (int i = 0; i < operation.Tags.Count; ++i)
+            {
+                sBuilder.Append("#");
+                sBuilder.Append(operation.Tags[i].Value);
+                if (operation.Tags.Count - 1 != i)
+                {
+                    sBuilder.Append(" ");
+                }
+            }
+            return sBuilder.ToString();
         }
 
         private Column GetDescriptionColumn(IEnumerable<Operation> operations)
@@ -163,26 +184,6 @@
             }
 
             return columns;
-        }
-
-        private string GetTagString(Operation operation)
-        {
-            if (operation.Tags.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            var sBuilder = new StringBuilder();
-
-            for (int i = 0; i < operation.Tags.Count; ++i)
-            {
-                sBuilder.Append(operation.Tags[i].Value);
-                if (operation.Tags.Count - 1 != i)
-                {
-                    sBuilder.Append(", ");
-                }
-            }
-            return sBuilder.ToString();
         }
 
         private string UnsignedValueChange(Change change)

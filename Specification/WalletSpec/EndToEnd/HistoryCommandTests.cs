@@ -88,12 +88,12 @@
                         "/wallet history --t"
                     }, new List<string>
                     {
-                        "    when        where         howMuch  valueAfter  tags       ",
+                        "    when        where         howMuch  valueAfter  tags        ",
                         string.Empty,
-                        "    2015-05-24  mbank           +2.00        2.00  tag2, tag3 ",
-                        "    2015-05-24  mbank->getin     1.00              tag3, taggg",
-                        "                mbank           -1.00        1.00             ",
-                        "                getin           +1.00        1.00             "
+                        "    2015-05-24  mbank           +2.00        2.00  #tag2 #tag3 ",
+                        "    2015-05-24  mbank->getin     1.00              #tag3 #taggg",
+                        "                mbank           -1.00        1.00              ",
+                        "                getin           +1.00        1.00              "
                     }).SetName("display history with tags");
 
                     yield return new TestCaseData(new []
@@ -114,6 +114,25 @@
                         "                mbank           -1.00        0.00                   ",
                         "                getin           +1.00        1.00                   "
                     }).SetName("display history with descriptions");
+
+                    yield return new TestCaseData(new[]
+                    {
+                        "/wallet source mbank",
+                        "/wallet source getin",
+                        "/wallet add mbank 2 short tag1 tag2",
+                        "/wallet sub mbank 1 'other description' tag3 tag4",
+                        "/wallet trans mbank getin 1 'trans description' tag5 tag6",
+                        "/wallet history --d --t"
+                    }, new[]
+                    {
+                        "    when        where         howMuch  valueAfter  description        tags       ",
+                        string.Empty,
+                        "    2015-05-24  mbank           +2.00        2.00  short              #tag1 #tag2",
+                        "    2015-05-24  mbank           -1.00        1.00  other description  #tag3 #tag4",
+                        "    2015-05-24  mbank->getin     1.00              trans description  #tag5 #tag6",
+                        "                mbank           -1.00        0.00                                ",
+                        "                getin           +1.00        1.00                                "
+                    }).SetName("display history with descriptions and tags");
 
                     yield return new TestCaseData(new List<string>
                     {
