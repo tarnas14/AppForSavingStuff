@@ -1,10 +1,14 @@
 ﻿namespace Modules.MoneyTracking.Presentation
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
+    using CommandHandlers;
     using Raven.Abstractions.Extensions;
     using Tarnas.ConsoleUi;
+    using Console = Tarnas.ConsoleUi.Console;
 
     public class WalletUi
     {
@@ -46,28 +50,28 @@
 
             if (verbosity.Descriptions)
             {
-                tableDisplay.AddColumn(GetDescriptionColumn(history.Operations));
+                tableDisplay.AddColumn(GetColumn("description", history.Operations, GetDescription));
             }
 
             if (verbosity.Tags)
             {
-                tableDisplay.AddColumn(GetTagColumn(history.Operations));
+                tableDisplay.AddColumn(GetColumn("tags", history.Operations, GetTagString));
             }
 
             tableDisplay.Display();
         }
 
-        private Column GetTagColumn(IEnumerable<Operation> operations)
+        private Column GetColumn(string header, IEnumerable<Operation> operations, Func<Operation, string> stringFromOperation)
         {
             var column = new Column
             {
-                Header = "tags",
+                Header = header,
                 Prefix = "  "
             };
 
             foreach (var operation in operations)
             {
-                column.Data.Add(GetTagString(operation));
+                column.Data.Add(stringFromOperation(operation));
 
                 if (operation.Changes.Count == 2)
                 {
@@ -77,6 +81,12 @@
             }
 
             return column;
+        }
+
+        private string GetDescription(Operation operation)
+        {
+            string description = operation.Description.Length > 28 ? string.Format("{0}..", operation.Description.Substring(0, 28)) : operation.Description;
+            return string.Format("'{0}'", description);
         }
 
         private string GetTagString(Operation operation)
@@ -98,28 +108,6 @@
                 }
             }
             return sBuilder.ToString();
-        }
-
-        private Column GetDescriptionColumn(IEnumerable<Operation> operations)
-        {
-            var column = new Column
-            {
-                Header = "description",
-                Prefix = "  "
-            };
-
-            foreach (var operation in operations)
-            {
-                column.Data.Add(operation.Description);
-
-                if (operation.Changes.Count == 2)
-                {
-                    column.Data.Add(string.Empty);
-                    column.Data.Add(string.Empty);
-                }
-            }
-
-            return column;
         }
 
         private IEnumerable<Column> RequiredDataToColumns(IEnumerable<Operation> operations)

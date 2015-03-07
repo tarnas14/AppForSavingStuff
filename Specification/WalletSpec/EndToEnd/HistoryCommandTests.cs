@@ -106,14 +106,33 @@
                         "/wallet history --d"
                     }, new []
                     {
-                        "    when        where         howMuch  valueAfter  description      ",
+                        "    when        where         howMuch  valueAfter  description        ",
                         string.Empty,
-                        "    2015-05-24  mbank           +2.00        2.00  short            ",
-                        "    2015-05-24  mbank           -1.00        1.00  other description",
-                        "    2015-05-24  mbank->getin     1.00              trans description",
-                        "                mbank           -1.00        0.00                   ",
-                        "                getin           +1.00        1.00                   "
+                        "    2015-05-24  mbank           +2.00        2.00  'short'            ",
+                        "    2015-05-24  mbank           -1.00        1.00  'other description'",
+                        "    2015-05-24  mbank->getin     1.00              'trans description'",
+                        "                mbank           -1.00        0.00                     ",
+                        "                getin           +1.00        1.00                     "
                     }).SetName("display history with descriptions");
+
+                    yield return new TestCaseData(new[]
+                    {
+                        "/wallet source mbank",
+                        "/wallet source getin",
+                        "/wallet add mbank 2 'some very long description longer than 30'",
+                        "/wallet sub mbank 1 'short description lol'",
+                        "/wallet trans mbank getin 1 'another quite long description to make the point of shortening it for display'",
+                        "/wallet history --d"
+                    }, new[]
+                    {
+                        "    when        where         howMuch  valueAfter  description                     ",
+                        string.Empty,
+                        "    2015-05-24  mbank           +2.00        2.00  'some very long description l..'",
+                        "    2015-05-24  mbank           -1.00        1.00  'short description lol'         ",
+                        "    2015-05-24  mbank->getin     1.00              'another quite long descripti..'",
+                        "                mbank           -1.00        0.00                                  ",
+                        "                getin           +1.00        1.00                                  "
+                    }).SetName("descriptions longer than 30 characters should be shortened to 28with 2 dots suffix");
 
                     yield return new TestCaseData(new[]
                     {
@@ -125,13 +144,13 @@
                         "/wallet history --d --t"
                     }, new[]
                     {
-                        "    when        where         howMuch  valueAfter  description        tags       ",
+                        "    when        where         howMuch  valueAfter  description          tags       ",
                         string.Empty,
-                        "    2015-05-24  mbank           +2.00        2.00  short              #tag1 #tag2",
-                        "    2015-05-24  mbank           -1.00        1.00  other description  #tag3 #tag4",
-                        "    2015-05-24  mbank->getin     1.00              trans description  #tag5 #tag6",
-                        "                mbank           -1.00        0.00                                ",
-                        "                getin           +1.00        1.00                                "
+                        "    2015-05-24  mbank           +2.00        2.00  'short'              #tag1 #tag2",
+                        "    2015-05-24  mbank           -1.00        1.00  'other description'  #tag3 #tag4",
+                        "    2015-05-24  mbank->getin     1.00              'trans description'  #tag5 #tag6",
+                        "                mbank           -1.00        0.00                                  ",
+                        "                getin           +1.00        1.00                                  "
                     }).SetName("display history with descriptions and tags");
 
                     yield return new TestCaseData(new List<string>
