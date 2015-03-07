@@ -1,7 +1,6 @@
 ﻿namespace Modules.MoneyTracking.Presentation
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
     using Raven.Abstractions.Extensions;
@@ -50,6 +49,11 @@
                 tableDisplay.AddColumn(GetTagColumn(history.Operations));
             }
 
+            if (verbosity.Descriptions)
+            {
+                tableDisplay.AddColumn(GetDescriptionColumn(history.Operations));
+            }
+
             tableDisplay.Display();
         }
 
@@ -64,6 +68,28 @@
             foreach (var operation in operations)
             {
                 column.Data.Add(GetTagString(operation));
+
+                if (operation.Changes.Count == 2)
+                {
+                    column.Data.Add(string.Empty);
+                    column.Data.Add(string.Empty);
+                }
+            }
+
+            return column;
+        }
+
+        private Column GetDescriptionColumn(IEnumerable<Operation> operations)
+        {
+            var column = new Column
+            {
+                Header = "description",
+                Prefix = "  "
+            };
+
+            foreach (var operation in operations)
+            {
+                column.Data.Add(operation.Description);
 
                 if (operation.Changes.Count == 2)
                 {

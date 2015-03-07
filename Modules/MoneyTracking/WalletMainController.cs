@@ -104,7 +104,8 @@
                             Monthly = userCommand.Flags.Contains("m"),
                             Verbosity = new HistoryDisplayVerbosity
                             {
-                                Tags = userCommand.Flags.Contains("t")
+                                Tags = userCommand.Flags.Contains("t"),
+                                Descriptions = userCommand.Flags.Contains("d")
                             }
                         };
 

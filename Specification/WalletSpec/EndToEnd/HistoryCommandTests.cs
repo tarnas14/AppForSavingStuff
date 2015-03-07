@@ -96,6 +96,25 @@
                         "                getin           +1.00        1.00             "
                     }).SetName("display history with tags");
 
+                    yield return new TestCaseData(new []
+                    {
+                        "/wallet source mbank",
+                        "/wallet source getin",
+                        "/wallet add mbank 2 short",
+                        "/wallet sub mbank 1 'other description'",
+                        "/wallet trans mbank getin 1 'trans description'",
+                        "/wallet history --d"
+                    }, new []
+                    {
+                        "    when        where         howMuch  valueAfter  description      ",
+                        string.Empty,
+                        "    2015-05-24  mbank           +2.00        2.00  short            ",
+                        "    2015-05-24  mbank           -1.00        1.00  other description",
+                        "    2015-05-24  mbank->getin     1.00              trans description",
+                        "                mbank           -1.00        0.00                   ",
+                        "                getin           +1.00        1.00                   "
+                    }).SetName("display history with descriptions");
+
                     yield return new TestCaseData(new List<string>
                     {
                         "/wallet source mbank",
