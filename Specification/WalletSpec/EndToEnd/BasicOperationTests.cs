@@ -1,132 +1,153 @@
 ﻿namespace Specification.WalletSpec.EndToEnd
 {
-    using System.Collections.Generic;
     using NUnit.Framework;
 
     [TestFixture]
-    class BasicOperationTests : EndToEndBaseFixture
+    class BasicOperationTests
     {
-        [Test]
-        [TestCaseSource(typeof(TestCasesDataSource), "BasicOperations")]
-        public void ShouldCorrectlyRespondToUserInput(IEnumerable<string> userCommands, IList<string> expectedOutput)
+        private EndToEndTester _e2eTester;
+
+        [SetUp]
+        public void Setup()
         {
-            EndToEndTest(userCommands, expectedOutput);
+            _e2eTester = new EndToEndTester();
         }
 
-        private static class TestCasesDataSource
+        [Test]
+        public void ShouldCreateSource()
         {
-            public static IEnumerable<TestCaseData> BasicOperations
-            {
-                get
-                {
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet balance mbank"
-                    }, new List<string>{
-                        "    mbank: 0.00"
-                    }).SetName("creating source");
+            //given
+            _e2eTester.Execute("/wallet source mbank");
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source tags"
-                    }, new List<string>
-                    {
-                        "    Error: 'tags' is a reserved word and cannot be used as a source name."
-                    }).SetName("'tags' should be a reserved word");
+            //when
+            _e2eTester.Execute("/wallet balance mbank");
 
-                    yield return new TestCaseData(new List<string> //todo
-                    {
-                        "/wallet source all"
-                    }, new List<string>
-                    {
-                        "    Error: 'all' is a reserved word and cannot be used as a source name."
-                    }).SetName("'all' should be a reserved word");
+            //then
+            _e2eTester.AssertExpectedResult("    mbank: 0.00");
+        }
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet source mbank"
-                    }, new List<string>
-                    {
-                        "    Error: Source mbank already exists."
-                    }).SetName("creating source that alredy exists");
-                
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet balance mbank"
-                    }, new List<string>{
-                        "    Error: Source mbank does not exist."
-                    }).SetName("balance - source does not exist");
+        [Test]
+        public void ShouldNotCreateSourceCalledTags()
+        {
+            //when
+            _e2eTester.Execute("/wallet source tags");
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank", 
-                        "/wallet add mbank 2", 
-                        "/wallet balance mbank"
-                    }, new List<string>
-                    {
-                        "    mbank: 2.00"
-                    }).SetName("add 2");
+            //then
+            _e2eTester.AssertExpectedResult("    Error: 'tags' is a reserved word and cannot be used as a source name.");
+        }
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank", 
-                        "/wallet add mbank 2 'my description' tag1 tag2", 
-                        "/wallet balance mbank"
-                    }, new List<string>
-                    {
-                        "    mbank: 2.00"
-                    }).SetName("add 2 with description and tags");
+        [Test]
+        public void ShouldNotAllowDuplicatingSources()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank");
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet add mbank 5 'my description' tag1 tag2",
-                        "/wallet sub mbank 2 'my description' tag1 tag2",
-                        "/wallet balance mbank"
-                    }, new List<string>
-                    {
-                        "    mbank: 3.00"
-                    }).SetName("add 5 subtract 2");
+            //when
+            _e2eTester.Execute("/wallet source mbank");
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet source getin",
-                        "/wallet add mbank 5 'my description' tag1 tag2",
-                        "/wallet trans mbank getin 3 'my description' tag1 tag2",
-                        "/wallet balance mbank"
-                    }, new List<string>
-                    {
-                        "    mbank: 2.00"
-                    }).SetName("add 5 to mbank transfer 3 to getin display mbank");
+            //then
+            _e2eTester.AssertExpectedResult("    Error: Source mbank already exists.");
+        }
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet source getin",
-                        "/wallet add mbank 5 'my description' tag1 tag2",
-                        "/wallet trans mbank getin 3 'my description' tag1 tag2",
-                        "/wallet balance getin"
-                    }, new List<string>
-                    {
-                        "    getin: 3.00"
-                    }).SetName("add 5 to mbank transfer 3 to getin display getin");
+        [Test]
+        public void ShouldNotDisplayBalanceForSourceThatDoesNotExist()
+        {
+            //when
+            _e2eTester.Execute("/wallet balance mbank");
 
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet add mbank 20 asdf tag1",
-                        "/wallet sub mbank 2 qwer tag3 tag2",
-                        "/wallet tags"
-                    },
-                        new List<string>
-                    {
-                        "#tag1, #tag2, #tag3"
-                    }).SetName("should display tags");
-                }
-            }
+            //then
+            _e2eTester.AssertExpectedResult("    Error: Source mbank does not exist.");
+        }
+
+        [Test]
+        public void ShouldAllowAddingToSources()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank", 
+                               "/wallet add mbank 2");
+
+            //when
+            _e2eTester.Execute("/wallet balance mbank");
+
+            //then
+            _e2eTester.AssertExpectedResult("    mbank: 2.00");
+        }
+
+        [Test]
+        public void ShouldAllowStoringDescriptionAndTagsWhenAddingToSources()
+        {
+            //given
+            _e2eTester.Execute(
+                "/wallet source mbank",
+                "/wallet add mbank 2 'my description' tag1 tag2");
+
+            //when
+            _e2eTester.Execute("/wallet balance mbank");
+
+            //then
+            _e2eTester.AssertExpectedResult("    mbank: 2.00");
+        }
+
+        [Test]
+        public void ShouldCalculateBalanceFromOperationHistory()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank",
+                "/wallet add mbank 5 'my description' tag1 tag2",
+                "/wallet sub mbank 2 'my description' tag1 tag2");
+
+            //when
+            _e2eTester.Execute("/wallet balance mbank");
+
+            //then
+            _e2eTester.AssertExpectedResult("    mbank: 3.00");
+        }
+
+        [Test]
+        public void ShouldRemoveMoneyFromSourceOnTransfer()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank",
+                "/wallet source getin",
+                "/wallet add mbank 5 'my description' tag1 tag2",
+                "/wallet trans mbank getin 3 'my description' tag1 tag2");
+
+            //when
+            _e2eTester.Execute("/wallet balance mbank");
+
+            //then
+            _e2eTester.AssertExpectedResult("    mbank: 2.00");
+        }
+
+        [Test]
+        public void ShouldAddMoneyToDestinationOnTransfer()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank",
+                "/wallet source getin",
+                "/wallet add mbank 5 'my description' tag1 tag2",
+                "/wallet trans mbank getin 3 'my description' tag1 tag2");
+
+            //when
+            _e2eTester.Execute("/wallet balance getin");
+
+            //then
+            _e2eTester.AssertExpectedResult("    getin: 3.00");
+        }
+
+        [Test]
+        public void ShouldDisplayAllTags()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank",
+                "/wallet add mbank 20 asdf tag1",
+                "/wallet sub mbank 2 qwer tag3 tag2");
+
+            //when
+            _e2eTester.Execute("/wallet tags");
+
+            //then
+            _e2eTester.AssertExpectedResult("#tag1, #tag2, #tag3");
         }
     }
 }

@@ -64,6 +64,7 @@
     <Compile Include="WalletSpec\EndToEnd\DisplayBalanceTests.cs" />
     <Compile Include="WalletSpec\EndToEnd\EndToEndBaseFixture.cs" />
     <Compile Include="WalletSpec\EndToEnd\BasicOperationTests.cs" />
+    <Compile Include="WalletSpec\EndToEnd\EndToEndTester.cs" />
     <Compile Include="WalletSpec\EndToEnd\HistoryCommandTests.cs" />
     <Compile Include="WalletSpec\MoneyzSpec.cs" />
     <Compile Include="WalletSpec\WalletSpec.cs" />

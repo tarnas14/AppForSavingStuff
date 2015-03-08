@@ -6,8 +6,7 @@
     {
         private static readonly List<string> ReservedWords = new List<string>
             {
-                "tags",
-                "all"
+                "tags"
             };
 
         public bool IsReserved(string word)
