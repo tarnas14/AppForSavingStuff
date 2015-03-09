@@ -1,37 +1,37 @@
 ﻿namespace Specification.WalletSpec.EndToEnd
 {
-    using System.Collections.Generic;
     using NUnit.Framework;
 
-    class DisplayBalanceTests : EndToEndBaseFixture
+    [TestFixture]
+    class DisplayBalanceTests
     {
-        [Test]
-        [TestCaseSource(typeof(TestCasesDataSource), "DisplayingBalance")]
-        public void ShouldCorrectlyRespondToUserInput(IEnumerable<string> userCommands, IList<string> expectedOutput)
+        private EndToEndTester _endToEnd;
+
+        [SetUp]
+        public void Setup()
         {
-            EndToEndTest(userCommands, expectedOutput);
+            _endToEnd = new EndToEndTester();
         }
 
-        private static class TestCasesDataSource
+        [Test]
+        public void ShouldDisplayBalanceOfAllSources()
         {
-            public static IEnumerable<TestCaseData> DisplayingBalance
-            {
-                get
-                {
-                    yield return new TestCaseData(new List<string>
-                    {
-                        "/wallet source mbank",
-                        "/wallet source otherSource",
-                        "/wallet add mbank 2",
-                        "/wallet add otherSource 10",
-                        "/wallet balance"
-                    }, new List<string>{
-                        "          mbank:  2.00",
-                        "    otherSource: 10.00",
-                        "               : 12.00"
-                    }).SetName("should display balances of all sources if no source specified");
-                }
-            }
+            //given
+            _endToEnd.Execute("/wallet source mbank");
+            _endToEnd.Execute("/wallet source otherSource");
+            _endToEnd.Execute("/wallet add mbank 2");
+            _endToEnd.Execute("/wallet add otherSource 10");
+            
+            //when
+            _endToEnd.Execute("/wallet balance");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "          mbank:  2.00",
+                "    otherSource: 10.00",
+                "               : 12.00"
+                );
         }
+
     }
 }
