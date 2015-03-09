@@ -149,5 +149,24 @@
             //then
             _e2eTester.AssertExpectedResult("#tag1, #tag2, #tag3");
         }
+
+        [Test]
+        public void ShouldAddOperationWithSpecifiedDate()
+        {
+            //given
+            _e2eTester.Execute("/wallet source mbank");
+
+            //when
+            _e2eTester.Execute("/wallet add mbank 20 'asdf' tag1 tag2 tag3 tag4 -date 2015-02-02");
+            //_e2eTester.Execute("/wallet sub mbank 10");
+
+            //then
+            _e2eTester.Execute("/wallet history");
+            _e2eTester.AssertExpectedResult(
+                "    when        where  howMuch  valueAfter",
+                string.Empty,
+                "    2015-02-02  mbank   +20.00       20.00"
+                );
+        }
     }
 }
