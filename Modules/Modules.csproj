@@ -84,7 +84,6 @@
     <Compile Include="MoneyTracking\Persistence\SourceDoesNotExistException.cs" />
     <Compile Include="MoneyTracking\Tag.cs" />
     <Compile Include="MoneyTracking\TagHistory.cs" />
-    <Compile Include="MoneyTracking\Wallet.cs" />
     <Compile Include="MoneyTracking\WalletException.cs" />
     <Compile Include="MoneyTracking\WalletHistory.cs" />
     <Compile Include="MoneyTracking\WalletMainController.cs" />
