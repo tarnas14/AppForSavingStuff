@@ -35,17 +35,14 @@ namespace Modules.MoneyTracking.CommandHandlers
 
         private void StandardOperation(Operation operation, OperationCommand command)
         {
-            var before = _walletHistory.GetBalance(command.Source);
-            operation.AddChange(command.Source, before, before + command.HowMuch);
+            operation.AddChange(command.Source, command.HowMuch);
         }
 
         private void AddTransferChanges(Operation operation, OperationCommand command)
         {
-            var before = _walletHistory.GetBalance(command.Source);
-            operation.AddChange(command.Source, before, before - command.HowMuch);
+            operation.AddChange(command.Source, -command.HowMuch);
 
-            before = _walletHistory.GetBalance(command.Destination);
-            operation.AddChange(command.Destination, before, before + command.HowMuch);
+            operation.AddChange(command.Destination, command.HowMuch);
         }
 
         private bool HasDestination(OperationCommand command)

@@ -16,13 +16,12 @@
             Changes = new List<Change>();
         }
 
-        public void AddChange(string sourceName, Moneyz before, Moneyz after)
+        public void AddChange(string sourceName, Moneyz howMuch)
         {
             Changes.Add(new Change
             {
                 Source = sourceName,
-                Before = before,
-                After = after
+                Difference = howMuch
             });
         }
     }

@@ -22,6 +22,11 @@
             return new Moneyz(lhs.Value - rhs.Value);
         }
 
+        public static Moneyz operator -(Moneyz other)
+        {
+            return new Moneyz(-other.Value);
+        }
+
         public override bool Equals(object obj)
         {
             var moneyz = obj as Moneyz;

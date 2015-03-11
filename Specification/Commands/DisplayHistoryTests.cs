@@ -6,6 +6,7 @@
     using Modules;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.CommandHandlers;
+    using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
     using Moq;
     using NUnit.Framework;
@@ -13,7 +14,7 @@
     [TestFixture]
     class DisplayHistoryTests
     {
-        private Mock<WalletHistory> _walletHistory;
+        private WalletHistory _walletHistory;
         private ConsoleMock _consoleMock;
         private WalletUi _walletUi;
         private DisplayHistoryCommandHandler _handler;
@@ -23,13 +24,16 @@
         [SetUp]
         public void Setup()
         {
-            _walletHistory = new Mock<WalletHistory>();
+            _walletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider(){RunInMemory = true}){WaitForNonStale = true};
+            SetupWalletHistory();
+
             _consoleMock = new ConsoleMock();
             _walletUi = new WalletUi(_consoleMock);
+
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(mock => mock.Today).Returns(new DateTime(2014, 5, 25));
-            _handler = new DisplayHistoryCommandHandler(_walletHistory.Object, _walletUi, _timeMasterMock.Object);
-            SetupWalletHistory();
+
+            _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object);
         }
 
         private void SetupWalletHistory()
@@ -38,19 +42,26 @@
             var monthEarlier = new DateTime(2014, 4, 25);
 
             var op1 = new Operation(monthEarlier);
-            op1.AddChange("mbank", new Moneyz(0), new Moneyz(2.5m));
+            op1.AddChange("mbank", new Moneyz(2.5m));
             var op2 = new Operation(testDate);
-            op2.AddChange("mbank", new Moneyz(2.5m), new Moneyz(2.1m));
+            op2.AddChange("mbank", new Moneyz(-0.4m));
             var op3 = new Operation(testDate);
-            op3.AddChange("getin", new Moneyz(0), new Moneyz(0.01m));
+            op3.AddChange("getin", new Moneyz(0.01m));
             var op4 = new Operation(testDate);
-            op4.AddChange("mbank", new Moneyz(2.1m), new Moneyz(2));
-            op4.AddChange("getin", new Moneyz(0.01m), new Moneyz(0.11m));
+            op4.AddChange("mbank", new Moneyz(-0.1m));
+            op4.AddChange("getin", new Moneyz(0.1m));
             var op5 = new Operation(testDate);
-            op5.AddChange("src", new Moneyz(0), new Moneyz(69) );
+            op5.AddChange("src", new Moneyz(69) );
 
-            _walletHistory.Setup(history => history.GetFullHistory()).Returns(new [] {op1, op2, op3, op4, op5});
-            _walletHistory.Setup(history => history.GetForMonth(2014, 5)).Returns(new[] {op2, op3, op4});
+            _walletHistory.CreateSource("mbank");
+            _walletHistory.CreateSource("getin");
+            _walletHistory.CreateSource("src");
+
+            _walletHistory.SaveOperation(op1);
+            _walletHistory.SaveOperation(op2);
+            _walletHistory.SaveOperation(op3);
+            _walletHistory.SaveOperation(op4);
+            _walletHistory.SaveOperation(op5);
         }
 
         [Test]
@@ -94,7 +105,8 @@
                 "    2014-05-25  getin           +0.01        0.01",
                 "    2014-05-25  mbank->getin     0.10            ",
                 "                mbank           -0.10        2.00",
-                "                getin           +0.10        0.11"
+                "                getin           +0.10        0.11",
+                "    2014-05-25  src            +69.00       69.00"
             };
 
             //when

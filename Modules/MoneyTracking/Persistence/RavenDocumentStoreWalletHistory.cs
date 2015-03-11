@@ -34,11 +34,14 @@
                 var source = GetSourceByName(change.Source);
                 if (source != null)
                 {
-                    session.Load<Source>(source.Id).SetBalance(change.After);
+                    var after = source.Balance + change.Difference;
+                    session.Load<Source>(source.Id).SetBalance(after);
+                    change.Before = source.Balance;
+                    change.After = after;
                 }
                 else
                 {
-                    session.Store(new Source(change.Source, change.After));
+                    session.Store(new Source(change.Source, change.Difference));
                 }
             }
         }
@@ -62,9 +65,20 @@
 
         private IEnumerable<Operation> GetMonthHistory(IDocumentSession session, DateTime date)
         {
-            return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
+            var operations = WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
                 .Where(result => result.MonthYear == date.ToString("MMyy"))
                 .OrderBy(result => result.When).OfType<Operation>().ToList();
+
+            AddDifferencesToChangesInLegacyOperations(operations);
+
+            return operations;
+        }
+
+        private void AddDifferencesToChangesInLegacyOperations(IEnumerable<Operation> operations)
+        {
+            var changes = operations.SelectMany(operation => operation.Changes);
+
+            LegacyDataMagic.AddDifferencesToChanges(changes);
         }
 
         public IList<Source> GetSources()

@@ -69,5 +69,19 @@
             //then
             Assert.That(actual, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void ShouldWorkWithSingularMinusOperator()
+        {
+            //given
+            var moneyz = new Moneyz(2);
+            var expectedMoneyz = new Moneyz(-2);
+
+            //when
+            var actual = -moneyz;
+
+            //then
+            Assert.That(actual, Is.EqualTo(expectedMoneyz));
+        }
     }
 }

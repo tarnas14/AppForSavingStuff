@@ -65,6 +65,7 @@
     <Compile Include="WalletSpec\EndToEnd\BasicOperationTests.cs" />
     <Compile Include="WalletSpec\EndToEnd\EndToEndTester.cs" />
     <Compile Include="WalletSpec\EndToEnd\HistoryCommandTests.cs" />
+    <Compile Include="WalletSpec\LegacyDataMagicSpec.cs" />
     <Compile Include="WalletSpec\MoneyzSpec.cs" />
   </ItemGroup>
   <ItemGroup>

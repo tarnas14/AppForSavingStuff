@@ -176,12 +176,12 @@
 
         private string UnsignedValueChange(Change change)
         {
-            return (change.After - change.Before).UnsignedString;
+            return (change.Difference).UnsignedString;
         }
 
         private string SignedValueChange(Change change)
         {
-            return (change.After - change.Before).SignedString;
+            return (change.Difference).SignedString;
         }
 
         public void DisplayHistory(TagHistory history)
