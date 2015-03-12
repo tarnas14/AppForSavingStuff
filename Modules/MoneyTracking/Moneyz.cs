@@ -74,6 +74,16 @@
                 return Value >= 0 ? "+" : "-";
             }
         }
+
+        public static implicit operator decimal(Moneyz d)
+        {
+            return d.Value;
+        }
+
+        public static implicit operator Moneyz(decimal d)
+        {
+            return new Moneyz(d);
+        }
         
         [JsonIgnore]
         public Moneyz Absolute
@@ -85,5 +95,7 @@
                 return new Moneyz(value);
             }
         }
+
+
     }
 }

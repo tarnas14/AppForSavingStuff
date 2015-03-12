@@ -90,18 +90,15 @@
         }
 
         public Moneyz GetBalance(string sourceName)
-        {
-            using (var session = _storeProvider.Store.OpenSession())
+    {
+            var source = GetSourceByName(sourceName);
+
+            if (source == null)
             {
-                var source = GetSourceByName(sourceName);
-
-                if (source == null)
-                {
-                    throw new SourceDoesNotExistException(sourceName);
-                }
-
-                return source.Balance;
+                throw new SourceDoesNotExistException(sourceName);
             }
+
+            return source.Balance;
         }
 
         public Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month)
@@ -174,8 +171,20 @@
         private Source GetSourceByName(string sourceName)
         {
             using (var session = _storeProvider.Store.OpenSession())
-            { 
-                var sources = WaitForQueryIfNecessary(session.Query<Source, Sources_ByName>()).Where(src => src.Name == sourceName).ToList();
+            {
+                IList<Source> sources = new List<Source>();
+
+                if (IsTag(sourceName))
+                {
+                    sources.Add(GetSourcesFromTags(sourceName));
+                }
+                else
+                {
+                    sources = 
+                        WaitForQueryIfNecessary(session.Query<Source, Sources_ByName>())
+                        .Where(src => src.Name == sourceName)
+                        .ToList();
+                }
 
                 if (sources.Count == 1)
                 {
@@ -184,6 +193,27 @@
 
                 return null;
             }
+        }
+
+        private Source GetSourcesFromTags(string tagName)
+        {
+            var history = GetFullHistory();
+
+            var tagNameWithoutHash = tagName.Substring(1);
+            var tagOperations = history.Where(operation => operation.Tags.Any(tag => tag.Value == tagNameWithoutHash));
+
+            var changes = tagOperations.SelectMany(operation => operation.Changes);
+
+            return new Source
+            {
+                Name = tagName,
+                Balance = changes.Aggregate(new Moneyz(0), (money, change) => money + change.Difference)
+            };
+        }
+
+        private bool IsTag(string sourceName)
+        {
+            return sourceName.StartsWith("#");
         }
 
         private IRavenQueryable<TEntity> WaitForQueryIfNecessary<TEntity>(IRavenQueryable<TEntity> query) where TEntity : class
