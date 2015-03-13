@@ -1,45 +1,46 @@
 ﻿namespace Specification.Commands
 {
+    using System;
     using System.Collections.Generic;
     using Halp;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.CommandHandlers;
+    using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
-    using Moq;
     using NUnit.Framework;
 
     [TestFixture]
     class DisplayBalanceTests
     {
-        private Mock<WalletHistory> _walletHistoryMock;
         private ConsoleMock _consoleMock;
         private DisplayBalanceCommandHandler _commandHandler;
+        private WalletHistory _walletHistory;
 
         [SetUp]
         public void Setup()
         {   
             _consoleMock = new ConsoleMock();
 
-            _walletHistoryMock = new Mock<WalletHistory>();
-            _walletHistoryMock.Setup(walletHistory => walletHistory.GetBalance(It.IsAny<string>()))
-                .Returns(new Moneyz(2));
+            _walletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider(){RunInMemory = true}){WaitForNonStale = true};
+            _walletHistory.CreateSource("source1");
+            _walletHistory.CreateSource("source2");
 
-            _commandHandler = new DisplayBalanceCommandHandler(_walletHistoryMock.Object, new WalletUi(_consoleMock));
+            _commandHandler = new DisplayBalanceCommandHandler(_walletHistory, new WalletUi(_consoleMock));
         }
 
         [Test]
         public void ShouldDisplayBalanceOfASingleSource()
         {
             //given
-            const string sourceName = "source";
+            const string sourceName = "source1";
+            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange(sourceName, new Moneyz(2)));
             var command = new DisplayBalanceCommand
             {
                 Sources = new[] { sourceName }
             };
-            _walletHistoryMock.Setup(mock => mock.GetBalance(sourceName)).Returns(new Moneyz(2));
             var expectedOutput = new List<string>
             {
-                "    source: 2.00"
+                "    source1: 2.00"
             };
 
             //when
@@ -53,12 +54,13 @@
         public void ShouldDisplayBalanceOfMultipleSources()
         {
             //given
+            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source1", new Moneyz(2)));
+            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source2", new Moneyz(12)));
             var command = new DisplayBalanceCommand
             {
                 Sources = new List<string> { "source1", "source2" }
             };
-            _walletHistoryMock.Setup(mock => mock.GetBalance("source1")).Returns(new Moneyz(2));
-            _walletHistoryMock.Setup(mock => mock.GetBalance("source2")).Returns(new Moneyz(12));
+            
             var expectedOutput = new List<string>
             {
                 "    source1:  2.00",
@@ -77,16 +79,13 @@
         public void ShouldDisplayAllSourceBalancesWhenNoSourcesSpecified()
         {
             //given
+            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source1", new Moneyz(2)));
+            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source2", new Moneyz(12)));
             var command = new DisplayBalanceCommand
             {
                 Sources = new List<string>()
             };
 
-            _walletHistoryMock.Setup(mock => mock.GetSources()).Returns(new List<Source>
-            {
-                new Source("source1", new Moneyz(2)),
-                new Source("source2", new Moneyz(12))
-            });
             var expectedOutput = new List<string>
             {
                 "    source1:  2.00",
@@ -99,7 +98,6 @@
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
-            _walletHistoryMock.Verify(historyMock => historyMock.GetBalance(It.IsAny<string>()), Times.Never);
         }
     }
 }

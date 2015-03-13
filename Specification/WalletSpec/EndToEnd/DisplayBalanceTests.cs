@@ -1,5 +1,6 @@
 ﻿namespace Specification.WalletSpec.EndToEnd
 {
+    using System;
     using NUnit.Framework;
 
     [TestFixture]
