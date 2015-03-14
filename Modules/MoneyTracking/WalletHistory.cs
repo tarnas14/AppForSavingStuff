@@ -6,13 +6,13 @@
     {
         void SaveOperation(Operation toSave);
         IList<Operation> GetFullHistory();
-        IList<Operation> GetForMonth(int year, int month);
+        IList<Operation> GetForMonth(Month month);
         IList<Source> GetSources();
         Moneyz GetBalance(string sourceName);
-        Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month);
+        Moneyz GetSourceBalanceForMonth(string sourceName, Month month);
         void CreateSource(string sourceName);
-        IList<Operation> GetTagHistoryForThisMonth(string tagName, int year, int month);
-        IList<Tag> GetTagsForMonth(int year, int month);
+        IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month);
+        IList<Tag> GetTagsForMonth(Month month);
         IList<Tag> GetAllTags(); 
         bool Exists(string sourceName);
     }

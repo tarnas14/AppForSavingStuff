@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Presentation;
     using Raven.Client;
     using Raven.Client.Linq;
 
@@ -54,11 +55,11 @@
             }
         }
 
-        public IList<Operation> GetForMonth(int year, int month)
+        public IList<Operation> GetForMonth(Month month)
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                var date = new DateTime(year, month, 1);
+                var date = new DateTime(month.Year, month.MonthNr, 1);
                 return GetMonthHistory(session, date).ToList();
             }
         }
@@ -101,9 +102,18 @@
             return source.Balance;
         }
 
-        public Moneyz GetSourceBalanceForThisMonth(string sourceName, int year, int month)
+        public Moneyz GetSourceBalanceForMonth(string sourceName, Month month)
         {
-            var date = new DateTime(year, month, 1);
+            var date = new DateTime(month.Year, month.MonthNr, 1);
+
+            if (IsTag(sourceName))
+            {
+                var tagOperationsThisMonth = GetTagHistoryForThisMonth(Tag.GetSanitizedTagName(sourceName), month);
+                var changesForTagThisMonth = tagOperationsThisMonth.SelectMany(operation => operation.Changes);
+                var tagMoneyBalanceForMonth = changesForTagThisMonth.Sum(change => change.Difference);
+
+                return tagMoneyBalanceForMonth;
+            }
 
             using (var session = _storeProvider.Store.OpenSession())
             {
@@ -133,9 +143,9 @@
             }
         }
 
-        public IList<Operation> GetTagHistoryForThisMonth(string tagName, int year, int month)
+        public IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month)
         {
-            var date = new DateTime(year, month, 1);
+            var date = new DateTime(month.Year, month.MonthNr, 1);
 
             using (var session = _storeProvider.Store.OpenSession())
             {
@@ -145,9 +155,9 @@
             }
         }
 
-        public IList<Tag> GetTagsForMonth(int year, int month)
+        public IList<Tag> GetTagsForMonth(Month month)
         {
-            var thisMonthOperations = GetForMonth(year, month);
+            var thisMonthOperations = GetForMonth(month);
 
             var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
 
@@ -176,7 +186,7 @@
 
                 if (IsTag(sourceName))
                 {
-                    sources.Add(GetSourcesFromTags(sourceName));
+                    sources.Add(GetSourceFromTag(sourceName));
                 }
                 else
                 {
@@ -195,7 +205,7 @@
             }
         }
 
-        private Source GetSourcesFromTags(string tagName)
+        private Source GetSourceFromTag(string tagName)
         {
             var history = GetFullHistory();
 

@@ -5,5 +5,6 @@ namespace Modules.MoneyTracking.CommandHandlers
     public class DisplayBalanceCommand : Command
     {
         public IEnumerable<string> Sources { get; set; }
+        public Month Month { get; set; }
     }
 }

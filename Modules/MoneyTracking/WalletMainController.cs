@@ -68,7 +68,8 @@
                     case "balance":
                         var displayBalanceCommand = new DisplayBalanceCommand
                         {
-                            Sources = GetParamsFrom(1, userCommand.Params)
+                            Sources = GetParamsFrom(1, userCommand.Params),
+                            Month = GetMonth(userCommand)
                         };
                         new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
 
@@ -103,6 +104,22 @@
             {
                 _walletUi.DisplayError(e);
             }
+        }
+
+        private Month GetMonth(UserCommand userCommand)
+        {
+            if (!userCommand.Flags.Contains("m"))
+            {
+                return null;
+            }
+
+            string monthParam;
+            if (!userCommand.TryGetParam("month", out monthParam))
+            {
+                return new Month(_timeMaster.Today.Year, _timeMaster.Today.Month);
+            }
+
+            return Month.FromString(monthParam);
         }
 
         private DateTime GetDate(UserCommand userCommand)

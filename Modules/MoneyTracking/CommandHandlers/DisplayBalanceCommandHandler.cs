@@ -24,10 +24,20 @@
             }
             else
             {
-                command.Sources.ForEach(sourceName => balancesToDisplay.AddBalance(sourceName, _walletHistory.GetBalance(sourceName)));
+                command.Sources.ForEach(sourceName => balancesToDisplay.AddBalance(sourceName, GetBalance(sourceName, command.Month)));
             }
 
             _walletUi.DisplayBalance(balancesToDisplay);
+        }
+
+        private Moneyz GetBalance(string sourceName, Month month)
+        {
+            if (month == null)
+            {
+                return _walletHistory.GetBalance(sourceName);
+            }
+
+            return _walletHistory.GetSourceBalanceForMonth(sourceName, month);
         }
 
         private bool ShouldDisplayAllSources(DisplayBalanceCommand command)

@@ -26,5 +26,10 @@ namespace Modules.MoneyTracking
         {
             return (Value != null ? Value.GetHashCode() : 0);
         }
+
+        public static string GetSanitizedTagName(string tagName)
+        {
+            return tagName.StartsWith("#") ? tagName.Substring(1) : tagName;
+        }
     }
 }

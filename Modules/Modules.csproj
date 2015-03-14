@@ -67,6 +67,7 @@
     <Compile Include="MoneyTracking\CommandHandlers\HardcodedReservedWordsStore.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\OperationCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\OperationCommandHandler.cs" />
+    <Compile Include="MoneyTracking\Month.cs" />
     <Compile Include="MoneyTracking\Persistence\LegacyDataMagic.cs" />
     <Compile Include="MoneyTracking\Presentation\Balances.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayFilter.cs" />

@@ -38,7 +38,7 @@ namespace Modules.MoneyTracking.CommandHandlers
 
         private IList<Operation> GetOperationsForThisMonth()
         {
-            return _walletHistory.GetForMonth(_timeMaster.Today.Year, _timeMaster.Today.Month);
+            return _walletHistory.GetForMonth(new Month(_timeMaster.Today.Year, _timeMaster.Today.Month));
         }
 
         private bool OperationDealsWithAnySource(Operation operation, ICollection<string> sources)
