@@ -88,5 +88,45 @@
             _endToEnd.AssertExpectedResult(
                 "    #tag1: 6.00");
         }
+
+        [Test]
+        public void ShouldNotDisplayBalanceSumWhenDisplayingMultipleTagBalances()
+        {
+            //given
+            _endToEnd.Execute("/wallet add source 6 'desc' tag1 ootherTag2 -date 2012-03-03");
+            _endToEnd.Execute("/wallet add source 80 'desc' tag2 ootherTag5 -date 2012-03-03");
+            _endToEnd.Execute("/wallet sub source 2 'desc' tag1 ootherTag4 -date 2012-04-03");
+            _endToEnd.Execute("/wallet sub source 92 'desc' tag2 ootherTag3 -date 2012-04-03");
+            
+            _endToEnd.SetTime(new DateTime(2012, 04, 03));
+
+            //when
+            _endToEnd.Execute("/wallet balance #tag1 #ootherTag4 --m");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "          #tag1: -2.00",
+                "    #ootherTag4: -2.00",
+                "               :   [-]");
+        }
+
+        [Test]
+        public void ShouldNotAllowMixingNormalSourcesAndTagsInBalanceDisplay()
+        {
+            //given
+            _endToEnd.Execute("/wallet add source 6 'desc' tag1 ootherTag2 -date 2012-03-03");
+            _endToEnd.Execute("/wallet add source 80 'desc' tag2 ootherTag5 -date 2012-03-03");
+            _endToEnd.Execute("/wallet sub source 2 'desc' tag1 ootherTag4 -date 2012-04-03");
+            _endToEnd.Execute("/wallet sub source 92 'desc' tag2 ootherTag3 -date 2012-04-03");
+
+            _endToEnd.SetTime(new DateTime(2012, 04, 03));
+
+            //when
+            _endToEnd.Execute("/wallet balance #tag1 source");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    Error: Cannot mix sources and tags in balance command.");
+        }
     }
 }

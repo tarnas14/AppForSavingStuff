@@ -106,13 +106,13 @@
         {
             var date = new DateTime(month.Year, month.MonthNr, 1);
 
-            if (IsTag(sourceName))
+            if (Tag.IsTagName(sourceName))
             {
                 var tagOperationsThisMonth = GetTagHistoryForThisMonth(Tag.GetSanitizedTagName(sourceName), month);
                 var changesForTagThisMonth = tagOperationsThisMonth.SelectMany(operation => operation.Changes);
                 var tagMoneyBalanceForMonth = changesForTagThisMonth.Sum(change => change.Difference);
 
-                return tagMoneyBalanceForMonth;
+                return tagMoneyBalanceForMonth; 
             }
 
             using (var session = _storeProvider.Store.OpenSession())
@@ -184,7 +184,7 @@
             {
                 IList<Source> sources = new List<Source>();
 
-                if (IsTag(sourceName))
+                if (Tag.IsTagName(sourceName))
                 {
                     sources.Add(GetSourceFromTag(sourceName));
                 }
@@ -219,11 +219,6 @@
                 Name = tagName,
                 Balance = changes.Aggregate(new Moneyz(0), (money, change) => money + change.Difference)
             };
-        }
-
-        private bool IsTag(string sourceName)
-        {
-            return sourceName.StartsWith("#");
         }
 
         private IRavenQueryable<TEntity> WaitForQueryIfNecessary<TEntity>(IRavenQueryable<TEntity> query) where TEntity : class

@@ -268,7 +268,14 @@
 
             if (balancesDictionary.Count > 1)
             {
-                valuesColumn.Data.Add(balancesToDisplay.TotalBalance.ToString());
+                if (balancesToDisplay.DisplaySum)
+                {
+                    valuesColumn.Data.Add(balancesToDisplay.TotalBalance.ToString());
+                }
+                else
+                {
+                    valuesColumn.Data.Add("[-]");
+                }
             }
 
             var table = new TableDisplay(_console);

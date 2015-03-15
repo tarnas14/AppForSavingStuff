@@ -10,6 +10,7 @@
         public Balances()
         {
             _balances = new Dictionary<string, Moneyz>();
+            DisplaySum = true;
         }
 
         public void AddBalance(string displayName, Moneyz balance)
@@ -26,6 +27,8 @@
         {
             get { return _balances.Aggregate(new Moneyz(0), (m1, m2) => m1 + m2.Value); }
         }
+
+        public bool DisplaySum { get; set; }
 
         public void AddBalance(Source source)
         {

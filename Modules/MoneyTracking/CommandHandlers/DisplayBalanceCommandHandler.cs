@@ -1,5 +1,6 @@
 ﻿namespace Modules.MoneyTracking.CommandHandlers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using Presentation;
     using Raven.Abstractions.Extensions;
@@ -24,10 +25,26 @@
             }
             else
             {
+                CheckIfAllSourcesAreOfTheSameType(command.Sources);
                 command.Sources.ForEach(sourceName => balancesToDisplay.AddBalance(sourceName, GetBalance(sourceName, command.Month)));
             }
 
+            balancesToDisplay.DisplaySum = !OnlyTagsInSources(command.Sources);
+
             _walletUi.DisplayBalance(balancesToDisplay);
+        }
+
+        private void CheckIfAllSourcesAreOfTheSameType(IEnumerable<string> sources)
+        {
+            if (!OnlyTagsInSources(sources))
+            {
+                throw new WalletException("Cannot mix sources and tags in balance command.");
+            }
+        }
+
+        private static bool OnlyTagsInSources(IEnumerable<string> sources)
+        {
+            return sources.Any(Tag.IsTagName) && sources.All(Tag.IsTagName);
         }
 
         private Moneyz GetBalance(string sourceName, Month month)

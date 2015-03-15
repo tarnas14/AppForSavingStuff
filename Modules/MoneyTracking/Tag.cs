@@ -31,5 +31,10 @@ namespace Modules.MoneyTracking
         {
             return tagName.StartsWith("#") ? tagName.Substring(1) : tagName;
         }
+
+        public static bool IsTagName(string sourceName)
+        {
+            return sourceName.StartsWith("#");
+        }
     }
 }
