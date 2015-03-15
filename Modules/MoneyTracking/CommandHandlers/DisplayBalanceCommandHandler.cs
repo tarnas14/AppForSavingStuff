@@ -26,25 +26,38 @@
             else
             {
                 CheckIfAllSourcesAreOfTheSameType(command.Sources);
+
                 command.Sources.ForEach(sourceName => balancesToDisplay.AddBalance(sourceName, GetBalance(sourceName, command.Month)));
             }
 
-            balancesToDisplay.DisplaySum = !OnlyTagsInSources(command.Sources);
+            balancesToDisplay.DisplaySum = AllOfTheSameType(command.Sources) && NoTagsInSources(command.Sources);
 
             _walletUi.DisplayBalance(balancesToDisplay);
         }
 
+        private bool NoTagsInSources(IEnumerable<string> sources)
+        {
+            return !sources.Any(Tag.IsTagName);
+        }
+
         private void CheckIfAllSourcesAreOfTheSameType(IEnumerable<string> sources)
         {
-            if (!OnlyTagsInSources(sources))
+            if (!AllOfTheSameType(sources))
             {
                 throw new WalletException("Cannot mix sources and tags in balance command.");
             }
         }
 
-        private static bool OnlyTagsInSources(IEnumerable<string> sources)
+        private bool AllOfTheSameType(IEnumerable<string> sources)
         {
-            return sources.Any(Tag.IsTagName) && sources.All(Tag.IsTagName);
+            var tagSources = sources.Count(Tag.IsTagName);
+
+            if (tagSources == 0)
+            {
+                return true;
+            }
+
+            return tagSources == sources.Count();
         }
 
         private Moneyz GetBalance(string sourceName, Month month)
