@@ -12,7 +12,6 @@
         public void ShouldAddDifferencesToDataWithOnlyBeforeAndAfter()
         {
             //given
-            var now = new DateTime();
             var changes = new[]
             {
                 new Change

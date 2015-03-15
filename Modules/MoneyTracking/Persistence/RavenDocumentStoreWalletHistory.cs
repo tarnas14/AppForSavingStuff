@@ -51,7 +51,11 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                return WaitForQueryIfNecessary(session.Query<Operation>().OrderBy(operation => operation.When)).ToList();
+                var operations = WaitForQueryIfNecessary(session.Query<Operation>().OrderBy(operation => operation.When)).ToList();
+
+                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
+
+                return operations.ToList();
             }
         }
 
@@ -70,16 +74,9 @@
                 .Where(result => result.MonthYear == date.ToString("MMyy"))
                 .OrderBy(result => result.When).OfType<Operation>().ToList();
 
-            AddDifferencesToChangesInLegacyOperations(operations);
+            LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
 
             return operations;
-        }
-
-        private void AddDifferencesToChangesInLegacyOperations(IEnumerable<Operation> operations)
-        {
-            var changes = operations.SelectMany(operation => operation.Changes);
-
-            LegacyDataMagic.AddDifferencesToChanges(changes);
         }
 
         public IList<Source> GetSources()
@@ -110,6 +107,7 @@
             {
                 var tagOperationsThisMonth = GetTagHistoryForThisMonth(Tag.GetSanitizedTagName(sourceName), month);
                 var changesForTagThisMonth = tagOperationsThisMonth.SelectMany(operation => operation.Changes);
+
                 var tagMoneyBalanceForMonth = changesForTagThisMonth.Sum(change => change.Difference);
 
                 return tagMoneyBalanceForMonth; 
@@ -149,9 +147,13 @@
 
             using (var session = _storeProvider.Store.OpenSession())
             {
-                return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
+                var operations = WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
                     .Where(result => result.MonthYear == date.ToString("MMyy") && result.TagNames.Any(tag => tag == tagName))
                     .OrderBy(result => result.When).OfType<Operation>().ToList();
+
+                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
+
+                return operations;
             }
         }
 
