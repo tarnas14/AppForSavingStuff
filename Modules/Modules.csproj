@@ -69,6 +69,7 @@
     <Compile Include="MoneyTracking\CommandHandlers\OperationCommandHandler.cs" />
     <Compile Include="MoneyTracking\Month.cs" />
     <Compile Include="MoneyTracking\Persistence\LegacyDataMagic.cs" />
+    <Compile Include="MoneyTracking\Persistence\Sources_ByChanges.cs" />
     <Compile Include="MoneyTracking\Presentation\Balances.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayFilter.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayVerbosity.cs" />
@@ -80,7 +81,6 @@
     <Compile Include="MoneyTracking\Persistence\Operations_ByMonthYear.cs" />
     <Compile Include="MoneyTracking\Persistence\RavenDocumentStoreWalletHistory.cs" />
     <Compile Include="MoneyTracking\Persistence\SourceAlreadyExistsException.cs" />
-    <Compile Include="MoneyTracking\Persistence\Sources_ByName.cs" />
     <Compile Include="MoneyTracking\ReservedWordsStore.cs" />
     <Compile Include="MoneyTracking\Source.cs" />
     <Compile Include="MoneyTracking\Persistence\SourceDoesNotExistException.cs" />

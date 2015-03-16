@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Presentation;
+    using Raven.Abstractions.Extensions;
     using Raven.Client;
     using Raven.Client.Linq;
 
@@ -23,6 +23,9 @@
             using (var session = _storeProvider.Store.OpenSession())
             {
                 session.Store(toSave);
+
+                toSave.Changes.ForEach(change => session.Store(change));
+
                 SaveSources(toSave.Changes, session);
                 session.SaveChanges();
             }
@@ -83,7 +86,7 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                return session.Query<Source>().ToList();
+                return WaitForQueryIfNecessary(session.Query<Source>()).ToList();
             }
         }
 
@@ -193,7 +196,7 @@
                 else
                 {
                     sources = 
-                        WaitForQueryIfNecessary(session.Query<Source, Sources_ByName>())
+                        WaitForQueryIfNecessary(session.Query<Source>())
                         .Where(src => src.Name == sourceName)
                         .ToList();
                 }
