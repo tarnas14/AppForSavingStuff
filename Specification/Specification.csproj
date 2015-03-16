@@ -70,7 +70,7 @@
     <Compile Include="Presentation\BalancesViewModelTests.cs" />
     <Compile Include="Presentation\WalletUiTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Specs\MapReduceTests.cs" />
+    <Compile Include="Specs\MapReduceExploration.cs" />
     <Compile Include="WalletSpec\EndToEnd\DisplayBalanceTests.cs" />
     <Compile Include="WalletSpec\EndToEnd\BasicOperationTests.cs" />
     <Compile Include="WalletSpec\EndToEnd\EndToEndTester.cs" />

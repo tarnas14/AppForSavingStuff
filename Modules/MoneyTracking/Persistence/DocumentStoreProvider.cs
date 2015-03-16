@@ -24,7 +24,6 @@
             .Initialize();
 
             new Operations_ByMonthYear().Execute(store);
-            new Sources_ByChanges().Execute(store);
 
             return store;
         }
