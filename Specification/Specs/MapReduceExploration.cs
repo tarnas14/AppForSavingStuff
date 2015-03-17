@@ -63,12 +63,12 @@ namespace Specification.Specs
             }            
 
             //when
-            IList<Sources_ByChangesInOperations.Source2> sources;
+            IList<Sources_ByChangesInOperations.Result> sources;
             using (var session = provider.Store.OpenSession())
             {
 
 
-                sources = session.Query<Sources_ByChangesInOperations.Source2, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
+                sources = session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
             }
 
             //then
@@ -78,7 +78,7 @@ namespace Specification.Specs
         }
     }
 
-    internal class Sources_ByChangesInOperations : AbstractIndexCreationTask<Operation, Sources_ByChangesInOperations.Source2>
+    internal class Sources_ByChangesInOperations : AbstractIndexCreationTask<Operation, Sources_ByChangesInOperations.Result>
     {
         public override bool IsMapReduce
         {
@@ -104,14 +104,14 @@ namespace Specification.Specs
                                     };
         }
 
-        public class Source2
+        public class Result
         {
             public string Name { get; set; }
-            public double Balance { get; set; }
+            public decimal Balance { get; set; }
         }
     }
 
-    internal class Sources_ByChanges : AbstractIndexCreationTask<Change, Source>
+    internal class Sources_ByChanges : AbstractIndexCreationTask<Change, Sources_ByChanges.Result>
     {
         public override bool IsMapReduce
         {
@@ -121,7 +121,7 @@ namespace Specification.Specs
         public Sources_ByChanges()
         {
             Map = changes => from change in changes
-                             select new Source
+                             select new
                              {
                                  Name = change.Source,
                                  Balance = change.Difference.Value
@@ -130,11 +130,17 @@ namespace Specification.Specs
             Reduce = results => from result in results
                                 group result by result.Name
                                     into g
-                                    select new Source
+                                    select new
                                     {
                                         Name = g.Key,
-                                        Balance = g.Sum(x => x.Balance.Value)
+                                        Balance = g.Sum(x => x.Balance)
                                     };
+        }
+
+        public class Result
+        {
+            public string Name { get; set; }
+            public decimal Balance { get; set; }
         }
     }
 }
