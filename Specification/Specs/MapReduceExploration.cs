@@ -1,4 +1,6 @@
-﻿namespace Specification.Specs
+﻿using System.Threading;
+
+namespace Specification.Specs
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +16,7 @@
         public void ShouldMapReduceSourcesFromStoredChanges()
         {
             //given
-            var provider = new DocumentStoreProvider() {RunInMemory = true};
+            var provider = new DocumentStoreProvider() { RunInMemory = true };
 
             new Sources_ByChanges().Execute(provider.Store);
 
@@ -56,24 +58,27 @@
             {
                 session.Store(opreation1);
                 session.Store(operation2);
+
                 session.SaveChanges();
-            }
+            }            
 
             //when
-            IList<Source> sources;
+            IList<Sources_ByChangesInOperations.Source2> sources;
             using (var session = provider.Store.OpenSession())
             {
-                sources = session.Query<Source, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResultsAsOfNow()).Where(s => s.Name == "asdf").ToList();
+
+
+                sources = session.Query<Sources_ByChangesInOperations.Source2, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
             }
 
             //then
             var source = sources.SingleOrDefault();
             Assert.That(source, Is.Not.Null);
-            Assert.That(source.Balance, Is.EqualTo(new Moneyz(4)));
+            Assert.That(source.Balance, Is.EqualTo(4));
         }
     }
 
-    internal class Sources_ByChangesInOperations : AbstractIndexCreationTask<Operation, Source>
+    internal class Sources_ByChangesInOperations : AbstractIndexCreationTask<Operation, Sources_ByChangesInOperations.Source2>
     {
         public override bool IsMapReduce
         {
@@ -83,20 +88,26 @@
         public Sources_ByChangesInOperations()
         {
             Map = operations => from operation in operations
-                from change in operation.Changes
-                select new Source
-                {
-                    Name = change.Source,
-                    Balance = change.Difference
-                };
+                                from change in operation.Changes
+                                select new
+                                {
+                                    Name = change.Source,
+                                    Balance = change.Difference.Value
+                                };
             Reduce = results => from result in results
-                group result by result.Name
-                into g
-                select new Source
-                {
-                    Name = g.Key,
-                    Balance = g.Sum(x => x.Balance)
-                };
+                                group result by result.Name
+                                    into g
+                                    select new
+                                    {
+                                        Name = g.Key,
+                                        Balance = g.Sum(x => x.Balance)
+                                    };
+        }
+
+        public class Source2
+        {
+            public string Name { get; set; }
+            public double Balance { get; set; }
         }
     }
 
@@ -113,7 +124,7 @@
                              select new Source
                              {
                                  Name = change.Source,
-                                 Balance = change.Difference
+                                 Balance = change.Difference.Value
                              };
 
             Reduce = results => from result in results
@@ -122,7 +133,7 @@
                                     select new Source
                                     {
                                         Name = g.Key,
-                                        Balance = g.Sum(x => x.Balance)
+                                        Balance = g.Sum(x => x.Balance.Value)
                                     };
         }
     }
