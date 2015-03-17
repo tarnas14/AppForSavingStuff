@@ -80,7 +80,6 @@
         {
             //given
             _endToEnd.Execute(
-                "/wallet source getin",
                 "/wallet add mbank 5 'my description' tag1 tag2",
                 "/wallet trans mbank getin 3 'my description' tag1 tag2");
 
@@ -96,7 +95,6 @@
         {
             //given
             _endToEnd.Execute(
-                "/wallet source getin",
                 "/wallet add mbank 5 'my description' tag1 tag2",
                 "/wallet trans mbank getin 3 'my description' tag1 tag2");
 
