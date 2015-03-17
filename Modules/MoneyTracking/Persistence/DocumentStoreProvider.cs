@@ -1,4 +1,7 @@
-﻿namespace Modules.MoneyTracking.Persistence
+﻿using System;
+using Raven.Client.Extensions;
+
+namespace Modules.MoneyTracking.Persistence
 {
     using Raven.Client;
     using Raven.Client.Embedded;
@@ -19,9 +22,12 @@
             IDocumentStore store = new EmbeddableDocumentStore()
             {
                 DataDirectory = "Database",
-                RunInMemory = RunInMemory
+                DefaultDatabase = "Database",
+                RunInMemory = RunInMemory,                
             }
             .Initialize();
+
+            store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists("Database");
 
             new Operations_ByMonthYear().Execute(store);
 
