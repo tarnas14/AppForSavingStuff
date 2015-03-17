@@ -53,10 +53,6 @@
             var op5 = new Operation(testDate);
             op5.AddChange("src", new Moneyz(69) );
 
-            _walletHistory.CreateSource("mbank");
-            _walletHistory.CreateSource("getin");
-            _walletHistory.CreateSource("src");
-
             _walletHistory.SaveOperation(op1);
             _walletHistory.SaveOperation(op2);
             _walletHistory.SaveOperation(op3);

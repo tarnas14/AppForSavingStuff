@@ -1,18 +1,24 @@
 namespace Modules.MoneyTracking.CommandHandlers
 {
+    using Persistence;
+
     public class OperationCommandHandler : CommandHandler<OperationCommand>
     {
         private readonly WalletHistory _walletHistory;
         private readonly TimeMaster _timeMaster;
+        private readonly ReservedWordsStore _reservedWordsStore;
 
-        public OperationCommandHandler(WalletHistory walletHistory, TimeMaster timeMaster)
+        public OperationCommandHandler(WalletHistory walletHistory, TimeMaster timeMaster, ReservedWordsStore reservedWordsStore)
         {
             _walletHistory = walletHistory;
             _timeMaster = timeMaster;
+            _reservedWordsStore = reservedWordsStore;
         }
 
         public void Execute(OperationCommand command)
         {
+            CheckIfSourceNameIsReserved(command.Source);
+
             var when = command.When ?? _timeMaster.Today;
 
             var operation = new Operation(when)
@@ -31,6 +37,14 @@ namespace Modules.MoneyTracking.CommandHandlers
             }
 
             _walletHistory.SaveOperation(operation);
+        }
+
+        private void CheckIfSourceNameIsReserved(string source)
+        {
+            if (_reservedWordsStore.IsReserved(source))
+            {
+                throw new SourceNameIsReservedException();
+            }
         }
 
         private void StandardOperation(Operation operation, OperationCommand command)

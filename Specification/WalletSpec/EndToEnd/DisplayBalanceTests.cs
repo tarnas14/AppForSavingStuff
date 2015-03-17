@@ -12,8 +12,6 @@
         public void Setup()
         {
             _endToEnd = new EndToEndTester();
-            _endToEnd.Execute("/wallet source source");
-            _endToEnd.Execute("/wallet source otherSource");
         }
 
         [Test]

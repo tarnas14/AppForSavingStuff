@@ -20,7 +20,6 @@
         {
             //given
             const string source = "sourceName";
-            _endToEnd.Execute(string.Format("/wallet source {0}", source));
             _endToEnd.Execute(string.Format("/wallet add {0} 4 -date 2000-11-30", source));
             _endToEnd.Execute(string.Format("/wallet add {0} 2 -date 2000-12-01", source));
 
@@ -42,8 +41,6 @@
             //given
             const string source = "sourceName";
             const string otherSource = "diffSource";
-            _endToEnd.Execute(string.Format("/wallet source {0}", source));
-            _endToEnd.Execute(string.Format("/wallet source {0}", otherSource));
             _endToEnd.Execute(string.Format("/wallet add {0} 4 -date 2000-11-30", source));
             _endToEnd.Execute(string.Format("/wallet add {0} 2 -date 2000-12-01", source));
             _endToEnd.Execute(string.Format("/wallet sub {0} 1 -date 2000-12-01", source));
@@ -71,9 +68,7 @@
         public void ShouldDisplayHistoryWithTags()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank");
             _endToEnd.Execute("/wallet add mbank 2 description tag2 tag3");
-            _endToEnd.Execute("/wallet source getin");
             _endToEnd.Execute("/wallet trans mbank getin 1 'another description' tag3 taggg");
 
             //when
@@ -94,8 +89,6 @@
         public void ShouldDisplayHistoryWithDescriptions()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank");
-            _endToEnd.Execute("/wallet source getin");
             _endToEnd.Execute("/wallet add mbank 2 short");
             _endToEnd.Execute("/wallet sub mbank 1 'other description'");
             _endToEnd.Execute("/wallet trans mbank getin 1 'trans description'");
@@ -118,8 +111,6 @@
         public void ShouldShortenDescriptionsTo30Characters()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank");
-            _endToEnd.Execute("/wallet source getin");
             _endToEnd.Execute("/wallet add mbank 2 'some very long description longer than 30'");
             _endToEnd.Execute("/wallet sub mbank 1 'short description lol'");
             _endToEnd.Execute("/wallet trans mbank getin 1 'another quite long description to make the point of shortening it for display'");
@@ -143,8 +134,6 @@
         public void ShouldDisplayHistoryWithBothDescriptionsAndTags()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank");
-            _endToEnd.Execute("/wallet source getin");
             _endToEnd.Execute("/wallet add mbank 2 short tag1 tag2");
             _endToEnd.Execute("/wallet sub mbank 1 'other description' tag3 tag4");
             _endToEnd.Execute("/wallet trans mbank getin 1 'trans description' tag5 tag6");
@@ -168,9 +157,7 @@
         public void ShouldDisplayHistoryForSpecificSource()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank");
             _endToEnd.Execute("/wallet add mbank 2 description tag2 tag3");
-            _endToEnd.Execute("/wallet source getin");
             _endToEnd.Execute("/wallet add getin 2");
             _endToEnd.Execute("/wallet trans mbank getin 1 'another description' tag3 taggg");
 
@@ -192,9 +179,6 @@
         public void ShouldDisplayHistoryForMultipleSources()
         {
             //given
-            _endToEnd.Execute("/wallet source src1");
-            _endToEnd.Execute("/wallet source src2");
-            _endToEnd.Execute("/wallet source src3");
             _endToEnd.Execute("/wallet add src1 1");
             _endToEnd.Execute("/wallet add src2 2");
             _endToEnd.Execute("/wallet add src3 3");

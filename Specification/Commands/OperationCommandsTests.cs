@@ -28,13 +28,28 @@
             {
                 WaitForNonStale = true
             };
-            _walletHistory.CreateSource(TestSource);
-            _walletHistory.CreateSource(TestDestination);
-
-            _commandHandler = new OperationCommandHandler(_walletHistory, _timeMasterMock.Object);
 
             _reservedWordsStoreMock = new Mock<ReservedWordsStore>();
             _reservedWordsStoreMock.Setup(mock => mock.IsReserved(It.IsAny<string>())).Returns(false);
+
+            _commandHandler = new OperationCommandHandler(_walletHistory, _timeMasterMock.Object, _reservedWordsStoreMock.Object);
+        }
+
+        [Test]
+        public void ShouldNotAllowReservedSource()
+        {
+            //given
+            var command = new OperationCommand
+            {
+                Source = "reserved"
+            };
+            _reservedWordsStoreMock.Setup(mock => mock.IsReserved(It.IsAny<string>())).Returns(true);
+
+            //when
+            TestDelegate savingOperationWithRerservedSourcename = () => _commandHandler.Execute(command);
+
+            //then
+            Assert.That(savingOperationWithRerservedSourcename, Throws.Exception.TypeOf<SourceNameIsReservedException>());
         }
 
         [Test]
@@ -49,7 +64,7 @@
             };
             var walletHistoryMock = new Mock<WalletHistory>();
             walletHistoryMock.Setup(history => history.GetBalance(It.IsAny<string>())).Returns(new Moneyz(0));
-            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, _timeMasterMock.Object);
+            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, _timeMasterMock.Object, Mock.Of<ReservedWordsStore>());
 
             //when
             commandHandler.Execute(command);
@@ -140,24 +155,6 @@
 
             var destinationBalance = _walletHistory.GetBalance(TestDestination);
             Assert.That(destinationBalance, Is.EqualTo(new Moneyz(howMuch)));
-        }
-
-        [Test]
-        public void ShouldNotCreateSourceWithNameFromReservedWords()
-        {
-            //given
-            _reservedWordsStoreMock.Setup(store => store.IsReserved(It.IsAny<string>())).Returns(true);
-            var commandHandler = new CreateSourceCommandHandler(_walletHistory, _reservedWordsStoreMock.Object);
-            var command = new CreateSourceCommand
-            {
-                Name = "testName"
-            };
-
-            //when
-            TestDelegate result = () => commandHandler.Execute(command);
-
-            //then
-            Assert.Throws<WalletException>(result);
         }
     }
 }

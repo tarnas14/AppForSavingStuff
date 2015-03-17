@@ -1,5 +1,4 @@
-﻿using System;
-using Raven.Client.Extensions;
+﻿using Raven.Client.Extensions;
 
 namespace Modules.MoneyTracking.Persistence
 {
@@ -30,6 +29,7 @@ namespace Modules.MoneyTracking.Persistence
             store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists("Database");
 
             new Operations_ByMonthYear().Execute(store);
+            new Sources_ByChangesInOperations().Execute(store);
 
             return store;
         }

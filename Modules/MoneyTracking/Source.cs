@@ -1,8 +1,11 @@
 ﻿namespace Modules.MoneyTracking
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Persistence;
+
     public class Source
     {
-        public string Id { get; set; }
         public string Name { get; set; }
         public Moneyz Balance { get; set; }
 
@@ -25,6 +28,15 @@
         public void SetBalance(Moneyz newBalance)
         {
             Balance = newBalance;
+        }
+
+        public static IList<Source> FromMapReduceResults(IEnumerable<Sources_ByChangesInOperations.Result> results)
+        {
+            return results.Select(result => new Source
+            {
+                Name = result.Name,
+                Balance = new Moneyz(result.Balance)
+            }).ToList();
         }
     }
 }

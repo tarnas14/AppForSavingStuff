@@ -10,10 +10,8 @@
         IList<Source> GetSources();
         Moneyz GetBalance(string sourceName);
         Moneyz GetSourceBalanceForMonth(string sourceName, Month month);
-        void CreateSource(string sourceName);
         IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month);
         IList<Tag> GetTagsForMonth(Month month);
         IList<Tag> GetAllTags(); 
-        bool Exists(string sourceName);
     }
 }

@@ -11,7 +11,7 @@
 
         public bool IsReserved(string word)
         {
-            return ReservedWords.Contains(word);
+            return ReservedWords.Contains(word.ToLower());
         }
     }
 }

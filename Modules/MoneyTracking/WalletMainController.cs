@@ -12,12 +12,14 @@
         private readonly WalletUi _walletUi;
         private readonly WalletHistory _ravenHistory;
         private readonly TimeMaster _timeMaster;
+        private ReservedWordsStore _reservedWordsStore;
 
-        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster)
+        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, ReservedWordsStore reservedWordsStore)
         {
             _walletUi = walletUi;
             _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
+            _reservedWordsStore = reservedWordsStore;
         }
 
         public void Execute(UserCommand userCommand)
@@ -38,7 +40,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(addCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster, _reservedWordsStore).Execute(addCommand);
                         break;
                     case "sub":
                         var subCommand = new OperationCommand
@@ -49,7 +51,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(subCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster, _reservedWordsStore).Execute(subCommand);
 
                         break;
                     case "trans":
@@ -62,7 +64,7 @@
                             Tags = GetTags(userCommand, 5),
                             When = GetDate(userCommand)
                         };;
-                        new OperationCommandHandler(_ravenHistory, _timeMaster).Execute(transCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster, _reservedWordsStore).Execute(transCommand);
 
                         break;
                     case "balance":
@@ -73,14 +75,6 @@
                         };
                         new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
 
-                        break;
-                    case "source":
-                        sourceName = userCommand.Params[1];
-                        var newSourceCommand = new CreateSourceCommand
-                        {
-                            Name = sourceName
-                        };
-                        new CreateSourceCommandHandler(_ravenHistory, new HardcodedReservedWordsStore()).Execute(newSourceCommand);
                         break;
                     case "history":
                         var displayHistoryCommand = new DisplayHistoryCommand

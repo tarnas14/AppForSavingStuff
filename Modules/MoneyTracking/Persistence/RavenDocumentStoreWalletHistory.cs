@@ -22,30 +22,26 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
+                AdditionalInformationToChanges(toSave.Changes);
                 session.Store(toSave);
-
-                toSave.Changes.ForEach(change => session.Store(change));
-
-                SaveSources(toSave.Changes, session);
                 session.SaveChanges();
             }
         }
 
-        private void SaveSources(IEnumerable<Change> changes, IDocumentSession session)
+        private void AdditionalInformationToChanges(IEnumerable<Change> changes)
         {
             foreach (var change in changes)
             {
                 var source = GetSourceByName(change.Source);
                 if (source != null)
                 {
-                    var after = source.Balance + change.Difference;
-                    session.Load<Source>(source.Id).SetBalance(after);
                     change.Before = source.Balance;
-                    change.After = after;
+                    change.After = source.Balance + change.Difference;
                 }
                 else
                 {
-                    session.Store(new Source(change.Source, change.Difference));
+                    change.Before = new Moneyz(0);
+                    change.After = change.Difference;
                 }
             }
         }
@@ -86,7 +82,8 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                return WaitForQueryIfNecessary(session.Query<Source>()).ToList();
+                var results = WaitForQueryIfNecessary(session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>()).ToList();
+                return Source.FromMapReduceResults(results);
             }
         }
 
@@ -130,20 +127,6 @@
             }
         }
 
-        public void CreateSource(string sourceName)
-        {
-            if (Exists(sourceName))
-            {
-                throw new SourceAlreadyExistsException(sourceName);
-            }
-
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                session.Store(new Source(sourceName));
-                session.SaveChanges();
-            }
-        }
-
         public IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month)
         {
             var date = new DateTime(month.Year, month.MonthNr, 1);
@@ -178,11 +161,6 @@
             return tags.ToList();
         }
 
-        public bool Exists(string sourceName)
-        {
-            return null != GetSourceByName(sourceName);
-        }
-
         private Source GetSourceByName(string sourceName)
         {
             using (var session = _storeProvider.Store.OpenSession())
@@ -195,10 +173,11 @@
                 }
                 else
                 {
-                    sources = 
-                        WaitForQueryIfNecessary(session.Query<Source>())
+                    var results =
+                        WaitForQueryIfNecessary(session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>())
                         .Where(src => src.Name == sourceName)
                         .ToList();
+                    sources = Source.FromMapReduceResults(results);
                 }
 
                 if (sources.Count == 1)

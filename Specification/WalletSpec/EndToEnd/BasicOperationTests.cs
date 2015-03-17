@@ -14,39 +14,14 @@
         }
 
         [Test]
-        public void ShouldCreateSource()
-        {
-            //given
-            _endToEnd.Execute("/wallet source mbank");
-
-            //when
-            _endToEnd.Execute("/wallet balance mbank");
-
-            //then
-            _endToEnd.AssertExpectedResult("    mbank: 0.00");
-        }
-
-        [Test]
-        public void ShouldNotCreateSourceCalledTags()
+        public void ShouldNotAcceptOperationsWithSourceCalledTags()
         {
             //when
-            _endToEnd.Execute("/wallet source tags");
+            _endToEnd.ReserveWord("tags");
+            _endToEnd.Execute("/wallet add tags 2");
 
             //then
             _endToEnd.AssertExpectedResult("    Error: 'tags' is a reserved word and cannot be used as a source name.");
-        }
-
-        [Test]
-        public void ShouldNotAllowDuplicatingSources()
-        {
-            //given
-            _endToEnd.Execute("/wallet source mbank");
-
-            //when
-            _endToEnd.Execute("/wallet source mbank");
-
-            //then
-            _endToEnd.AssertExpectedResult("    Error: Source mbank already exists.");
         }
 
         [Test]
@@ -63,8 +38,7 @@
         public void ShouldAllowAddingToSources()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank", 
-                               "/wallet add mbank 2");
+            _endToEnd.Execute("/wallet add mbank 2");
 
             //when
             _endToEnd.Execute("/wallet balance mbank");
@@ -77,9 +51,7 @@
         public void ShouldAllowStoringDescriptionAndTagsWhenAddingToSources()
         {
             //given
-            _endToEnd.Execute(
-                "/wallet source mbank",
-                "/wallet add mbank 2 'my description' tag1 tag2");
+            _endToEnd.Execute("/wallet add mbank 2 'my description' tag1 tag2");
 
             //when
             _endToEnd.Execute("/wallet balance mbank");
@@ -92,7 +64,7 @@
         public void ShouldCalculateBalanceFromOperationHistory()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank",
+            _endToEnd.Execute(
                 "/wallet add mbank 5 'my description' tag1 tag2",
                 "/wallet sub mbank 2 'my description' tag1 tag2");
 
@@ -107,7 +79,7 @@
         public void ShouldRemoveMoneyFromSourceOnTransfer()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank",
+            _endToEnd.Execute(
                 "/wallet source getin",
                 "/wallet add mbank 5 'my description' tag1 tag2",
                 "/wallet trans mbank getin 3 'my description' tag1 tag2");
@@ -123,7 +95,7 @@
         public void ShouldAddMoneyToDestinationOnTransfer()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank",
+            _endToEnd.Execute(
                 "/wallet source getin",
                 "/wallet add mbank 5 'my description' tag1 tag2",
                 "/wallet trans mbank getin 3 'my description' tag1 tag2");
@@ -139,7 +111,7 @@
         public void ShouldDisplayAllTags()
         {
             //given
-            _endToEnd.Execute("/wallet source mbank",
+            _endToEnd.Execute(
                 "/wallet add mbank 20 asdf tag1",
                 "/wallet sub mbank 2 qwer tag3 tag2");
 
@@ -153,12 +125,8 @@
         [Test]
         public void ShouldAddOperationWithSpecifiedDate()
         {
-            //given
-            _endToEnd.Execute("/wallet source mbank");
-
             //when
             _endToEnd.Execute("/wallet add mbank 20 'asdf' tag1 tag2 tag3 tag4 -date 2015-02-02");
-            //_endToEnd.Execute("/wallet sub mbank 10");
 
             //then
             _endToEnd.Execute("/wallet history");

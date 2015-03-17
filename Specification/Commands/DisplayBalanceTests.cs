@@ -22,8 +22,6 @@
             _consoleMock = new ConsoleMock();
 
             _walletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider(){RunInMemory = true}){WaitForNonStale = true};
-            _walletHistory.CreateSource("source1");
-            _walletHistory.CreateSource("source2");
 
             _commandHandler = new DisplayBalanceCommandHandler(_walletHistory, new WalletUi(_consoleMock));
         }

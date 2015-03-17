@@ -56,8 +56,6 @@
     <Compile Include="MoneyTracking\Change.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\CommandHandler.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\CreateSourceCommand.cs" />
-    <Compile Include="MoneyTracking\CommandHandlers\CreateSourceCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayBalanceCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayBalanceCommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayHistoryCommand.cs" />
@@ -69,6 +67,8 @@
     <Compile Include="MoneyTracking\CommandHandlers\OperationCommandHandler.cs" />
     <Compile Include="MoneyTracking\Month.cs" />
     <Compile Include="MoneyTracking\Persistence\LegacyDataMagic.cs" />
+    <Compile Include="MoneyTracking\Persistence\SourceNameIsReservedException.cs" />
+    <Compile Include="MoneyTracking\Persistence\Sources_ByChangesInOperations.cs" />
     <Compile Include="MoneyTracking\Presentation\Balances.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayFilter.cs" />
     <Compile Include="MoneyTracking\Presentation\HistoryDisplayVerbosity.cs" />

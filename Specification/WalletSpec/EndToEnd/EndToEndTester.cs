@@ -16,6 +16,7 @@
         private readonly ConsoleUi _ui;
         private readonly ConsoleMock _consoleMock;
         private readonly Mock<TimeMaster> _timeMasterMock;
+        private readonly Mock<ReservedWordsStore> _reservedWordsStoreMock;
 
         public EndToEndTester()
         {
@@ -33,8 +34,9 @@
             };
 
             _timeMasterMock = new Mock<TimeMaster>();
+            _reservedWordsStoreMock = new Mock<ReservedWordsStore>();
 
-            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object), "wallet");
+            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _reservedWordsStoreMock.Object), "wallet");
         }
 
         public EndToEndTester Execute(string userCommandString)
@@ -62,6 +64,11 @@
         public void AssertExpectedResult(params string[] expectedOutput)
         {
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
+        }
+
+        public void ReserveWord(string wordToReserve)
+        {
+            _reservedWordsStoreMock.Setup(reservedWordsStore => reservedWordsStore.IsReserved(wordToReserve)).Returns(true);
         }
     }
 }
