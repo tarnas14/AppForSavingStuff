@@ -82,11 +82,7 @@
         {
             var changes = operations.SelectMany(operation => operation.Changes);
 
-            changes.ToList().ForEach(change =>
-            {
-                change.Difference = change.After - change.Before;
-                change.Before = null;
-            });
+            LegacyDataMagic.AddDifferencesToChanges(changes);
         }
     }
 }

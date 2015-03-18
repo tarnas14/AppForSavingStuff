@@ -9,7 +9,11 @@ namespace Modules.MoneyTracking.Persistence
         {
             var changesWithoutDiffs = changes.Where(change => change.Difference == null);
 
-            changesWithoutDiffs.ToList().ForEach(change => change.Difference = change.After - change.Before);
+            changesWithoutDiffs.ToList().ForEach(change =>
+            {
+                change.Difference = change.After - change.Before;
+                change.Before = null;
+            });
         }
     }
 }
