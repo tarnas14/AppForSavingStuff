@@ -66,6 +66,7 @@
     <Compile Include="Commands\DisplayHistoryTests.cs" />
     <Compile Include="Commands\OperationCommandsTests.cs" />
     <Compile Include="Commands\TagHistoryTests.cs" />
+    <Compile Include="DataMigration\CalculatingDifferenceForLegacyChangeDocuments.cs" />
     <Compile Include="Halp\ConsoleMock.cs" />
     <Compile Include="Presentation\BalancesViewModelTests.cs" />
     <Compile Include="Presentation\WalletUiTests.cs" />
