@@ -17,7 +17,7 @@ namespace Modules.MoneyTracking.Persistence
                 select new
                 {
                     Name = change.Source,
-                    Balance = change.Difference.Value
+                    Balance = change.Difference == null ? (change.After.Value - change.Before.Value) : change.Difference.Value
                 };
             Reduce = results => from result in results
                 group result by result.Name
