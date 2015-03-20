@@ -19,5 +19,10 @@
 
             return new Month(Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]));
         }
+
+        public string GetIndexString()
+        {
+            return string.Format("{0,2:00}{1,2:00}", MonthNr, Year - 2000); //very ugly hack, but will work for 985 years to come, so whatever
+        }
     }
 }
