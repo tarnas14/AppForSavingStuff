@@ -87,8 +87,8 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                var results = WaitForQueryIfNecessary(session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>()).ToList();
-                return Source.FromMapReduceResults(results);
+                var results = WaitForQueryIfNecessary(session.Query<Source, Sources_ByChangesInOperations>()).ToList();
+                return results;
             }
         }
 
@@ -171,11 +171,10 @@
                 }
                 else
                 {
-                    var results =
-                        WaitForQueryIfNecessary(session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>())
+                    sources =
+                        WaitForQueryIfNecessary(session.Query<Source, Sources_ByChangesInOperations>())
                         .Where(src => src.Name == sourceName)
                         .ToList();
-                    sources = Source.FromMapReduceResults(results);
                 }
 
                 if (sources.Count == 1)

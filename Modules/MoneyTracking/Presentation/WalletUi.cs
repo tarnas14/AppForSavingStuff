@@ -212,7 +212,7 @@
             tableDisplay.DisplayHeaderless();
         }
 
-        public void DisplayMultipleBalances(IEnumerable<Source> sources)
+        public void DisplayMultipleBalances(IEnumerable<MoneyTracking.Source> sources)
         {
             var nameColumn = new Column
             {

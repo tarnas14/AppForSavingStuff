@@ -4,6 +4,7 @@
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Presentation;
     using NUnit.Framework;
+    using Source = Modules.MoneyTracking.Source;
 
     [TestFixture]
     class BalancesViewModelTests

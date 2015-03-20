@@ -29,16 +29,16 @@
             }            
 
             //when
-            IList<Sources_ByChangesInOperations.Result> sources;
+            IList<Source> sources;
             using (var session = provider.Store.OpenSession())
             {
-                sources = session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
+                sources = session.Query<Source, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
             }
 
             //then
             var source = sources.SingleOrDefault();
             Assert.That(source, Is.Not.Null);
-            Assert.That(source.Balance, Is.EqualTo(4));
+            Assert.That(source.Balance, Is.EqualTo(new Moneyz(4)));
         }
 
         [Test]
@@ -66,16 +66,16 @@
             }
 
             //when
-            IList<Sources_ByChangesInOperations.Result> sources;
+            IList<Source> sources;
             using (var session = provider.Store.OpenSession())
             {
-                sources = session.Query<Sources_ByChangesInOperations.Result, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
+                sources = session.Query<Source, Sources_ByChangesInOperations>().Customize(q => q.WaitForNonStaleResults()).Where(s => s.Name == "asdf").ToList();
             }
 
             //then
             var source = sources.SingleOrDefault();
             Assert.That(source, Is.Not.Null);
-            Assert.That(source.Balance, Is.EqualTo(6));
+            Assert.That(source.Balance, Is.EqualTo(new Moneyz(6)));
         }
     }
 }

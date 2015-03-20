@@ -30,7 +30,7 @@
 
         public bool DisplaySum { get; set; }
 
-        public void AddBalance(Source source)
+        public void AddBalance(MoneyTracking.Source source)
         {
             AddBalance(source.Name, source.Balance);
         }
