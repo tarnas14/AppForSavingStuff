@@ -17,12 +17,19 @@
         {
             var parts = monthParam.Split('-');
 
-            return new Month(Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]));
+            int yearh = Convert.ToInt32(parts[0]);
+            int month = Convert.ToInt32(parts[1]);
+            return new Month(yearh, month);
         }
 
         public string GetIndexString()
         {
             return string.Format("{0,2:00}{1,2:00}", MonthNr, Year - 2000); //very ugly hack, but will work for 985 years to come, so whatever
+        }
+
+        public static Month FromToday(TimeMaster timeMaster)
+        {
+            return new Month(timeMaster.Today.Year, timeMaster.Today.Month);
         }
     }
 }

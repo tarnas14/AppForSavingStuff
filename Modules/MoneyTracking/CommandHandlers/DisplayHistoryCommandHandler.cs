@@ -19,7 +19,7 @@ namespace Modules.MoneyTracking.CommandHandlers
 
         public void Execute(DisplayHistoryCommand command)
         {
-            var operations = command.Monthly ? GetOperationsForThisMonth() : _walletHistory.GetFullHistory();
+            var operations = GetOperations(command.Monthly, command.Month);
 
             if (command.Sources.Any())
             {
@@ -36,9 +36,19 @@ namespace Modules.MoneyTracking.CommandHandlers
             });
         }
 
-        private IList<Operation> GetOperationsForThisMonth()
+        private IList<Operation> GetOperations(bool monthly, Month month)
         {
-            return _walletHistory.GetForMonth(new Month(_timeMaster.Today.Year, _timeMaster.Today.Month));
+            if (month != null)
+            {
+                return _walletHistory.GetForMonth(month);
+            }
+
+            if (monthly)
+            {
+                return _walletHistory.GetForMonth(new Month(_timeMaster.Today.Year, _timeMaster.Today.Month));
+            }
+
+            return _walletHistory.GetFullHistory();
         }
 
         private bool OperationDealsWithAnySource(Operation operation, ICollection<string> sources)

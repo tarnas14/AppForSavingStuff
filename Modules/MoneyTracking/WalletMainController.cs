@@ -71,8 +71,9 @@
                         var displayBalanceCommand = new DisplayBalanceCommand
                         {
                             Sources = GetParamsFrom(1, userCommand.Params),
-                            Month = GetMonth(userCommand)
+                            Month = GetMonthForBalanceDisplay(userCommand)
                         };
+
                         new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
 
                         break;
@@ -80,6 +81,7 @@
                         var displayHistoryCommand = new DisplayHistoryCommand
                         {
                             Monthly = userCommand.Flags.Contains("m"),
+                            Month = GetMonthForHistoryDisplay(userCommand),
                             DisplayTags = userCommand.Flags.Contains("t"),
                             DisplayDescriptions = userCommand.Flags.Contains("d")
                         };
@@ -100,7 +102,23 @@
             }
         }
 
-        private Month GetMonth(UserCommand userCommand)
+        private Month GetMonthForHistoryDisplay(UserCommand userCommand)
+        {
+            string month;
+            if (userCommand.TryGetParam("month", out month))
+            {
+                return Month.FromString(month);
+            }
+
+            if (userCommand.Flags.Contains("m"))
+            {
+                return Month.FromToday(_timeMaster);
+            }
+
+            return null;
+        }
+
+        private Month GetMonthForBalanceDisplay(UserCommand userCommand)
         {
             if (!userCommand.Flags.Contains("m"))
             {
@@ -110,7 +128,7 @@
             string monthParam;
             if (!userCommand.TryGetParam("month", out monthParam))
             {
-                return new Month(_timeMaster.Today.Year, _timeMaster.Today.Month);
+                return Month.FromToday(_timeMaster);
             }
 
             return Month.FromString(monthParam);

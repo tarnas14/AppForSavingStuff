@@ -61,10 +61,13 @@
         }
 
         [Test]
-        public void ShouldDisplayHistoryOfOperations()
+        public void ShouldDisplayHistoryOfOperationsWhenMonthlyIsFalseAndMonthNotSet()
         {
             //given
-            var command = new DisplayHistoryCommand();
+            var command = new DisplayHistoryCommand
+            {
+                Monthly = false
+            };
             var expectedLines = new List<string>
             {
                 "    when        where         howMuch  valueAfter",
@@ -103,6 +106,52 @@
                 "                mbank           -0.10        2.00",
                 "                getin           +0.10        0.11",
                 "    2014-05-25  src            +69.00       69.00"
+            };
+
+            //when
+            _handler.Execute(command);
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
+
+        [Test]
+        public void ShouldDisplayHistoryForSpecifiedMonth()
+        {
+            //given
+            var command = new DisplayHistoryCommand
+            {
+                Monthly = true,
+                Month = Month.FromString("2014-04")
+            };
+            var expectedLines = new List<string>
+            {
+                "    when        where  howMuch  valueAfter",
+                string.Empty,
+                "    2014-04-25  mbank    +2.50        2.50"
+            };
+
+            //when
+            _handler.Execute(command);
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
+
+        [Test]
+        public void ShouldDisplayHistoryForSpecificMonthEvenIfMonthlyIsNotSet()
+        {
+            //given
+            var command = new DisplayHistoryCommand
+            {
+                Monthly = false,
+                Month = Month.FromString("2014-04")
+            };
+            var expectedLines = new List<string>
+            {
+                "    when        where  howMuch  valueAfter",
+                string.Empty,
+                "    2014-04-25  mbank    +2.50        2.50"
             };
 
             //when

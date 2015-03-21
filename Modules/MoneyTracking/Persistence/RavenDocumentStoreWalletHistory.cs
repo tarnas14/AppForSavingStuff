@@ -72,8 +72,6 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                Console.WriteLine(month.GetIndexString());
-
                 var operations = WaitForQueryIfNecessary(ByMonth(QueryOperations(session), month))
                         .OrderBy(result => result.When).OfType<Operation>().ToList();
 

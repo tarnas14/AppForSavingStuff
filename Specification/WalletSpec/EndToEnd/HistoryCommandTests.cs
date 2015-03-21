@@ -36,6 +36,27 @@
         }
 
         [Test]
+        [TestCase("/wallet history --m -month 2001-01")]
+        [TestCase("/wallet history -month 2001-01")]
+        public void ShouldDisplayHistoryForSpecifiedMonth(string command)
+        {
+            //given
+            _endToEnd.Execute("/wallet add source 4 -date 2001-01-01");
+            _endToEnd.Execute("/wallet add source 4 -date 2001-02-01");
+
+            _endToEnd.SetTime(new DateTime(2001, 2, 2));
+
+            //when
+            _endToEnd.Execute(command);
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    when        where   howMuch  valueAfter",
+                string.Empty,
+                "    2001-01-01  source    +4.00        4.00");
+        }
+
+        [Test]
         public void ShouldDisplayFullHistory()
         {
             //given
