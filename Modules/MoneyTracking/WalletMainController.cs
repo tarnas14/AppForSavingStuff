@@ -5,6 +5,7 @@
     using System.Linq;
     using CommandHandlers;
     using Presentation;
+    using SourceNameValidation;
     using Tarnas.ConsoleUi;
 
     public class WalletMainController : Subscriber
@@ -12,14 +13,14 @@
         private readonly WalletUi _walletUi;
         private readonly WalletHistory _ravenHistory;
         private readonly TimeMaster _timeMaster;
-        private readonly ReservedWordsStore _reservedWordsStore;
+        private readonly SourceNameValidator _sourceNameValidator;
 
-        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, ReservedWordsStore reservedWordsStore)
+        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator)
         {
             _walletUi = walletUi;
             _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
-            _reservedWordsStore = reservedWordsStore;
+            _sourceNameValidator = sourceNameValidator;
         }
 
         public void Execute(UserCommand userCommand)
@@ -40,7 +41,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _timeMaster, _reservedWordsStore).Execute(addCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster, _sourceNameValidator).Execute(addCommand);
                         break;
                     case "sub":
                         var subCommand = new OperationCommand
@@ -51,7 +52,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _timeMaster, _reservedWordsStore).Execute(subCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster, _sourceNameValidator).Execute(subCommand);
 
                         break;
                     case "trans":
@@ -64,7 +65,7 @@
                             Tags = GetTags(userCommand, 5),
                             When = GetDate(userCommand)
                         };;
-                        new OperationCommandHandler(_ravenHistory, _timeMaster, _reservedWordsStore).Execute(transCommand);
+                        new OperationCommandHandler(_ravenHistory, _timeMaster, _sourceNameValidator).Execute(transCommand);
 
                         break;
                     case "balance":

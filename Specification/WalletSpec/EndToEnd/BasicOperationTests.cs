@@ -25,6 +25,17 @@
         }
 
         [Test]
+        public void ShouldNotAcceptOperationsWithSourcesStartingWithHashSign()
+        {
+            //when
+            _endToEnd.ReserveWord("tags");
+            _endToEnd.Execute("/wallet add #source 2");
+
+            //then
+            _endToEnd.AssertExpectedResult("    Error: source name cannot start with a # sign.");
+        }
+
+        [Test]
         public void ShouldNotDisplayBalanceForSourceThatDoesNotExist()
         {
             //when

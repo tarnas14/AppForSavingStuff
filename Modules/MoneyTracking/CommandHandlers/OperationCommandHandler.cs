@@ -1,23 +1,24 @@
 namespace Modules.MoneyTracking.CommandHandlers
 {
     using Persistence;
+    using SourceNameValidation;
 
     public class OperationCommandHandler : CommandHandler<OperationCommand>
     {
         private readonly WalletHistory _walletHistory;
         private readonly TimeMaster _timeMaster;
-        private readonly ReservedWordsStore _reservedWordsStore;
+        private readonly SourceNameValidator _sourceNameValidator;
 
-        public OperationCommandHandler(WalletHistory walletHistory, TimeMaster timeMaster, ReservedWordsStore reservedWordsStore)
+        public OperationCommandHandler(WalletHistory walletHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator)
         {
             _walletHistory = walletHistory;
             _timeMaster = timeMaster;
-            _reservedWordsStore = reservedWordsStore;
+            _sourceNameValidator = sourceNameValidator;
         }
 
         public void Execute(OperationCommand command)
         {
-            CheckIfSourceNameIsReserved(command.Source);
+            _sourceNameValidator.CheckIfValid(command.Source);
 
             var when = command.When ?? _timeMaster.Today;
 
@@ -37,14 +38,6 @@ namespace Modules.MoneyTracking.CommandHandlers
             }
 
             _walletHistory.SaveOperation(operation);
-        }
-
-        private void CheckIfSourceNameIsReserved(string source)
-        {
-            if (_reservedWordsStore.IsReserved(source))
-            {
-                throw new SourceNameIsReservedException();
-            }
         }
 
         private void StandardOperation(Operation operation, OperationCommand command)

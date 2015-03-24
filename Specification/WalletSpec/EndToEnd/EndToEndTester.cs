@@ -5,8 +5,10 @@
     using Halp;
     using Modules;
     using Modules.MoneyTracking;
+    using Modules.MoneyTracking.CommandHandlers;
     using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
+    using Modules.MoneyTracking.SourceNameValidation;
     using Moq;
     using NUnit.Framework;
     using Tarnas.ConsoleUi;
@@ -16,7 +18,7 @@
         private readonly ConsoleUi _ui;
         private readonly ConsoleMock _consoleMock;
         private readonly Mock<TimeMaster> _timeMasterMock;
-        private readonly Mock<ReservedWordsStore> _reservedWordsStoreMock;
+        private readonly MemoryListSourceNameValidator _sourceNameValidator;
 
         public EndToEndTester()
         {
@@ -34,9 +36,9 @@
             };
 
             _timeMasterMock = new Mock<TimeMaster>();
-            _reservedWordsStoreMock = new Mock<ReservedWordsStore>();
+            _sourceNameValidator = new MemoryListSourceNameValidator();
 
-            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _reservedWordsStoreMock.Object), "wallet");
+            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator), "wallet");
         }
 
         public EndToEndTester Execute(string userCommandString)
@@ -68,7 +70,7 @@
 
         public void ReserveWord(string wordToReserve)
         {
-            _reservedWordsStoreMock.Setup(reservedWordsStore => reservedWordsStore.IsReserved(wordToReserve)).Returns(true);
+            _sourceNameValidator.RestrictWord(wordToReserve);
         }
     }
 }

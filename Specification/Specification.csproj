@@ -78,6 +78,7 @@
     <Compile Include="WalletSpec\LegacyDataMagicSpec.cs" />
     <Compile Include="WalletSpec\MoneyzSpec.cs" />
     <Compile Include="WalletSpec\MonthSpec.cs" />
+    <Compile Include="WalletSpec\Spec_MemoryListSourceNameValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

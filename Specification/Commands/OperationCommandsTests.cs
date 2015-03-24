@@ -5,6 +5,7 @@
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.CommandHandlers;
     using Modules.MoneyTracking.Persistence;
+    using Modules.MoneyTracking.SourceNameValidation;
     using Moq;
     using NUnit.Framework;
 
@@ -12,7 +13,7 @@
     class OperationCommandsTests
     {
         private Mock<TimeMaster> _timeMasterMock;
-        private Mock<ReservedWordsStore> _reservedWordsStoreMock;
+        private Mock<SourceNameValidator> _reservedWordsStoreMock;
         private WalletHistory _walletHistory;
         private OperationCommandHandler _commandHandler;
         private const string TestSource = "testSource";
@@ -29,27 +30,9 @@
                 WaitForNonStale = true
             };
 
-            _reservedWordsStoreMock = new Mock<ReservedWordsStore>();
-            _reservedWordsStoreMock.Setup(mock => mock.IsReserved(It.IsAny<string>())).Returns(false);
+            _reservedWordsStoreMock = new Mock<SourceNameValidator>();
 
             _commandHandler = new OperationCommandHandler(_walletHistory, _timeMasterMock.Object, _reservedWordsStoreMock.Object);
-        }
-
-        [Test]
-        public void ShouldNotAllowReservedSource()
-        {
-            //given
-            var command = new OperationCommand
-            {
-                Source = "reserved"
-            };
-            _reservedWordsStoreMock.Setup(mock => mock.IsReserved(It.IsAny<string>())).Returns(true);
-
-            //when
-            TestDelegate savingOperationWithRerservedSourcename = () => _commandHandler.Execute(command);
-
-            //then
-            Assert.That(savingOperationWithRerservedSourcename, Throws.Exception.TypeOf<SourceNameIsReservedException>());
         }
 
         [Test]
@@ -64,7 +47,7 @@
             };
             var walletHistoryMock = new Mock<WalletHistory>();
             walletHistoryMock.Setup(history => history.GetBalance(It.IsAny<string>())).Returns(new Moneyz(0));
-            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, _timeMasterMock.Object, Mock.Of<ReservedWordsStore>());
+            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, _timeMasterMock.Object, Mock.Of<SourceNameValidator>());
 
             //when
             commandHandler.Execute(command);
