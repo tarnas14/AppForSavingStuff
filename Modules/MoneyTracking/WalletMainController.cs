@@ -12,7 +12,7 @@
         private readonly WalletUi _walletUi;
         private readonly WalletHistory _ravenHistory;
         private readonly TimeMaster _timeMaster;
-        private ReservedWordsStore _reservedWordsStore;
+        private readonly ReservedWordsStore _reservedWordsStore;
 
         public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, ReservedWordsStore reservedWordsStore)
         {

@@ -215,5 +215,25 @@
                 "    2015-05-24  src3     +3.00        3.00"
                 );
         }
+
+        [Test]
+        public void ShouldDisplayHistoryForTagSource()
+        {
+            //given
+            _endToEnd.Execute("/wallet add src1 1 'desc' tag1");
+            _endToEnd.Execute("/wallet add src2 2 'desc' tag2");
+            _endToEnd.Execute("/wallet add src3 3 'desc' tag2 tag1");
+
+            //when
+            _endToEnd.Execute("/wallet history --t #tag1");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    when        where  howMuch  valueAfter  tags       ",
+                string.Empty,
+                "    2015-05-24  src1     +1.00        1.00  #tag1      ",
+                "    2015-05-24  src3     +3.00        3.00  #tag2 #tag1"
+                );
+        }
     }
 }
