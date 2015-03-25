@@ -62,7 +62,7 @@
         public void ShouldAllowStoringDescriptionAndTagsWhenAddingToSources()
         {
             //given
-            _endToEnd.Execute("/wallet add mbank 2 'my description' tag1 tag2");
+            _endToEnd.Execute("/wallet add mbank 2");
 
             //when
             _endToEnd.Execute("/wallet balance mbank");
@@ -76,8 +76,8 @@
         {
             //given
             _endToEnd.Execute(
-                "/wallet add mbank 5 'my description' tag1 tag2",
-                "/wallet sub mbank 2 'my description' tag1 tag2");
+                "/wallet add mbank 5",
+                "/wallet sub mbank 2");
 
             //when
             _endToEnd.Execute("/wallet balance mbank");
@@ -91,8 +91,8 @@
         {
             //given
             _endToEnd.Execute(
-                "/wallet add mbank 5 'my description' tag1 tag2",
-                "/wallet trans mbank getin 3 'my description' tag1 tag2");
+                "/wallet add mbank 5",
+                "/wallet trans mbank getin 3");
 
             //when
             _endToEnd.Execute("/wallet balance mbank");
@@ -106,8 +106,8 @@
         {
             //given
             _endToEnd.Execute(
-                "/wallet add mbank 5 'my description' tag1 tag2",
-                "/wallet trans mbank getin 3 'my description' tag1 tag2");
+                "/wallet add mbank 5",
+                "/wallet trans mbank getin 3");
 
             //when
             _endToEnd.Execute("/wallet balance getin");
@@ -121,8 +121,8 @@
         {
             //given
             _endToEnd.Execute(
-                "/wallet add mbank 20 asdf tag1",
-                "/wallet sub mbank 2 qwer tag3 tag2");
+                "/wallet add mbank 20 #asdf #tag1",
+                "/wallet sub mbank 2 qwer #tag3 #tag2");
 
             //when
             _endToEnd.Execute("/wallet tags");
@@ -135,7 +135,7 @@
         public void ShouldAddOperationWithSpecifiedDate()
         {
             //when
-            _endToEnd.Execute("/wallet add mbank 20 'asdf' tag1 tag2 tag3 tag4 -date 2015-02-02");
+            _endToEnd.Execute("/wallet add mbank 20 -date 2015-02-02");
 
             //then
             _endToEnd.Execute("/wallet history");

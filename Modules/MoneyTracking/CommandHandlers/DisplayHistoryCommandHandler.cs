@@ -53,7 +53,7 @@ namespace Modules.MoneyTracking.CommandHandlers
 
         private bool OperationDealsWithAnySource(Operation operation, ICollection<string> sources)
         {
-            var tagSources = sources.Where(Tag.IsTagName).Select(Tag.GetSanitizedTagName);
+            var tagSources = sources.Where(Tag.IsTagName);
             var dealsWithTagSource = (tagSources.Any() && operation.Tags.Any(tag => tagSources.Contains(tag.Value)));
 
             var regularSources = sources.Where(source => !Tag.IsTagName(source));

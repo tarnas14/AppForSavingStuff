@@ -1,6 +1,5 @@
 ﻿namespace Specification.WalletSpec
 {
-    using System;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Persistence;
     using NUnit.Framework;

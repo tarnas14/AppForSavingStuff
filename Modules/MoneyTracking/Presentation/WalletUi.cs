@@ -2,10 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Linq;
     using System.Text;
-    using CommandHandlers;
     using Raven.Abstractions.Extensions;
     using Tarnas.ConsoleUi;
     using Console = Tarnas.ConsoleUi.Console;
@@ -100,7 +98,6 @@
 
             for (int i = 0; i < operation.Tags.Count; ++i)
             {
-                sBuilder.Append("#");
                 sBuilder.Append(operation.Tags[i].Value);
                 if (operation.Tags.Count - 1 != i)
                 {
@@ -241,7 +238,7 @@
 
         public void DisplayTags(IEnumerable<Tag> tagsUsedThisMonth)
         {
-            var ordered = tagsUsedThisMonth.OrderBy(tag => tag.Value).Select(tag => "#" + tag.Value);
+            var ordered = tagsUsedThisMonth.OrderBy(tag => tag.Value).Select(tag => tag.Value);
 
             _console.WriteLine(string.Join(", ", ordered.ToList()));
         }

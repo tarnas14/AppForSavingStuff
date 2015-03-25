@@ -1,6 +1,5 @@
 namespace Modules.MoneyTracking.CommandHandlers
 {
-    using Persistence;
     using SourceNameValidation;
 
     public class OperationCommandHandler : CommandHandler<OperationCommand>

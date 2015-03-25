@@ -11,6 +11,7 @@
         public IList<Change> Changes { get; set; }
         public string Description { get; set; }
         public IList<Tag> Tags { get; set; }
+        public IList<string> TagStrings { get; set; }
 
         public Operation()
         {

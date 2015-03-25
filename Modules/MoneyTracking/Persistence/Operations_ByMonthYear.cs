@@ -31,7 +31,7 @@
                 {
                     When = operation.When,
                     MonthYear = operation.When.ToString("MMyy"),
-                    TagNames = operation.Tags.Select(tag => tag.Value)
+                    TagNames = operation.Tags.Select(tag => tag.Value.StartsWith("#") ? tag.Value : "#" + tag.Value)
                 };
         }
     }

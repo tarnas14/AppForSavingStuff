@@ -89,8 +89,29 @@
         public void ShouldDisplayHistoryWithTags()
         {
             //given
-            _endToEnd.Execute("/wallet add mbank 2 description tag2 tag3");
-            _endToEnd.Execute("/wallet trans mbank getin 1 'another description' tag3 taggg");
+            _endToEnd.Execute("/wallet add mbank 2 description #tag2 #tag3");
+            _endToEnd.Execute("/wallet trans mbank getin 1 'another description' #tag3 #taggg");
+
+            //when
+            _endToEnd.Execute("/wallet history --t");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    when        where         howMuch  valueAfter  tags        ",
+                string.Empty,
+                "    2015-05-24  mbank           +2.00        2.00  #tag2 #tag3 ",
+                "    2015-05-24  mbank->getin     1.00              #tag3 #taggg",
+                "                mbank           -1.00        1.00              ",
+                "                getin           +1.00        1.00              "
+                );
+        }
+
+        [Test]
+        public void ShouldTreatAsTagsOnlyWordsStartingWithHashSign()
+        {
+            //given
+            _endToEnd.Execute("/wallet add mbank 2 description #tag2 #tag3 notAtag");
+            _endToEnd.Execute("/wallet trans mbank getin 1 'another description' #tag3 #taggg another not a tag");
 
             //when
             _endToEnd.Execute("/wallet history --t");
@@ -155,9 +176,9 @@
         public void ShouldDisplayHistoryWithBothDescriptionsAndTags()
         {
             //given
-            _endToEnd.Execute("/wallet add mbank 2 short tag1 tag2");
-            _endToEnd.Execute("/wallet sub mbank 1 'other description' tag3 tag4");
-            _endToEnd.Execute("/wallet trans mbank getin 1 'trans description' tag5 tag6");
+            _endToEnd.Execute("/wallet add mbank 2 short #tag1 #tag2");
+            _endToEnd.Execute("/wallet sub mbank 1 'other description' #tag3 #tag4");
+            _endToEnd.Execute("/wallet trans mbank getin 1 'trans description' #tag5 #tag6");
 
             //when
             _endToEnd.Execute("/wallet history --d --t");
@@ -220,9 +241,9 @@
         public void ShouldDisplayHistoryForTagSource()
         {
             //given
-            _endToEnd.Execute("/wallet add src1 1 'desc' tag1");
-            _endToEnd.Execute("/wallet add src2 2 'desc' tag2");
-            _endToEnd.Execute("/wallet add src3 3 'desc' tag2 tag1");
+            _endToEnd.Execute("/wallet add src1 1 'desc' #tag1");
+            _endToEnd.Execute("/wallet add src2 2 'desc' #tag2");
+            _endToEnd.Execute("/wallet add src3 3 'desc' #tag2 #tag1");
 
             //when
             _endToEnd.Execute("/wallet history --t #tag1");

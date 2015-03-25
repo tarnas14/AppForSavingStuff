@@ -152,22 +152,21 @@
             {
                 return new List<string>();
             }
-
-            return Enumerable.Range(startIndex, parameters.Count - startIndex).Select(index => parameters[index]).ToList();
+            return parameters.Skip(startIndex).ToList();
         }
 
         private IList<Tag> GetTags(UserCommand userCommand, int tagsFrom)
         {
-            var tags = new List<Tag>();
-            if (userCommand.Params.Count >= tagsFrom)
+            var paramsThatCouldBeTags = userCommand.Params.Skip(tagsFrom);
+
+            if (!paramsThatCouldBeTags.Any())
             {
-                for (int i = tagsFrom; i < userCommand.Params.Count; ++i)
-                {
-                    tags.Add(new Tag(userCommand.Params[i]));
-                }
+                return new Tag[] {};
             }
 
-            return tags;
+            var tags = paramsThatCouldBeTags.Where(Tag.IsTagName).Select(param => new Tag(param));
+            
+            return tags.ToList();
         }
     }
 }

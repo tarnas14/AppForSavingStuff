@@ -4,7 +4,7 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class Spec_MemoryListSourceNameValidator
+    public class MemoryListSourceNameValidatorSpec
     {
         private MemoryListSourceNameValidator _validator;
 

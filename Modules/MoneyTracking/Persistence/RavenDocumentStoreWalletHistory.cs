@@ -1,9 +1,7 @@
 ﻿namespace Modules.MoneyTracking.Persistence
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Raven.Abstractions.Extensions;
     using Raven.Client;
     using Raven.Client.Linq;
 
@@ -106,7 +104,7 @@
         {
             if (Tag.IsTagName(sourceName))
             {
-                var tagOperationsThisMonth = GetTagHistoryForThisMonth(Tag.GetSanitizedTagName(sourceName), month);
+                var tagOperationsThisMonth = GetTagHistoryForThisMonth(sourceName, month);
                 var changesForTagThisMonth = tagOperationsThisMonth.SelectMany(operation => operation.Changes);
 
                 var tagMoneyBalanceForMonth = changesForTagThisMonth.Sum(change => change.Difference);
@@ -188,8 +186,7 @@
         {
             var history = GetFullHistory();
 
-            var tagNameWithoutHash = tagName.Substring(1);
-            var tagOperations = history.Where(operation => operation.Tags.Any(tag => tag.Value == tagNameWithoutHash));
+            var tagOperations = history.Where(operation => operation.Tags.Any(tag => tag.Value == tagName));
 
             var changes = tagOperations.SelectMany(operation => operation.Changes);
 

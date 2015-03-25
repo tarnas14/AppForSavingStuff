@@ -104,11 +104,38 @@
             //given
             var pastMonthDate = new DateTime(2015, 03, 02);
             var thisMonthDate = new DateTime(2015, 04, 02);
-            _walletHistory.SaveOperation(new Operation(pastMonthDate){Tags = new []{new Tag("tag1"), new Tag("tag2") }}.AddChange("source1", new Moneyz(2)));
-            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("tag1"), new Tag("tag3") } }.AddChange("source2", new Moneyz(12)));
+            _walletHistory.SaveOperation(new Operation(pastMonthDate){Tags = new []{new Tag("#tag1"), new Tag("#tag2") }}.AddChange("source1", new Moneyz(2)));
+            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("#tag1"), new Tag("#tag3") } }.AddChange("source2", new Moneyz(12)));
             var command = new DisplayBalanceCommand
             {
                 Sources = new []{ "#tag1" },
+                Month = new Month(2015, 4)
+            };
+
+            var expectedOutput = new List<string>
+            {
+                "    #tag1: 12.00"
+            };
+
+            //when
+            _commandHandler.Execute(command);
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
+        }
+
+        [Test]
+        public void ShouldDisplayTagBalanceForSpecifiedMonthForLegacyData()
+        {
+            //given
+            var pastMonthDate = new DateTime(2015, 03, 02);
+            var thisMonthDate = new DateTime(2015, 04, 02);
+            _walletHistory.SaveOperation(new Operation(pastMonthDate) { Tags = new[] { new Tag("tag1"), new Tag("tag2") } }.AddChange("source1", new Moneyz(2)));
+            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("#tag1"), new Tag("#tag3") } }.AddChange("source2", new Moneyz(2)));
+            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("tag1"), new Tag("tag3") } }.AddChange("source2", new Moneyz(10)));
+            var command = new DisplayBalanceCommand
+            {
+                Sources = new[] { "#tag1" },
                 Month = new Month(2015, 4)
             };
 
