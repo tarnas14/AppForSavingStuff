@@ -236,9 +236,9 @@
             tableDisplay.DisplayHeaderless();
         }
 
-        public void DisplayTags(IEnumerable<Tag> tagsUsedThisMonth)
+        public void DisplayTags(IEnumerable<Tag> tags)
         {
-            var ordered = tagsUsedThisMonth.OrderBy(tag => tag.Value).Select(tag => tag.Value);
+            var ordered = tags.Select(tag => Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value).OrderBy(t => t, StringComparer.InvariantCulture);
 
             _console.WriteLine(string.Join(", ", ordered.ToList()));
         }
