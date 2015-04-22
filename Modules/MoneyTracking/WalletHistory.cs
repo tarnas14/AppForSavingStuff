@@ -12,6 +12,7 @@
         Moneyz GetSourceBalanceForMonth(string sourceName, Month month);
         IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month);
         IList<Tag> GetTagsForMonth(Month month);
-        IList<Tag> GetAllTags(); 
+        IList<Tag> GetAllTags();
+        void RemoveSource(string source);
     }
 }

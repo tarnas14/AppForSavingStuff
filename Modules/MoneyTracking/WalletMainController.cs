@@ -95,6 +95,15 @@
                     case "tags":
                         new DisplayTagsCommandHandler(_ravenHistory, _walletUi).Execute(new DisplayTagsCommand());
                         break;
+
+                    case "remove":
+                        var removeSourceCommand = new RemoveSourceCommand
+                        {
+                            Source = userCommand.Params[1]
+                        };
+
+                        new RemoveSourceCommandHandler(_ravenHistory, _walletUi).Execute(removeSourceCommand);
+                        break;
                 }
             }
             catch (WalletException e)

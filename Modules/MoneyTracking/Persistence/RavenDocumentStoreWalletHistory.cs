@@ -155,6 +155,21 @@
             return tags.ToList();
         }
 
+        public void RemoveSource(string source)
+        {
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                var operations =
+                    WaitForQueryIfNecessary(session.Query<Operations_BySources.Result, Operations_BySources>())
+                        .Where(operation => operation.SourceName == source)
+                        .OfType<Operation>()
+                        .ToList();
+
+                operations.ForEach(session.Delete);
+                session.SaveChanges();
+            }
+        }
+
         private Source GetSourceByName(string sourceName)
         {
             using (var session = _storeProvider.Store.OpenSession())

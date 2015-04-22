@@ -5,7 +5,6 @@
     using Halp;
     using Modules;
     using Modules.MoneyTracking;
-    using Modules.MoneyTracking.CommandHandlers;
     using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
     using Modules.MoneyTracking.SourceNameValidation;

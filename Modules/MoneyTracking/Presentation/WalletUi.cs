@@ -281,5 +281,10 @@
 
             table.DisplayHeaderless();
         }
+
+        public void DisplayInformation(string information)
+        {
+            _console.WriteLine(Tab + information);
+        }
     }
 }

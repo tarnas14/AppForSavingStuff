@@ -1,5 +1,6 @@
 ﻿namespace Specification.Presentation
 {
+    using System.Collections;
     using System.Collections.Generic;
     using Halp;
     using Modules.MoneyTracking;
@@ -63,6 +64,19 @@
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
+        }
+
+        [Test]
+        public void ShouldDisplayProvidedInformation()
+        {
+            //given
+            const string informationText = "asdf";
+
+            //when
+            _walletUi.DisplayInformation(informationText);
+
+            //then
+            Assert.That(_consoleMock.Lines, Is.EquivalentTo(new[] { "    " + informationText }));
         }
     }
 }

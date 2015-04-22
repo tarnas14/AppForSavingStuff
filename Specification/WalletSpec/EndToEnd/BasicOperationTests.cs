@@ -145,5 +145,22 @@
                 "    2015-02-02  mbank   +20.00       20.00"
                 );
         }
+
+        [Test]
+        public void ShouldRemoveASource()
+        {
+            //given
+            _endToEnd.Execute("/wallet add mbank 20");
+            _endToEnd.Execute("/wallet add getin 10");
+            _endToEnd.Execute("/wallet remove getin");
+
+            //when
+            _endToEnd.Execute("/wallet balance");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    getin removed",
+                "    mbank: 20.00");
+        }
     }
 }

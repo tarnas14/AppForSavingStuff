@@ -29,6 +29,7 @@ namespace Modules.MoneyTracking.Persistence
             store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists("Database");
 
             new Operations_ByMonthYear().Execute(store);
+            new Operations_BySources().Execute(store);
             new Sources_ByChangesInOperations().Execute(store);
 
             return store;

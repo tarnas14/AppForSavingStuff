@@ -67,6 +67,7 @@
     <Compile Include="Commands\OperationCommandsTests.cs" />
     <Compile Include="Commands\TagHistoryTests.cs" />
     <Compile Include="Halp\ConsoleMock.cs" />
+    <Compile Include="Persistence\RetrievingOperationsBySourceNameSpecification.cs" />
     <Compile Include="Presentation\BalancesViewModelTests.cs" />
     <Compile Include="Presentation\WalletUiTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
