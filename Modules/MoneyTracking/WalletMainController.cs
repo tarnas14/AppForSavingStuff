@@ -41,7 +41,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _timeMaster, _sourceNameValidator).Execute(addCommand);
+                        new OperationCommandHandler(_ravenHistory, _sourceNameValidator).Execute(addCommand);
                         break;
                     case "sub":
                         var subCommand = new OperationCommand
@@ -52,7 +52,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _timeMaster, _sourceNameValidator).Execute(subCommand);
+                        new OperationCommandHandler(_ravenHistory, _sourceNameValidator).Execute(subCommand);
 
                         break;
                     case "trans":
@@ -65,7 +65,7 @@
                             Tags = GetTags(userCommand, 5),
                             When = GetDate(userCommand)
                         };;
-                        new OperationCommandHandler(_ravenHistory, _timeMaster, _sourceNameValidator).Execute(transCommand);
+                        new OperationCommandHandler(_ravenHistory, _sourceNameValidator).Execute(transCommand);
 
                         break;
                     case "balance":

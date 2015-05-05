@@ -10,6 +10,6 @@ namespace Modules.MoneyTracking.CommandHandlers
         public string Description { get; set; }
         public Moneyz HowMuch { get; set; }
         public IList<Tag> Tags { get; set; }
-        public DateTime? When { get; set; }
+        public DateTime When { get; set; }
     }
 }

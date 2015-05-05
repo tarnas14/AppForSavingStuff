@@ -1,18 +1,15 @@
 namespace Modules.MoneyTracking.CommandHandlers
 {
-    using System;
     using SourceNameValidation;
 
     public class OperationCommandHandler : CommandHandler<OperationCommand>
     {
         private readonly WalletHistory _walletHistory;
-        private readonly TimeMaster _timeMaster;
         private readonly SourceNameValidator _sourceNameValidator;
 
-        public OperationCommandHandler(WalletHistory walletHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator)
+        public OperationCommandHandler(WalletHistory walletHistory, SourceNameValidator sourceNameValidator)
         {
             _walletHistory = walletHistory;
-            _timeMaster = timeMaster;
             _sourceNameValidator = sourceNameValidator;
         }
 
@@ -20,9 +17,7 @@ namespace Modules.MoneyTracking.CommandHandlers
         {
             _sourceNameValidator.CheckIfValid(command.Source);
 
-            var when = command.When.Value;
-
-            var operation = new Operation(when)
+            var operation = new Operation(command.When)
             {
                 Description = command.Description,
                 Tags = command.Tags

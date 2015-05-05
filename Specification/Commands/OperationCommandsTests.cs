@@ -32,7 +32,7 @@
 
             _reservedWordsStoreMock = new Mock<SourceNameValidator>();
 
-            _commandHandler = new OperationCommandHandler(_walletHistory, _timeMasterMock.Object, _reservedWordsStoreMock.Object);
+            _commandHandler = new OperationCommandHandler(_walletHistory, _reservedWordsStoreMock.Object);
         }
 
         [Test]
@@ -47,13 +47,13 @@
             };
             var walletHistoryMock = new Mock<WalletHistory>();
             walletHistoryMock.Setup(history => history.GetBalance(It.IsAny<string>())).Returns(new Moneyz(0));
-            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, _timeMasterMock.Object, Mock.Of<SourceNameValidator>());
+            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, Mock.Of<SourceNameValidator>());
 
             //when
             commandHandler.Execute(command);
 
             //then
-            walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasDate(operation, command.When.Value))));
+            walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasDate(operation, command.When))));
         }
 
         private bool HasDate(Operation operation, DateTime when)
