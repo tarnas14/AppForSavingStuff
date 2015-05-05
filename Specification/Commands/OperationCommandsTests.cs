@@ -62,23 +62,6 @@
         }
 
         [Test]
-        public void ShouldUseTimeMasterObjectIfDateIsNotGivenInCommand()
-        {
-            //given
-            var command = new OperationCommand
-            {
-                HowMuch = new Moneyz(2),
-                Source = TestSource
-            };
-
-            //when
-            _commandHandler.Execute(command);
-
-            //then
-            _timeMasterMock.Verify(mock => mock.Today, Times.Once);
-        }
-
-        [Test]
         public void ShouldStorePositiveOperation()
         {
             //given
@@ -87,7 +70,8 @@
             var command = new OperationCommand
             {
                 Source = TestSource,
-                HowMuch = testHowMuch
+                HowMuch = testHowMuch,
+                When = DateTime.Now
             };
 
             //when
@@ -106,7 +90,8 @@
             var command = new OperationCommand
             {
                 Source = TestSource,
-                HowMuch = testHowMuch
+                HowMuch = testHowMuch,
+                When = DateTime.Now
             };
 
             //when
@@ -126,7 +111,8 @@
             {
                 Source = TestSource,
                 Destination = TestDestination,
-                HowMuch = new Moneyz(howMuch)
+                HowMuch = new Moneyz(howMuch),
+                When = DateTime.Now
             };
 
             //when

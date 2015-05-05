@@ -1,5 +1,6 @@
 ﻿namespace Modules.MoneyTracking.Persistence
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Raven.Client;
@@ -20,28 +21,57 @@
         {
             using (var session = _storeProvider.Store.OpenSession())
             {
-                AdditionalInformationToChanges(toSave.Changes);
+                AdditionalInformationToChanges(toSave.Changes, toSave.When, session);
                 session.Store(toSave);
                 session.SaveChanges();
             }
         }
 
-        private void AdditionalInformationToChanges(IEnumerable<Change> changes)
+        private void AdditionalInformationToChanges(IEnumerable<Change> changes, DateTime when, IDocumentSession session)
         {
             foreach (var change in changes)
             {
-                var source = GetSourceByName(change.Source);
-                if (source != null)
-                {
-                    change.Before = source.Balance;
-                    change.After = source.Balance + change.Difference;
-                }
-                else
-                {
-                    change.Before = new Moneyz(0);
-                    change.After = change.Difference;
-                }
+                var sourceBalance = GetBalanceAt(change.Source, when, session);
+
+                change.Before = sourceBalance;
+                change.After = sourceBalance + change.Difference;
+
+                AdjustLaterOperationsOnSourceIfNecessary(when, change.Source, change.Difference, session);
             }
+        }
+
+        private void AdjustLaterOperationsOnSourceIfNecessary(DateTime when, string sourceName, Moneyz difference, IDocumentSession session)
+        {
+            var laterOperations =
+                WaitForQueryIfNecessary(QueryOperations(session))
+                    .Where(operation => operation.When > when)
+                    .OfType<Operation>().ToList();
+
+            laterOperations.ForEach(operation => operation.Changes.Where(change => change.Source == sourceName).ToList().ForEach(
+                change =>
+                {
+                    change.Before += difference;
+                    change.After += difference;
+                }));
+        }
+
+        private Moneyz GetBalanceAt(string sourceName, DateTime when, IDocumentSession session)
+        {
+            var latestOperationBefore = WaitForQueryIfNecessary(QueryOperations(session)).Where(operation => operation.When < when).OrderByDescending(operation => operation.When).OfType<Operation>().FirstOrDefault();
+
+            if (latestOperationBefore == null)
+            {
+                return new Moneyz(0);
+            }
+
+            var changeForSource = latestOperationBefore.Changes.FirstOrDefault(change => change.Source == sourceName);
+
+            if (changeForSource == null)
+            {
+                return new Moneyz(0);
+            }
+
+            return changeForSource.After;
         }
 
         public IList<Operation> GetFullHistory()

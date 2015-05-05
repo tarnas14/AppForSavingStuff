@@ -18,6 +18,7 @@
         private readonly ConsoleMock _consoleMock;
         private readonly Mock<TimeMaster> _timeMasterMock;
         private readonly MemoryListSourceNameValidator _sourceNameValidator;
+        private DateTime _date;
 
         public EndToEndTester()
         {
@@ -35,6 +36,8 @@
             };
 
             _timeMasterMock = new Mock<TimeMaster>();
+            _timeMasterMock.Setup(master => master.Now).Returns(() => DateTime.Now);
+            _timeMasterMock.Setup(master => master.Today).Returns(() => DateTime.Now);
             _sourceNameValidator = new MemoryListSourceNameValidator();
 
             _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator), "wallet");
@@ -54,10 +57,20 @@
             return this;
         }
 
-        public EndToEndTester SetTime(DateTime time)
+        public EndToEndTester SetTime(DateTime date)
         {
-            _timeMasterMock.Setup(master => master.Now).Returns(time);
-            _timeMasterMock.Setup(master => master.Today).Returns(time);
+            _timeMasterMock.Setup(master => master.Now).Returns(() =>
+            {
+                var now = DateTime.Now;
+                return new DateTime(date.Year, date.Month, date.Day, now.Hour, now.Minute, now.Second,
+                    now.Millisecond);
+            });
+            _timeMasterMock.Setup(master => master.Today).Returns(() =>
+            {
+                var now = DateTime.Now;
+                return new DateTime(date.Year, date.Month, date.Day, now.Hour, now.Minute, now.Second,
+                    now.Millisecond);
+            });
 
             return this;
         }

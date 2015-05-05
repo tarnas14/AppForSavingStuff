@@ -1,5 +1,6 @@
 ﻿namespace Specification.WalletSpec.EndToEnd
 {
+    using System;
     using NUnit.Framework;
 
     [TestFixture]
@@ -87,33 +88,25 @@
         }
 
         [Test]
-        public void ShouldRemoveMoneyFromSourceOnTransfer()
+        public void ShouldTransferMoney()
         {
             //given
+            _endToEnd.SetTime(new DateTime(2015, 05, 01));
             _endToEnd.Execute(
                 "/wallet add mbank 5",
                 "/wallet trans mbank getin 3");
 
             //when
-            _endToEnd.Execute("/wallet balance mbank");
+            _endToEnd.Execute("/wallet history");
 
             //then
-            _endToEnd.AssertExpectedResult("    mbank: 2.00");
-        }
-
-        [Test]
-        public void ShouldAddMoneyToDestinationOnTransfer()
-        {
-            //given
-            _endToEnd.Execute(
-                "/wallet add mbank 5",
-                "/wallet trans mbank getin 3");
-
-            //when
-            _endToEnd.Execute("/wallet balance getin");
-
-            //then
-            _endToEnd.AssertExpectedResult("    getin: 3.00");
+            _endToEnd.AssertExpectedResult(
+                "    when        where         howMuch  valueAfter",
+                string.Empty,
+                "    2015-05-01  mbank           +5.00        5.00",
+                "    2015-05-01  mbank->getin     3.00            ",
+                "                mbank           -3.00        2.00",
+                "                getin           +3.00        3.00");
         }
 
         [Test]
@@ -161,6 +154,28 @@
             _endToEnd.AssertExpectedResult(
                 "    getin removed",
                 "    mbank: 20.00");
+        }
+
+        [Test]
+        public void ShouldCorrectlyStoreBalanceAfterOperationForOperationsInThePast()
+        {
+            //given
+            _endToEnd.SetTime(new DateTime(2015, 05, 01));
+            _endToEnd.Execute("/wallet add mbank 2");
+            _endToEnd.SetTime(new DateTime(2015, 05, 05));
+            _endToEnd.Execute("/wallet add mbank 3");
+            _endToEnd.Execute("/wallet add mbank 2 -date 2015-05-03");
+
+            //when
+            _endToEnd.Execute("/wallet history");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    when        where  howMuch  valueAfter",
+                string.Empty,
+                "    2015-05-01  mbank    +2.00        2.00",
+                "    2015-05-03  mbank    +2.00        4.00",
+                "    2015-05-05  mbank    +3.00        7.00");
         }
     }
 }

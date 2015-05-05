@@ -60,14 +60,13 @@
         public void ShouldDisplayFullHistory()
         {
             //given
+            _endToEnd.SetTime(new DateTime(2000, 12, 1));
             const string source = "sourceName";
             const string otherSource = "diffSource";
             _endToEnd.Execute(string.Format("/wallet add {0} 4 -date 2000-11-30", source));
             _endToEnd.Execute(string.Format("/wallet add {0} 2 -date 2000-12-01", source));
-            _endToEnd.Execute(string.Format("/wallet sub {0} 1 -date 2000-12-01", source));
-            _endToEnd.Execute(string.Format("/wallet trans {0} {1} 1 -date 2000-12-01", source, otherSource));
-
-            _endToEnd.SetTime(new DateTime(2000, 12, 1));
+            _endToEnd.Execute(string.Format("/wallet sub {0} 1 -date 2000-12-02", source));
+            _endToEnd.Execute(string.Format("/wallet trans {0} {1} 1 -date 2000-12-03", source, otherSource));
 
             //when
             _endToEnd.Execute("/wallet history");
@@ -78,8 +77,8 @@
                 string.Empty,
                 "    2000-11-30  sourceName                +4.00        4.00",
                 "    2000-12-01  sourceName                +2.00        6.00",
-                "    2000-12-01  sourceName                -1.00        5.00",
-                "    2000-12-01  sourceName->diffSource     1.00            ",
+                "    2000-12-02  sourceName                -1.00        5.00",
+                "    2000-12-03  sourceName->diffSource     1.00            ",
                 "                sourceName                -1.00        4.00",
                 "                diffSource                +1.00        1.00"
             );
@@ -199,9 +198,9 @@
         public void ShouldDisplayHistoryForSpecificSource()
         {
             //given
-            _endToEnd.Execute("/wallet add mbank 2 description tag2 tag3");
+            _endToEnd.Execute("/wallet add mbank 2");
             _endToEnd.Execute("/wallet add getin 2");
-            _endToEnd.Execute("/wallet trans mbank getin 1 'another description' tag3 taggg");
+            _endToEnd.Execute("/wallet trans mbank getin 1");
 
             //when
             _endToEnd.Execute("/wallet history getin");

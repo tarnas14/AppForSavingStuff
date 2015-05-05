@@ -1,5 +1,6 @@
 namespace Modules.MoneyTracking.CommandHandlers
 {
+    using System;
     using SourceNameValidation;
 
     public class OperationCommandHandler : CommandHandler<OperationCommand>
@@ -19,7 +20,7 @@ namespace Modules.MoneyTracking.CommandHandlers
         {
             _sourceNameValidator.CheckIfValid(command.Source);
 
-            var when = command.When ?? _timeMaster.Today;
+            var when = command.When.Value;
 
             var operation = new Operation(when)
             {

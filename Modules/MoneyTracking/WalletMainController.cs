@@ -149,10 +149,11 @@
             string dateString = string.Empty;
             if (userCommand.TryGetParam("date", out dateString))
             {
-                return Convert.ToDateTime(dateString);
+                var dayFromString = Convert.ToDateTime(dateString);
+                return new DateTime(dayFromString.Year, dayFromString.Month, dayFromString.Day, _timeMaster.Now.Hour, _timeMaster.Now.Minute, _timeMaster.Now.Second, _timeMaster.Now.Millisecond);
             }
 
-            return _timeMaster.Today;
+            return _timeMaster.Now;
         }
 
         private IList<string> GetParamsFrom(int startIndex, IList<string> parameters)
