@@ -94,6 +94,7 @@
             _endToEnd.SetTime(new DateTime(2015, 05, 01));
             _endToEnd.Execute(
                 "/wallet add mbank 5",
+                "/wallet add getin 1",
                 "/wallet trans mbank getin 3");
 
             //when
@@ -104,9 +105,10 @@
                 "    when        where         howMuch  valueAfter",
                 string.Empty,
                 "    2015-05-01  mbank           +5.00        5.00",
+                "    2015-05-01  getin           +1.00        1.00",
                 "    2015-05-01  mbank->getin     3.00            ",
                 "                mbank           -3.00        2.00",
-                "                getin           +3.00        3.00");
+                "                getin           +3.00        4.00");
         }
 
         [Test]

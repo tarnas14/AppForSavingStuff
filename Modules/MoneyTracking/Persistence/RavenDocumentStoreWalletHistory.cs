@@ -57,7 +57,8 @@
 
         private Moneyz GetBalanceAt(string sourceName, DateTime when, IDocumentSession session)
         {
-            var latestOperationBefore = WaitForQueryIfNecessary(QueryOperations(session)).Where(operation => operation.When < when).OrderByDescending(operation => operation.When).OfType<Operation>().FirstOrDefault();
+            var operationsBefore = WaitForQueryIfNecessary(QueryOperations(session)).OfType<Operation>().ToList();
+            var latestOperationBefore = operationsBefore.Where(operation => operation.When <= when && operation.Changes.Any(change => change.Source == sourceName)).OrderByDescending(operation => operation.When).FirstOrDefault();
 
             if (latestOperationBefore == null)
             {
