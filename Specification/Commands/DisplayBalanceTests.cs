@@ -7,6 +7,8 @@
     using Modules.MoneyTracking.CommandHandlers;
     using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
+    using Modules.MoneyTracking.SourceNameValidation;
+    using Moq;
     using NUnit.Framework;
 
     [TestFixture]
@@ -15,13 +17,17 @@
         private ConsoleMock _consoleMock;
         private DisplayBalanceCommandHandler _commandHandler;
         private WalletHistory _walletHistory;
+        private OperationCommandHandler _operationCommandHandler;
 
         [SetUp]
         public void Setup()
         {   
             _consoleMock = new ConsoleMock();
 
-            _walletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider(){RunInMemory = true}){WaitForNonStale = true};
+            var documentStoreProvider = new DocumentStoreProvider(){RunInMemory = true};
+            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider){WaitForNonStale = true};
+
+            _operationCommandHandler = new OperationCommandHandler(Mock.Of<SourceNameValidator>(), new StandardBagOfRavenMagic(documentStoreProvider) {WaitForNonStale = true});
 
             _commandHandler = new DisplayBalanceCommandHandler(_walletHistory, new WalletUi(_consoleMock));
         }
@@ -31,7 +37,7 @@
         {
             //given
             const string sourceName = "source1";
-            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange(sourceName, new Moneyz(2)));
+            SaveOperation(new OperationCommand { Source = sourceName, HowMuch = new Moneyz(2) });
             var command = new DisplayBalanceCommand
             {
                 Sources = new[] { sourceName }
@@ -48,12 +54,17 @@
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
         }
 
+        private void SaveOperation(OperationCommand command)
+        {
+            _operationCommandHandler.Execute(command);
+        }
+        
         [Test]
         public void ShouldDisplayBalanceOfMultipleSources()
         {
             //given
-            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source1", new Moneyz(2)));
-            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source2", new Moneyz(12)));
+            SaveOperation(new OperationCommand { Source = "source1", HowMuch = new Moneyz(2) });
+            SaveOperation(new OperationCommand { Source = "source2", HowMuch = new Moneyz(12) });
             var command = new DisplayBalanceCommand
             {
                 Sources = new List<string> { "source1", "source2" }
@@ -77,8 +88,8 @@
         public void ShouldDisplayAllSourceBalancesWhenNoSourcesSpecified()
         {
             //given
-            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source1", new Moneyz(2)));
-            _walletHistory.SaveOperation(new Operation(DateTime.Now).AddChange("source2", new Moneyz(12)));
+            SaveOperation(new OperationCommand { Source = "source1", HowMuch = new Moneyz(2) });
+            SaveOperation(new OperationCommand { Source = "source2", HowMuch = new Moneyz(12) });
             var command = new DisplayBalanceCommand
             {
                 Sources = new List<string>()
@@ -104,8 +115,24 @@
             //given
             var pastMonthDate = new DateTime(2015, 03, 02);
             var thisMonthDate = new DateTime(2015, 04, 02);
-            _walletHistory.SaveOperation(new Operation(pastMonthDate){Tags = new []{new Tag("#tag1"), new Tag("#tag2") }}.AddChange("source1", new Moneyz(2)));
-            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("#tag1"), new Tag("#tag3") } }.AddChange("source2", new Moneyz(12)));
+            var pastMonthOperation = new OperationCommand
+            {
+                When = pastMonthDate,
+                Source = "source1",
+                HowMuch = new Moneyz(2),
+                Tags = new[] {new Tag("#tag1"), new Tag("#tag2")}
+            };
+            var thisMonthOperation = new OperationCommand
+            {
+                When = thisMonthDate,
+                Source = "source2",
+                HowMuch = new Moneyz(12),
+                Tags = new[] { new Tag("#tag1"), new Tag("#tag3") }
+            };
+
+            SaveOperation(pastMonthOperation);
+            SaveOperation(thisMonthOperation);
+
             var command = new DisplayBalanceCommand
             {
                 Sources = new []{ "#tag1" },
@@ -130,9 +157,32 @@
             //given
             var pastMonthDate = new DateTime(2015, 03, 02);
             var thisMonthDate = new DateTime(2015, 04, 02);
-            _walletHistory.SaveOperation(new Operation(pastMonthDate) { Tags = new[] { new Tag("tag1"), new Tag("tag2") } }.AddChange("source1", new Moneyz(2)));
-            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("#tag1"), new Tag("#tag3") } }.AddChange("source2", new Moneyz(2)));
-            _walletHistory.SaveOperation(new Operation(thisMonthDate) { Tags = new[] { new Tag("tag1"), new Tag("tag3") } }.AddChange("source2", new Moneyz(10)));
+            var pastMonthOperation = new OperationCommand
+            {
+                When = pastMonthDate,
+                Source = "source1",
+                HowMuch = new Moneyz(2),
+                Tags = new[] { new Tag("tag1"), new Tag("tag2") }
+            };
+            var thisMonthOperationWithTagsWithHashes = new OperationCommand
+            {
+                When = thisMonthDate,
+                Source = "source2",
+                HowMuch = new Moneyz(2),
+                Tags = new[] { new Tag("#tag1"), new Tag("#tag3") }
+            };
+            var thisMonthOperationWithTagsWithoutHashes = new OperationCommand
+            {
+                When = thisMonthDate,
+                Source = "source2",
+                HowMuch = new Moneyz(10),
+                Tags = new[] { new Tag("tag1"), new Tag("tag3") }
+            };
+
+            SaveOperation(pastMonthOperation);
+            SaveOperation(thisMonthOperationWithTagsWithHashes);
+            SaveOperation(thisMonthOperationWithTagsWithoutHashes);
+
             var command = new DisplayBalanceCommand
             {
                 Sources = new[] { "#tag1" },

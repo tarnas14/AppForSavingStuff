@@ -25,22 +25,19 @@
             _ui = new ConsoleUi();
             _consoleMock = new ConsoleMock();
 
-            var ravenHistory = new RavenDocumentStoreWalletHistory(
-                new DocumentStoreProvider
-                {
-                    RunInMemory = true
-                }
-            )
+            var documentStoreProvider = new DocumentStoreProvider
             {
-                WaitForNonStale = true
+                RunInMemory = true
             };
+            var ravenHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider){WaitForNonStale = true};
+            var ravenMagic = new StandardBagOfRavenMagic(documentStoreProvider){WaitForNonStale = true};
 
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(master => master.Now).Returns(() => DateTime.Now);
             _timeMasterMock.Setup(master => master.Today).Returns(() => DateTime.Now);
             _sourceNameValidator = new MemoryListSourceNameValidator();
 
-            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator), "wallet");
+            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator, ravenMagic), "wallet");
         }
 
         public EndToEndTester Execute(string userCommandString)

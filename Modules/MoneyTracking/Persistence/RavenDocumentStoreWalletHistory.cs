@@ -17,64 +17,6 @@
 
         public bool WaitForNonStale { get; set; }
 
-        public void SaveOperation(Operation toSave)
-        {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                AdditionalInformationToChanges(toSave.Changes, toSave.When, session);
-                session.Store(toSave);
-                session.SaveChanges();
-            }
-        }
-
-        private void AdditionalInformationToChanges(IEnumerable<Change> changes, DateTime when, IDocumentSession session)
-        {
-            foreach (var change in changes)
-            {
-                var sourceBalance = GetBalanceAt(change.Source, when, session);
-
-                change.Before = sourceBalance;
-                change.After = sourceBalance + change.Difference;
-
-                AdjustLaterOperationsOnSourceIfNecessary(when, change.Source, change.Difference, session);
-            }
-        }
-
-        private void AdjustLaterOperationsOnSourceIfNecessary(DateTime when, string sourceName, Moneyz difference, IDocumentSession session)
-        {
-            var laterOperations =
-                WaitForQueryIfNecessary(QueryOperations(session))
-                    .Where(operation => operation.When > when)
-                    .OfType<Operation>().ToList();
-
-            laterOperations.ForEach(operation => operation.Changes.Where(change => change.Source == sourceName).ToList().ForEach(
-                change =>
-                {
-                    change.Before += difference;
-                    change.After += difference;
-                }));
-        }
-
-        private Moneyz GetBalanceAt(string sourceName, DateTime when, IDocumentSession session)
-        {
-            var operationsBefore = WaitForQueryIfNecessary(QueryOperations(session)).OfType<Operation>().ToList();
-            var latestOperationBefore = operationsBefore.Where(operation => operation.When <= when && operation.Changes.Any(change => change.Source == sourceName)).OrderByDescending(operation => operation.When).FirstOrDefault();
-
-            if (latestOperationBefore == null)
-            {
-                return new Moneyz(0);
-            }
-
-            var changeForSource = latestOperationBefore.Changes.FirstOrDefault(change => change.Source == sourceName);
-
-            if (changeForSource == null)
-            {
-                return new Moneyz(0);
-            }
-
-            return changeForSource.After;
-        }
-
         public IList<Operation> GetFullHistory()
         {
             using (var session = _storeProvider.Store.OpenSession())
@@ -120,7 +62,7 @@
         }
 
         public Moneyz GetBalance(string sourceName)
-    {
+        {
             var source = GetSourceByName(sourceName);
 
             if (source == null)

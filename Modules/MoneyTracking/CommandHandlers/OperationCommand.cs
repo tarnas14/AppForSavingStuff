@@ -5,6 +5,11 @@ namespace Modules.MoneyTracking.CommandHandlers
 
     public class OperationCommand : Command
     {
+        public OperationCommand()
+        {
+            HowMuch = new Moneyz(0);
+        }
+
         public string Source { get; set; }
         public string Destination { get; set; }
         public string Description { get; set; }

@@ -1,6 +1,7 @@
 ﻿namespace Specification.Commands
 {
     using System;
+    using System.Linq;
     using Modules;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.CommandHandlers;
@@ -25,14 +26,17 @@
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(timeMaster => timeMaster.Now).Returns(DateTime.Now);
 
-            _walletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider() {RunInMemory = true})
+            var documentStoreProvider = new DocumentStoreProvider() {RunInMemory = true};
+            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider)
             {
                 WaitForNonStale = true
             };
 
+            var bagOfRavenMagic = new StandardBagOfRavenMagic(documentStoreProvider){WaitForNonStale = true};
+
             _reservedWordsStoreMock = new Mock<SourceNameValidator>();
 
-            _commandHandler = new OperationCommandHandler(_walletHistory, _reservedWordsStoreMock.Object);
+            _commandHandler = new OperationCommandHandler(_reservedWordsStoreMock.Object, bagOfRavenMagic);
         }
 
         [Test]
@@ -45,20 +49,13 @@
                 HowMuch = new Moneyz(2),
                 When = DateTime.Now
             };
-            var walletHistoryMock = new Mock<WalletHistory>();
-            walletHistoryMock.Setup(history => history.GetBalance(It.IsAny<string>())).Returns(new Moneyz(0));
-            var commandHandler = new OperationCommandHandler(walletHistoryMock.Object, Mock.Of<SourceNameValidator>());
 
             //when
-            commandHandler.Execute(command);
+            _commandHandler.Execute(command);
 
             //then
-            walletHistoryMock.Verify(mock => mock.SaveOperation(It.Is<Operation>(operation => HasDate(operation, command.When))));
-        }
-
-        private bool HasDate(Operation operation, DateTime when)
-        {
-            return operation.When == when;
+            var operation = _walletHistory.GetFullHistory().First();
+            Assert.That(operation.When, Is.EqualTo(command.When));
         }
 
         [Test]

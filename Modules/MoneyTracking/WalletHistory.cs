@@ -4,7 +4,6 @@
 
     public interface WalletHistory
     {
-        void SaveOperation(Operation toSave);
         IList<Operation> GetFullHistory();
         IList<Operation> GetForMonth(Month month);
         IList<Source> GetSources();

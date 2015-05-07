@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MoneyTracking\Change.cs" />
+    <Compile Include="MoneyTracking\Persistence\BagOfRavenMagic.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\CommandHandler.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayBalanceCommand.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="MoneyTracking\CommandHandlers\DisplayTagsCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\DisplayTagsCommandHandler.cs" />
     <Compile Include="MoneyTracking\Persistence\Operations_BySources.cs" />
+    <Compile Include="MoneyTracking\Persistence\StandardBagOfRavenMagic.cs" />
     <Compile Include="MoneyTracking\RemoveSourceCommand.cs" />
     <Compile Include="MoneyTracking\RemoveSourceCommandHandler.cs" />
     <Compile Include="MoneyTracking\SourceNameValidation\MemoryListSourceNameValidator.cs" />

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using CommandHandlers;
+    using Persistence;
     using Presentation;
     using SourceNameValidation;
     using Tarnas.ConsoleUi;
@@ -14,13 +15,15 @@
         private readonly WalletHistory _ravenHistory;
         private readonly TimeMaster _timeMaster;
         private readonly SourceNameValidator _sourceNameValidator;
+        private readonly BagOfRavenMagic _ravenMagic;
 
-        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator)
+        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic)
         {
             _walletUi = walletUi;
             _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
             _sourceNameValidator = sourceNameValidator;
+            _ravenMagic = ravenMagic;
         }
 
         public void Execute(UserCommand userCommand)
@@ -41,7 +44,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _sourceNameValidator).Execute(addCommand);
+                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Execute(addCommand);
                         break;
                     case "sub":
                         var subCommand = new OperationCommand
@@ -52,7 +55,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_ravenHistory, _sourceNameValidator).Execute(subCommand);
+                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Execute(subCommand);
 
                         break;
                     case "trans":
@@ -65,7 +68,7 @@
                             Tags = GetTags(userCommand, 5),
                             When = GetDate(userCommand)
                         };;
-                        new OperationCommandHandler(_ravenHistory, _sourceNameValidator).Execute(transCommand);
+                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Execute(transCommand);
 
                         break;
                     case "balance":

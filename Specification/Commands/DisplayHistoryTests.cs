@@ -8,6 +8,7 @@
     using Modules.MoneyTracking.CommandHandlers;
     using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
+    using Modules.MoneyTracking.SourceNameValidation;
     using Moq;
     using NUnit.Framework;
 
@@ -24,8 +25,9 @@
         [SetUp]
         public void Setup()
         {
-            _walletHistory = new RavenDocumentStoreWalletHistory(new DocumentStoreProvider(){RunInMemory = true}){WaitForNonStale = true};
-            SetupWalletHistory();
+            var documentStoreProvider = new DocumentStoreProvider(){RunInMemory = true};
+            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider){WaitForNonStale = true};
+            SetupWalletHistory(documentStoreProvider);
 
             _consoleMock = new ConsoleMock();
             _walletUi = new WalletUi(_consoleMock);
@@ -36,28 +38,55 @@
             _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object);
         }
 
-        private void SetupWalletHistory()
+        private void SetupWalletHistory(DocumentStoreProvider documentStoreProvider)
         {
             var testDate = new DateTime(2014, 5, 25);
             var monthEarlier = new DateTime(2014, 4, 25);
 
-            var op1 = new Operation(monthEarlier);
-            op1.AddChange("mbank", new Moneyz(2.5m));
-            var op2 = new Operation(testDate);
-            op2.AddChange("mbank", new Moneyz(-0.4m));
-            var op3 = new Operation(testDate);
-            op3.AddChange("getin", new Moneyz(0.01m));
-            var op4 = new Operation(testDate);
-            op4.AddChange("mbank", new Moneyz(-0.1m));
-            op4.AddChange("getin", new Moneyz(0.1m));
-            var op5 = new Operation(testDate);
-            op5.AddChange("src", new Moneyz(69) );
+            var command1 = new OperationCommand
+            {
+                When = monthEarlier,
+                Source = "mbank",
+                HowMuch = new Moneyz(2.5m)
+            };
 
-            _walletHistory.SaveOperation(op1);
-            _walletHistory.SaveOperation(op2);
-            _walletHistory.SaveOperation(op3);
-            _walletHistory.SaveOperation(op4);
-            _walletHistory.SaveOperation(op5);
+            var command2 = new OperationCommand
+            {
+                When = testDate,
+                Source = "mbank",
+                HowMuch = new Moneyz(-0.4m)
+            };
+
+            var command3 = new OperationCommand
+            {
+                When = testDate,
+                Source = "getin",
+                HowMuch = new Moneyz(0.01m)
+            };
+
+            var command4 = new OperationCommand
+            {
+                When = testDate,
+                Source = "mbank",
+                Destination = "getin",
+                HowMuch = new Moneyz(0.1m)
+            };
+
+            var command5 = new OperationCommand
+            {
+                When = testDate,
+                Source = "src",
+                HowMuch = new Moneyz(69)
+            };
+
+            var handler = new OperationCommandHandler(Mock.Of<SourceNameValidator>(),
+                new StandardBagOfRavenMagic(documentStoreProvider) { WaitForNonStale = true });
+
+            handler.Execute(command1);
+            handler.Execute(command2);
+            handler.Execute(command3);
+            handler.Execute(command4);
+            handler.Execute(command5);
         }
 
         [Test]
