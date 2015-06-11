@@ -44,7 +44,7 @@
             var commandHandler = new DisplayTagsCommandHandler(_walletHistory, new WalletUi(_consoleMock));
 
             //when
-            commandHandler.Execute(command);
+            commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
@@ -52,7 +52,7 @@
 
         private void SaveOperation(OperationCommand operationCommand)
         {
-            new OperationCommandHandler(Mock.Of<SourceNameValidator>(), _standardBagOfRavenMagic).Execute(operationCommand);
+            new OperationCommandHandler(Mock.Of<SourceNameValidator>(), _standardBagOfRavenMagic).Handle(operationCommand);
         }
 
         [Test]
@@ -71,7 +71,7 @@
             var commandHandler = new DisplayTagsCommandHandler(_walletHistory, new WalletUi(_consoleMock));
 
             //when
-            commandHandler.Execute(command);
+            commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));

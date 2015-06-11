@@ -1,6 +1,5 @@
 ﻿namespace Modules.MoneyTracking.Persistence
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Raven.Client;
@@ -29,14 +28,14 @@
             }
         }
 
-        private static IRavenQueryable<Operations_ByMonthYear.Result> QueryOperations(IDocumentSession session)
+        public IRavenQueryable<Operations_ByMonthYear.Result> QueryOperations(IDocumentSession session)
         {
-            return session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>();
+            return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>());
         }
 
-        private static IRavenQueryable<Operations_ByMonthYear.Result> ByMonth(IRavenQueryable<Operations_ByMonthYear.Result> query, Month month)
+        private IRavenQueryable<Operations_ByMonthYear.Result> ByMonth(IRavenQueryable<Operations_ByMonthYear.Result> query, Month month)
         {
-            return query.Where(result => result.MonthYear == month.GetIndexString());
+            return WaitForQueryIfNecessary(query.Where(result => result.MonthYear == month.GetIndexString()));
         }
 
         public IList<Operation> GetForMonth(Month month)

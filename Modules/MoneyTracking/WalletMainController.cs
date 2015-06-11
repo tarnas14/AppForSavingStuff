@@ -16,14 +16,16 @@
         private readonly TimeMaster _timeMaster;
         private readonly SourceNameValidator _sourceNameValidator;
         private readonly BagOfRavenMagic _ravenMagic;
+        private readonly DocumentStoreProvider _storeProvider;
 
-        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic)
+        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic, DocumentStoreProvider storeProvider)
         {
             _walletUi = walletUi;
             _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
             _sourceNameValidator = sourceNameValidator;
             _ravenMagic = ravenMagic;
+            _storeProvider = storeProvider;
         }
 
         public void Execute(UserCommand userCommand)
@@ -44,7 +46,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Execute(addCommand);
+                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Handle(addCommand);
                         break;
                     case "sub":
                         var subCommand = new OperationCommand
@@ -55,7 +57,7 @@
                             Tags = GetTags(userCommand, 4),
                             When = GetDate(userCommand)
                         };
-                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Execute(subCommand);
+                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Handle(subCommand);
 
                         break;
                     case "trans":
@@ -68,7 +70,7 @@
                             Tags = GetTags(userCommand, 5),
                             When = GetDate(userCommand)
                         };;
-                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Execute(transCommand);
+                        new OperationCommandHandler(_sourceNameValidator, _ravenMagic).Handle(transCommand);
 
                         break;
                     case "balance":
@@ -78,7 +80,7 @@
                             Month = GetMonthForBalanceDisplay(userCommand)
                         };
 
-                        new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Execute(displayBalanceCommand);
+                        new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Handle(displayBalanceCommand);
 
                         break;
                     case "history":
@@ -92,11 +94,11 @@
 
                         displayHistoryCommand.Sources = GetParamsFrom(1, userCommand.Params);
 
-                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster).Execute(displayHistoryCommand);
+                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster, _storeProvider).Handle(displayHistoryCommand);
 
                         break;
                     case "tags":
-                        new DisplayTagsCommandHandler(_ravenHistory, _walletUi).Execute(new DisplayTagsCommand());
+                        new DisplayTagsCommandHandler(_ravenHistory, _walletUi).Handle(new DisplayTagsCommand());
                         break;
 
                     case "remove":
@@ -105,7 +107,7 @@
                             Source = userCommand.Params[1]
                         };
 
-                        new RemoveSourceCommandHandler(_ravenHistory, _walletUi).Execute(removeSourceCommand);
+                        new RemoveSourceCommandHandler(_ravenHistory, _walletUi).Handle(removeSourceCommand);
                         break;
                 }
             }

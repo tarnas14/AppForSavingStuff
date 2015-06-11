@@ -217,6 +217,24 @@
         }
 
         [Test]
+        public void ShouldDisplayHistoryForSpecificSourceWithMuchDataInStore()
+        {
+            //given
+            _endToEnd.GenerateOperations("mbank", 128);
+            _endToEnd.Execute("/wallet add getin 2");
+
+            //when
+            _endToEnd.Execute("/wallet history getin");
+
+            //then
+            _endToEnd.AssertExpectedResult(
+                "    when        where  howMuch  valueAfter",
+                string.Empty,
+                "    2015-05-24  getin    +2.00        2.00"
+                );
+        }
+
+        [Test]
         public void ShouldDisplayHistoryForMultipleSources()
         {
             //given

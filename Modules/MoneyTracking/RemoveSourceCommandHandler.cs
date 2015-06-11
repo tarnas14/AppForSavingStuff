@@ -14,7 +14,7 @@ namespace Modules.MoneyTracking
             _walletUi = walletUi;
         }
 
-        public void Execute(RemoveSourceCommand command)
+        public void Handle(RemoveSourceCommand command)
         {
             _ravenHistory.RemoveSource(command.Source);
 

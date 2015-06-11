@@ -19,9 +19,11 @@
         private readonly Mock<TimeMaster> _timeMasterMock;
         private readonly MemoryListSourceNameValidator _sourceNameValidator;
         private DateTime _date;
+        private readonly Random _random;
 
         public EndToEndTester()
         {
+            _random = new Random();
             _ui = new ConsoleUi();
             _consoleMock = new ConsoleMock();
 
@@ -37,7 +39,7 @@
             _timeMasterMock.Setup(master => master.Today).Returns(() => DateTime.Now);
             _sourceNameValidator = new MemoryListSourceNameValidator();
 
-            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator, ravenMagic), "wallet");
+            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator, ravenMagic, documentStoreProvider), "wallet");
         }
 
         public EndToEndTester Execute(string userCommandString)
@@ -80,6 +82,17 @@
         public void ReserveWord(string wordToReserve)
         {
             _sourceNameValidator.RestrictWord(wordToReserve);
+        }
+
+        public void GenerateOperations(string source, int number)
+        {
+            var operations = new[] { "add", "sub" };
+            for (int i = 0; i < number; i++)
+            {
+                var operation = operations[_random.Next(operations.Count())];
+                var value = (_random.NextDouble() * 100).ToString("F2");
+                Execute(string.Format("/wallet {0} {1} {2}", operation, source, value));
+            }
         }
     }
 }

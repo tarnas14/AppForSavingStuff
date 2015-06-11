@@ -51,7 +51,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             var operation = _walletHistory.GetFullHistory().First();
@@ -72,7 +72,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             var balance = _walletHistory.GetBalance(TestSource);
@@ -92,7 +92,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             var balance = _walletHistory.GetBalance(TestSource);
@@ -113,7 +113,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             var sourceBalance = _walletHistory.GetBalance(TestSource);

@@ -18,7 +18,7 @@ namespace Modules.MoneyTracking.CommandHandlers
             _ravenMagic = ravenMagic;
         }
 
-        public void Execute(OperationCommand command)
+        public void Handle(OperationCommand command)
         {
             _sourceNameValidator.CheckIfValid(command.Source);
 

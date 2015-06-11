@@ -35,7 +35,7 @@
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(mock => mock.Today).Returns(new DateTime(2014, 5, 25));
 
-            _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object);
+            _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object, documentStoreProvider);
         }
 
         private void SetupWalletHistory(DocumentStoreProvider documentStoreProvider)
@@ -82,11 +82,11 @@
             var handler = new OperationCommandHandler(Mock.Of<SourceNameValidator>(),
                 new StandardBagOfRavenMagic(documentStoreProvider) { WaitForNonStale = true });
 
-            handler.Execute(command1);
-            handler.Execute(command2);
-            handler.Execute(command3);
-            handler.Execute(command4);
-            handler.Execute(command5);
+            handler.Handle(command1);
+            handler.Handle(command2);
+            handler.Handle(command3);
+            handler.Handle(command4);
+            handler.Handle(command5);
         }
 
         [Test]
@@ -111,7 +111,7 @@
             };
 
             //when
-            _handler.Execute(command);
+            _handler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
@@ -138,7 +138,7 @@
             };
 
             //when
-            _handler.Execute(command);
+            _handler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
@@ -161,7 +161,7 @@
             };
 
             //when
-            _handler.Execute(command);
+            _handler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
@@ -184,7 +184,7 @@
             };
 
             //when
-            _handler.Execute(command);
+            _handler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
@@ -211,7 +211,7 @@
             };
 
             //when
-            _handler.Execute(command);
+            _handler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));
@@ -239,7 +239,7 @@
             };
 
             //when
-            _handler.Execute(command);
+            _handler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedLines));

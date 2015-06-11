@@ -48,7 +48,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
@@ -56,7 +56,7 @@
 
         private void SaveOperation(OperationCommand command)
         {
-            _operationCommandHandler.Execute(command);
+            _operationCommandHandler.Handle(command);
         }
         
         [Test]
@@ -78,7 +78,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
@@ -103,7 +103,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
@@ -145,7 +145,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
@@ -195,7 +195,7 @@
             };
 
             //when
-            _commandHandler.Execute(command);
+            _commandHandler.Handle(command);
 
             //then
             Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));

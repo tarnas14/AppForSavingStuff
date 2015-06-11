@@ -16,7 +16,7 @@
             _walletUi = walletUi;
         }
 
-        public void Execute(DisplayBalanceCommand command)
+        public void Handle(DisplayBalanceCommand command)
         {
             var balancesToDisplay = new Balances();
             if (ShouldDisplayAllSources(command))

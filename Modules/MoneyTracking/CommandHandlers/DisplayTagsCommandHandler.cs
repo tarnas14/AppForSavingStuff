@@ -13,7 +13,7 @@ namespace Modules.MoneyTracking.CommandHandlers
             _walletUi = walletUi;
         }
 
-        public void Execute(DisplayTagsCommand command)
+        public void Handle(DisplayTagsCommand command)
         {
             _walletUi.DisplayTags(_walletHistory.GetAllTags());
         }
