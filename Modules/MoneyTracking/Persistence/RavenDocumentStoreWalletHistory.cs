@@ -18,19 +18,19 @@
 
         public IList<Operation> GetFullHistory()
         {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                var operations = WaitForQueryIfNecessary(QueryOperations(session)).OrderBy(operation => operation.When).OfType<Operation>().ToList();
+            var operations = WaitForQueryIfNecessary(QueryOperations()).OrderBy(operation => operation.When).OfType<Operation>().ToList();
 
-                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
+            LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
 
-                return operations.ToList();
-            }
+            return operations.ToList();
         }
 
-        public IRavenQueryable<Operations_ByMonthYear.Result> QueryOperations(IDocumentSession session)
+        public IRavenQueryable<Operations_ByMonthYear.Result> QueryOperations()
         {
-            return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>());
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                return WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>());
+            }
         }
 
         private IRavenQueryable<Operations_ByMonthYear.Result> ByMonth(IRavenQueryable<Operations_ByMonthYear.Result> query, Month month)
@@ -40,15 +40,12 @@
 
         public IList<Operation> GetForMonth(Month month)
         {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                var operations = WaitForQueryIfNecessary(ByMonth(QueryOperations(session), month))
-                        .OrderBy(result => result.When).OfType<Operation>().ToList();
+            var operations = WaitForQueryIfNecessary(ByMonth(QueryOperations(), month))
+                    .OrderBy(result => result.When).OfType<Operation>().ToList();
 
-                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
+            LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
 
-                return operations;
-            }
+            return operations;
         }
 
         public IList<Source> GetSources()
@@ -97,16 +94,13 @@
 
         public IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month)
         {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                var operations = WaitForQueryIfNecessary(QueryOperations(session))
-                    .Where(result => result.MonthYear == month.GetIndexString() && result.TagNames.Any(tag => tag == tagName))
-                    .OrderBy(result => result.When).OfType<Operation>().ToList();
+            var operations = WaitForQueryIfNecessary(QueryOperations())
+                .Where(result => result.MonthYear == month.GetIndexString() && result.TagNames.Any(tag => tag == tagName))
+                .OrderBy(result => result.When).OfType<Operation>().ToList();
 
-                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
+            LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
 
-                return operations;
-            }
+            return operations;
         }
 
         public IList<Tag> GetTagsForMonth(Month month)

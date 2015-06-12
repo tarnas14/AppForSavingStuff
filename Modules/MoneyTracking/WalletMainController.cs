@@ -16,16 +16,14 @@
         private readonly TimeMaster _timeMaster;
         private readonly SourceNameValidator _sourceNameValidator;
         private readonly BagOfRavenMagic _ravenMagic;
-        private readonly DocumentStoreProvider _storeProvider;
 
-        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic, DocumentStoreProvider storeProvider)
+        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic)
         {
             _walletUi = walletUi;
             _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
             _sourceNameValidator = sourceNameValidator;
             _ravenMagic = ravenMagic;
-            _storeProvider = storeProvider;
         }
 
         public void Execute(UserCommand userCommand)
@@ -94,7 +92,7 @@
 
                         displayHistoryCommand.Sources = GetParamsFrom(1, userCommand.Params);
 
-                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster, _storeProvider).Handle(displayHistoryCommand);
+                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster).Handle(displayHistoryCommand);
 
                         break;
                     case "tags":

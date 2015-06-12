@@ -35,7 +35,7 @@
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(mock => mock.Today).Returns(new DateTime(2014, 5, 25));
 
-            _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object, documentStoreProvider);
+            _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object);
         }
 
         private void SetupWalletHistory(DocumentStoreProvider documentStoreProvider)

@@ -39,7 +39,7 @@
             _timeMasterMock.Setup(master => master.Today).Returns(() => DateTime.Now);
             _sourceNameValidator = new MemoryListSourceNameValidator();
 
-            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator, ravenMagic, documentStoreProvider), "wallet");
+            _ui.Subscribe(new WalletMainController(new WalletUi(_consoleMock), ravenHistory, _timeMasterMock.Object, _sourceNameValidator, ravenMagic), "wallet");
         }
 
         public EndToEndTester Execute(string userCommandString)
