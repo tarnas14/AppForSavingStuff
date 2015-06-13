@@ -92,7 +92,7 @@
 
                         displayHistoryCommand.Sources = GetParamsFrom(1, userCommand.Params);
 
-                        new DisplayHistoryCommandHandler(_ravenHistory, _walletUi, _timeMaster).Handle(displayHistoryCommand);
+                        new DisplayHistoryCommandHandler(_ravenMagic, _walletUi, _timeMaster).Handle(displayHistoryCommand);
 
                         break;
                     case "tags":

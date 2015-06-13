@@ -15,7 +15,6 @@
     [TestFixture]
     class DisplayHistoryTests
     {
-        private WalletHistory _walletHistory;
         private ConsoleMock _consoleMock;
         private WalletUi _walletUi;
         private DisplayHistoryCommandHandler _handler;
@@ -26,7 +25,6 @@
         public void Setup()
         {
             var documentStoreProvider = new DocumentStoreProvider(){RunInMemory = true};
-            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider){WaitForNonStale = true};
             SetupWalletHistory(documentStoreProvider);
 
             _consoleMock = new ConsoleMock();
@@ -35,7 +33,7 @@
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(mock => mock.Today).Returns(new DateTime(2014, 5, 25));
 
-            _handler = new DisplayHistoryCommandHandler(_walletHistory, _walletUi, _timeMasterMock.Object);
+            _handler = new DisplayHistoryCommandHandler(new StandardBagOfRavenMagic(documentStoreProvider), _walletUi, _timeMasterMock.Object);
         }
 
         private void SetupWalletHistory(DocumentStoreProvider documentStoreProvider)
