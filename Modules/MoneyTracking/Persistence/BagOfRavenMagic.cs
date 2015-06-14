@@ -7,5 +7,6 @@ namespace Modules.MoneyTracking.Persistence
     {
         IDocumentStore Store { get; }
         IRavenQueryable<TEntity> WaitForQueryIfNecessary<TEntity>(IRavenQueryable<TEntity> query) where TEntity : class;
+        void UpdateScheme();
     }
 }

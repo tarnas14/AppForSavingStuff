@@ -107,6 +107,9 @@
 
                         new RemoveSourceCommandHandler(_ravenHistory, _walletUi).Handle(removeSourceCommand);
                         break;
+                    case "updateDb":
+                        _ravenMagic.UpdateScheme();
+                        break;
                 }
             }
             catch (WalletException e)
