@@ -25,7 +25,7 @@ namespace Modules.MoneyTracking.CommandHandlers
             var operation = new Operation(command.When)
             {
                 Description = command.Description,
-                Tags = command.Tags
+                TagStrings = command.Tags.Select(tag => tag.Value).ToList()
             };
 
             if (HasDestination(command))
@@ -37,7 +37,24 @@ namespace Modules.MoneyTracking.CommandHandlers
                 StandardOperation(operation, command);
             }
 
+            SaveTags(command.Tags);
             SaveOperation(operation);
+        }
+
+        private void SaveTags(IEnumerable<Tag> tags)
+        {
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                foreach (var newTag in tags.Distinct(new Tag.Comparer()))
+                {
+                    if (session.Query<Tag>().Where(storedTag => storedTag.Value == newTag.Value).ToList().Any())
+                    {
+                        continue;
+                    }
+                    session.Store(newTag);
+                }
+                session.SaveChanges();
+            }
         }
 
         private bool HasDestination(OperationCommand command)

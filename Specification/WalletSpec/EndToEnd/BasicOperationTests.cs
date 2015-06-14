@@ -66,7 +66,7 @@
             _endToEnd.Execute("/wallet add mbank 2");
 
             //when
-            _endToEnd.Execute("/wallet balance mbank");
+            _endToEnd.Execute("/wallet balance mbank 'description' #tag2 #tag2");
 
             //then
             _endToEnd.AssertExpectedResult("    mbank: 2.00");

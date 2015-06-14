@@ -1,6 +1,7 @@
 ﻿namespace Specification.Commands
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using Modules;
     using Modules.MoneyTracking;
@@ -17,6 +18,7 @@
         private Mock<SourceNameValidator> _reservedWordsStoreMock;
         private WalletHistory _walletHistory;
         private OperationCommandHandler _commandHandler;
+        private DocumentStoreProvider _documentStoreProvider;
         private const string TestSource = "testSource";
         private const string TestDestination = "testDestination";
 
@@ -26,13 +28,13 @@
             _timeMasterMock = new Mock<TimeMaster>();
             _timeMasterMock.Setup(timeMaster => timeMaster.Now).Returns(DateTime.Now);
 
-            var documentStoreProvider = new DocumentStoreProvider() {RunInMemory = true};
-            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider)
+            _documentStoreProvider = new DocumentStoreProvider() {RunInMemory = true};
+            _walletHistory = new RavenDocumentStoreWalletHistory(_documentStoreProvider)
             {
                 WaitForNonStale = true
             };
 
-            var bagOfRavenMagic = new StandardBagOfRavenMagic(documentStoreProvider){WaitForNonStale = true};
+            var bagOfRavenMagic = new StandardBagOfRavenMagic(_documentStoreProvider){ WaitForNonStale = true };
 
             _reservedWordsStoreMock = new Mock<SourceNameValidator>();
 
@@ -121,6 +123,113 @@
 
             var destinationBalance = _walletHistory.GetBalance(TestDestination);
             Assert.That(destinationBalance, Is.EqualTo(new Moneyz(howMuch)));
+        }
+
+        [Test]
+        public void ShouldStoreTagsInTagStrings()
+        {
+            //given
+            const int howMuch = 666;
+            var command = new OperationCommand
+            {
+                Source = TestSource,
+                Description = Stopwatch.GetTimestamp().ToString(),
+                Destination = TestDestination,
+                HowMuch = new Moneyz(howMuch),
+                When = DateTime.Now,
+                Tags = new []{ new Tag("#tag1"), new Tag("#tag2") }
+            };
+
+            //when
+            _commandHandler.Handle(command);
+
+            //then
+            using (var session = _documentStoreProvider.Store.OpenSession())
+            {
+                var operationWithTagsInTagStrings =
+                    session.Query<Operation>().Single(operation => operation.Description == command.Description);
+
+                Assert.That(operationWithTagsInTagStrings.TagStrings, Is.EquivalentTo(command.Tags.Select(tag => tag.Value)));
+            }
+        }
+
+        [Test]
+        public void ShouldStoreTags()
+        {
+            //given
+            const int howMuch = 666;
+            var command = new OperationCommand
+            {
+                Source = TestSource,
+                Destination = TestDestination,
+                HowMuch = new Moneyz(howMuch),
+                When = DateTime.Now,
+                Tags = new[] { new Tag(Stopwatch.GetTimestamp().ToString()), new Tag(Stopwatch.GetTimestamp().ToString()) }
+            };
+
+            //when
+            _commandHandler.Handle(command);
+
+            //then
+            using (var session = _documentStoreProvider.Store.OpenSession())
+            {
+                var tags = session.Query<Tag>().ToList();
+                Assert.That(tags.Any(tag => tag.Value == command.Tags[0].Value));
+                Assert.That(tags.Any(tag => tag.Value == command.Tags[1].Value));
+            }
+        }
+
+        [Test]
+        public void ShouldStoreUniqueTagsInOneOperation()
+        {
+            //given
+            const int howMuch = 666;
+            var tagValue = Stopwatch.GetTimestamp().ToString();
+            var command = new OperationCommand
+            {
+                Source = TestSource,
+                Destination = TestDestination,
+                HowMuch = new Moneyz(howMuch),
+                When = DateTime.Now,
+                Tags = new[] { new Tag(tagValue), new Tag(tagValue) }
+            };
+
+            //when
+            _commandHandler.Handle(command);
+
+            //then
+            using (var session = _documentStoreProvider.Store.OpenSession())
+            {
+                var tags = session.Query<Tag>().ToList();
+                Assert.That(tags.Count(tag => tag.Value == tagValue) == 1);
+            }
+        }
+
+        [Test]
+        public void ShouldStoreTagWithTheSameValueOnlyOnce()
+        {
+            //given
+            const int howMuch = 666;
+            var tagValue = Stopwatch.GetTimestamp().ToString();
+            var command = new OperationCommand
+            {
+                Source = TestSource,
+                Destination = TestDestination,
+                HowMuch = new Moneyz(howMuch),
+                When = DateTime.Now,
+                Tags = new[] { new Tag(tagValue) }
+            };
+
+            //when
+            _commandHandler.Handle(command);
+            _commandHandler.Handle(command);
+
+            //then
+            using (var session = _documentStoreProvider.Store.OpenSession())
+            {
+                var tags = session.Query<Tag>().ToList();
+                Assert.That(tags.Count(tag => tag.Value == tagValue) == 1);
+            }
         }
     }
 }

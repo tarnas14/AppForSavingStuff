@@ -1,5 +1,7 @@
 namespace Modules.MoneyTracking
 {
+    using System.Collections.Generic;
+
     public class Tag
     {
 
@@ -30,6 +32,19 @@ namespace Modules.MoneyTracking
         public static bool IsTagName(string sourceName)
         {
             return sourceName.StartsWith("#");
+        }
+
+        public class Comparer : IEqualityComparer<Tag>
+        {
+            public bool Equals(Tag x, Tag y)
+            {
+                return x.Value == y.Value;
+            }
+
+            public int GetHashCode(Tag obj)
+            {
+                return obj.GetHashCode();
+            }
         }
     }
 }
