@@ -17,8 +17,9 @@
                     operation.TagStrings = new List<string>();
                     operation.Tags.ToList().ForEach(tag =>
                     {
-                        operation.TagStrings.Add(tag.Value);
-                        session.Store(tag);
+                        var sanitizedTag = new Tag(Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value);
+                        operation.TagStrings.Add(sanitizedTag.Value);
+                        session.Store(sanitizedTag);
                         actionOnOperationUpdated();
                     });
                     operation.Tags = null;

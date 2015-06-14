@@ -164,7 +164,7 @@
                 Destination = TestDestination,
                 HowMuch = new Moneyz(howMuch),
                 When = DateTime.Now,
-                Tags = new[] { new Tag(Stopwatch.GetTimestamp().ToString()), new Tag(Stopwatch.GetTimestamp().ToString()) }
+                Tags = new[] { new Tag(GetUniqueHashValue()), new Tag(GetUniqueHashValue()) }
             };
 
             //when
@@ -184,7 +184,7 @@
         {
             //given
             const int howMuch = 666;
-            var tagValue = Stopwatch.GetTimestamp().ToString();
+            var tagValue = GetUniqueHashValue();
             var command = new OperationCommand
             {
                 Source = TestSource,
@@ -205,8 +205,40 @@
             }
         }
 
+        private static string GetUniqueHashValue()
+        {
+            return "#" + Stopwatch.GetTimestamp();
+        }
+
         [Test]
         public void ShouldStoreTagWithTheSameValueOnlyOnce()
+        {
+            //given
+            const int howMuch = 666;
+            var tagValue = GetUniqueHashValue();
+            var command = new OperationCommand
+            {
+                Source = TestSource,
+                Destination = TestDestination,
+                HowMuch = new Moneyz(howMuch),
+                When = DateTime.Now,
+                Tags = new[] { new Tag(tagValue) }
+            };
+
+            //when
+            _commandHandler.Handle(command);
+            _commandHandler.Handle(command);
+
+            //then
+            using (var session = _documentStoreProvider.Store.OpenSession())
+            {
+                var tags = session.Query<Tag>().ToList();
+                Assert.That(tags.Count(tag => tag.Value == tagValue) == 1);
+            }
+        }
+
+        [Test]
+        public void ShouldSanitizeTagValuesAndPrependHashesIfNecessary()
         {
             //given
             const int howMuch = 666;
@@ -228,7 +260,8 @@
             using (var session = _documentStoreProvider.Store.OpenSession())
             {
                 var tags = session.Query<Tag>().ToList();
-                Assert.That(tags.Count(tag => tag.Value == tagValue) == 1);
+                Assert.That(tags.Count(tag => tag.Value == tagValue), Is.EqualTo(0));
+                Assert.That(tags.Count(tag => tag.Value == "#" + tagValue), Is.EqualTo(1));
             }
         }
     }

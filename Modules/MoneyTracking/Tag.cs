@@ -4,8 +4,18 @@ namespace Modules.MoneyTracking
 
     public class Tag
     {
+        private string _value;
 
-        public string Value { get; private set; }
+        public string Value
+        {
+            get { return _value; }
+            set { _value = IsTagName(value) ? value : "#" + value; }
+        }
+
+        public Tag()
+        {
+            
+        }
 
         public Tag(string tagString)
         {

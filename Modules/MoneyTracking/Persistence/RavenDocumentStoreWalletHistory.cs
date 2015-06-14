@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Raven.Client;
     using Raven.Client.Linq;
 
     public class RavenDocumentStoreWalletHistory : WalletHistory
@@ -114,11 +113,12 @@
 
         public IList<Tag> GetAllTags()
         {
-            var historyOperations = GetFullHistory();
+            using (var session = _storeProvider.Store.OpenSession())
+            {
+                var tags = WaitForQueryIfNecessary(session.Query<Tag>());
 
-            var tags = historyOperations.SelectMany(operation => operation.Tags).Distinct();
-
-            return tags.ToList();
+                return tags.ToList();
+            }
         }
 
         public void RemoveSource(string source)
@@ -167,7 +167,7 @@
         {
             var history = GetFullHistory();
 
-            var tagOperations = history.Where(operation => operation.Tags.Any(tag => tag.Value == tagName));
+            var tagOperations = history.Where(operation => operation.TagStrings.Any(tagString => tagString == tagName));
 
             var changes = tagOperations.SelectMany(operation => operation.Changes);
 

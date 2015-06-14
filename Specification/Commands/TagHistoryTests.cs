@@ -55,28 +55,6 @@
             new OperationCommandHandler(Mock.Of<SourceNameValidator>(), _standardBagOfRavenMagic).Handle(operationCommand);
         }
 
-        [Test]
-        public void ShouldDisplayAllTagsForLegacyData()
-        {
-            //given
-            SaveOperation(new OperationCommand { Tags = new[] { new Tag("tag1"), new Tag("tag2") } });
-            SaveOperation(new OperationCommand { Tags = new[] { new Tag("#tag3") } });
-
-            var expectedOutput = new[]
-            {
-                "#tag1, #tag2, #tag3"
-            };
-
-            var command = new DisplayTagsCommand();
-            var commandHandler = new DisplayTagsCommandHandler(_walletHistory, new WalletUi(_consoleMock));
-
-            //when
-            commandHandler.Handle(command);
-
-            //then
-            Assert.That(_consoleMock.Lines, Is.EquivalentTo(expectedOutput));
-        }
-
 
     }
 }

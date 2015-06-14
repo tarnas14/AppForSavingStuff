@@ -89,17 +89,17 @@
 
         private string GetTagString(Operation operation)
         {
-            if (operation.Tags.Count == 0)
+            if (!operation.TagStrings.Any())
             {
                 return string.Empty;
             }
 
             var sBuilder = new StringBuilder();
 
-            for (int i = 0; i < operation.Tags.Count; ++i)
+            for (int i = 0; i < operation.TagStrings.Count; ++i)
             {
-                sBuilder.Append(operation.Tags[i].Value);
-                if (operation.Tags.Count - 1 != i)
+                sBuilder.Append(operation.TagStrings[i]);
+                if (operation.TagStrings.Count - 1 != i)
                 {
                     sBuilder.Append(" ");
                 }
@@ -209,7 +209,7 @@
             tableDisplay.DisplayHeaderless();
         }
 
-        public void DisplayMultipleBalances(IEnumerable<MoneyTracking.Source> sources)
+        public void DisplayMultipleBalances(IEnumerable<Source> sources)
         {
             var nameColumn = new Column
             {

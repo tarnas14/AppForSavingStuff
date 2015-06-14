@@ -106,7 +106,7 @@
         }
 
         [Test]
-        public void ShouldTreatAsTagsOnlyWordsStartingWithHashSign()
+        public void ShouldOnlyTreatWordsStartingWithHashSignAsTags()
         {
             //given
             _endToEnd.Execute("/wallet add mbank 2 description #tag2 #tag3 notAtag");

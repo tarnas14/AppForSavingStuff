@@ -8,6 +8,7 @@ namespace Modules.MoneyTracking.CommandHandlers
         public OperationCommand()
         {
             HowMuch = new Moneyz(0);
+            Tags = new List<Tag>();
         }
 
         public string Source { get; set; }
