@@ -102,15 +102,6 @@
             return operations;
         }
 
-        public IList<Tag> GetTagsForMonth(Month month)
-        {
-            var thisMonthOperations = GetForMonth(month);
-
-            var tagsInOperations = thisMonthOperations.SelectMany(operation => operation.Tags).Distinct();
-
-            return tagsInOperations.ToList();
-        }
-
         public IList<Tag> GetAllTags()
         {
             using (var session = _storeProvider.Store.OpenSession())

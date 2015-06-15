@@ -57,6 +57,7 @@ namespace Modules.MoneyTracking.CommandHandlers
                     {
                         operations.AddRange(operationsQuery.Where(operation => operation.TagNames.Any(tag => tag == tagSource)).OfType<Operation>());
                     }
+
                     var regularSources = command.Sources.Where(source => !Tag.IsTagName(source));
                     foreach (var regularSource in regularSources)
                     {
