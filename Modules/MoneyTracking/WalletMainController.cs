@@ -78,7 +78,7 @@
                             Month = GetMonthForBalanceDisplay(userCommand)
                         };
 
-                        new DisplayBalanceCommandHandler(_ravenHistory, _walletUi).Handle(displayBalanceCommand);
+                        new DisplayBalanceCommandHandler(_walletUi, _ravenMagic).Handle(displayBalanceCommand);
 
                         break;
                     case "history":

@@ -16,7 +16,6 @@
     {
         private ConsoleMock _consoleMock;
         private DisplayBalanceCommandHandler _commandHandler;
-        private WalletHistory _walletHistory;
         private OperationCommandHandler _operationCommandHandler;
 
         [SetUp]
@@ -25,11 +24,11 @@
             _consoleMock = new ConsoleMock();
 
             var documentStoreProvider = new DocumentStoreProvider(){RunInMemory = true};
-            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider){WaitForNonStale = true};
 
-            _operationCommandHandler = new OperationCommandHandler(Mock.Of<SourceNameValidator>(), new StandardBagOfRavenMagic(documentStoreProvider) {WaitForNonStale = true});
+            var standardBagOfRavenMagic = new StandardBagOfRavenMagic(documentStoreProvider) {WaitForNonStale = true};
+            _operationCommandHandler = new OperationCommandHandler(Mock.Of<SourceNameValidator>(), standardBagOfRavenMagic);
 
-            _commandHandler = new DisplayBalanceCommandHandler(_walletHistory, new WalletUi(_consoleMock));
+            _commandHandler = new DisplayBalanceCommandHandler(new WalletUi(_consoleMock), standardBagOfRavenMagic);
         }
 
         [Test]

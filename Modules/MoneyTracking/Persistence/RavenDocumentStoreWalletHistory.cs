@@ -37,25 +37,6 @@
             return WaitForQueryIfNecessary(query.Where(result => result.MonthYear == month.GetIndexString()));
         }
 
-        public IList<Operation> GetForMonth(Month month)
-        {
-            var operations = WaitForQueryIfNecessary(ByMonth(QueryOperations(), month))
-                    .OrderBy(result => result.When).OfType<Operation>().ToList();
-
-            LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
-
-            return operations;
-        }
-
-        public IList<Source> GetSources()
-        {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                var results = WaitForQueryIfNecessary(session.Query<Source, Sources_ByChangesInOperations>()).ToList();
-                return results;
-            }
-        }
-
         public Moneyz GetBalance(string sourceName)
         {
             var source = GetSourceByName(sourceName);
@@ -66,40 +47,6 @@
             }
 
             return source.Balance;
-        }
-
-        public Moneyz GetSourceBalanceForMonth(string sourceName, Month month)
-        {
-            if (Tag.IsTagName(sourceName))
-            {
-                var tagOperationsThisMonth = GetTagHistoryForThisMonth(sourceName, month);
-                var changesForTagThisMonth = tagOperationsThisMonth.SelectMany(operation => operation.Changes);
-
-                var tagMoneyBalanceForMonth = changesForTagThisMonth.Sum(change => change.Difference);
-
-                return tagMoneyBalanceForMonth; 
-            }
-
-            var monthHistory = GetForMonth(month);
-
-            var changesOnSourceThisMonth =
-                monthHistory.SelectMany(operation => operation.Changes.Where(change => change.Source == sourceName));
-
-            var stateBeforeThisMonth = changesOnSourceThisMonth.First().Before;
-            var lastChangeInThisMonth = changesOnSourceThisMonth.Last().After;
-
-            return lastChangeInThisMonth - stateBeforeThisMonth;
-        }
-
-        public IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month)
-        {
-            var operations = WaitForQueryIfNecessary(QueryOperations())
-                .Where(result => result.MonthYear == month.GetIndexString() && result.TagNames.Any(tag => tag == tagName))
-                .OrderBy(result => result.When).OfType<Operation>().ToList();
-
-            LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
-
-            return operations;
         }
 
         public IList<Tag> GetAllTags()

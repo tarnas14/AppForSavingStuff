@@ -2,18 +2,19 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Persistence;
     using Presentation;
     using Raven.Abstractions.Extensions;
 
     public class DisplayBalanceCommandHandler : CommandHandler<DisplayBalanceCommand>
     {
-        private readonly WalletHistory _walletHistory;
         private readonly WalletUi _walletUi;
+        private readonly BagOfRavenMagic _ravenMagic;
 
-        public DisplayBalanceCommandHandler(WalletHistory walletHistory, WalletUi walletUi)
+        public DisplayBalanceCommandHandler(WalletUi walletUi, BagOfRavenMagic ravenMagic)
         {
-            _walletHistory = walletHistory;
             _walletUi = walletUi;
+            _ravenMagic = ravenMagic;
         }
 
         public void Handle(DisplayBalanceCommand command)
@@ -64,10 +65,60 @@
         {
             if (month == null)
             {
-                return _walletHistory.GetBalance(sourceName);
+                var source = GetSourceByName(sourceName);
+
+                if (source == null)
+                {
+                    throw new SourceDoesNotExistException(sourceName);
+                }
+
+                return source.Balance;
             }
 
-            return _walletHistory.GetSourceBalanceForMonth(sourceName, month);
+            return GetSourceBalanceForMonth(sourceName, month);
+        }
+
+        private Source GetSourceByName(string sourceName)
+        {
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                IList<Source> sources = new List<Source>();
+
+                if (Tag.IsTagName(sourceName))
+                {
+                    sources.Add(GetSourceFromTag(sourceName));
+                }
+                else
+                {
+                    sources =
+                        _ravenMagic.WaitForQueryIfNecessary(session.Query<Source, Sources_ByChangesInOperations>())
+                        .Where(src => src.Name == sourceName)
+                        .ToList();
+                }
+
+                if (sources.Count == 1)
+                {
+                    return sources.First();
+                }
+
+                return null;
+            }
+        }
+
+        private Source GetSourceFromTag(string tagName)
+        {
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                var tagOperations = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>()).Where(operation => operation.TagNames.Any(tagString => tagString == tagName)).OfType<Operation>().ToList();
+
+                var changes = tagOperations.SelectMany(operation => operation.Changes);
+
+                return new Source
+                {
+                    Name = tagName,
+                    Balance = changes.Aggregate(new Moneyz(0), (money, change) => money + change.Difference)
+                };
+            }
         }
 
         private bool ShouldDisplayAllSources(DisplayBalanceCommand command)
@@ -77,9 +128,56 @@
 
         private void LoadAllSources(Balances balancesToDisplay)
         {
-            var sources = _walletHistory.GetSources();
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                var sources = _ravenMagic.WaitForQueryIfNecessary(session.Query<Source, Sources_ByChangesInOperations>()).ToList();
 
-            sources.ForEach(balancesToDisplay.AddBalance);
+                sources.ForEach(balancesToDisplay.AddBalance);
+            }
+        }
+
+        public Moneyz GetSourceBalanceForMonth(string sourceName, Month month)
+        {
+            if (Tag.IsTagName(sourceName))
+            {
+                var tagOperationsThisMonth = GetTagHistoryForThisMonth(sourceName, month);
+                var changesForTagThisMonth = tagOperationsThisMonth.SelectMany(operation => operation.Changes);
+
+                var tagMoneyBalanceForMonth = changesForTagThisMonth.Sum(change => change.Difference);
+
+                return tagMoneyBalanceForMonth;
+            }
+
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                var monthHistory = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
+                    .Where(operation => operation.MonthYear == month.GetIndexString())
+                    .OrderBy(result => result.When)
+                    .OfType<Operation>()
+                    .ToList();
+
+                var changesOnSourceThisMonth =
+                    monthHistory.SelectMany(operation => operation.Changes.Where(change => change.Source == sourceName));
+
+                var stateBeforeThisMonth = changesOnSourceThisMonth.First().Before;
+                var lastChangeInThisMonth = changesOnSourceThisMonth.Last().After;
+
+                return lastChangeInThisMonth - stateBeforeThisMonth;
+            }
+        }
+
+        public IList<Operation> GetTagHistoryForThisMonth(string tagName, Month month)
+        {
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                var operations = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operations_ByMonthYear.Result, Operations_ByMonthYear>())
+                .Where(result => result.MonthYear == month.GetIndexString() && result.TagNames.Any(tag => tag == tagName))
+                .OrderBy(result => result.When).OfType<Operation>().ToList();
+
+                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
+
+                return operations;
+            }
         }
     }
 }
