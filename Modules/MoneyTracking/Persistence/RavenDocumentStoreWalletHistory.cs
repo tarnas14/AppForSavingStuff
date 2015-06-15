@@ -37,18 +37,6 @@
             return WaitForQueryIfNecessary(query.Where(result => result.MonthYear == month.GetIndexString()));
         }
 
-        public Moneyz GetBalance(string sourceName)
-        {
-            var source = GetSourceByName(sourceName);
-
-            if (source == null)
-            {
-                throw new SourceDoesNotExistException(sourceName);
-            }
-
-            return source.Balance;
-        }
-
         public IList<Tag> GetAllTags()
         {
             using (var session = _storeProvider.Store.OpenSession())
@@ -72,48 +60,6 @@
                 operations.ForEach(session.Delete);
                 session.SaveChanges();
             }
-        }
-
-        private Source GetSourceByName(string sourceName)
-        {
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                IList<Source> sources = new List<Source>();
-
-                if (Tag.IsTagName(sourceName))
-                {
-                    sources.Add(GetSourceFromTag(sourceName));
-                }
-                else
-                {
-                    sources =
-                        WaitForQueryIfNecessary(session.Query<Source, Sources_ByChangesInOperations>())
-                        .Where(src => src.Name == sourceName)
-                        .ToList();
-                }
-
-                if (sources.Count == 1)
-                {
-                    return sources.First();
-                }
-
-                return null;
-            }
-        }
-
-        private Source GetSourceFromTag(string tagName)
-        {
-            var history = GetFullHistory();
-
-            var tagOperations = history.Where(operation => operation.TagStrings.Any(tagString => tagString == tagName));
-
-            var changes = tagOperations.SelectMany(operation => operation.Changes);
-
-            return new Source
-            {
-                Name = tagName,
-                Balance = changes.Aggregate(new Moneyz(0), (money, change) => money + change.Difference)
-            };
         }
 
         private IRavenQueryable<TEntity> WaitForQueryIfNecessary<TEntity>(IRavenQueryable<TEntity> query) where TEntity : class

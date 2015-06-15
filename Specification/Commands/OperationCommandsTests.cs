@@ -77,8 +77,18 @@
             _commandHandler.Handle(command);
 
             //then
-            var balance = _walletHistory.GetBalance(TestSource);
+            var balance = GetBalance(TestSource);
             Assert.That(balance, Is.EqualTo(testHowMuch));
+        }
+
+        private Moneyz GetBalance(string testSource)
+        {
+            using (var session = _documentStoreProvider.Store.OpenSession())
+            {
+                return session.Query<Source, Sources_ByChangesInOperations>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow()).First(src => src.Name == testSource)
+                    .Balance;
+            }
         }
 
         [Test]
@@ -97,7 +107,7 @@
             _commandHandler.Handle(command);
 
             //then
-            var balance = _walletHistory.GetBalance(TestSource);
+            var balance = GetBalance(TestSource);
             Assert.That(balance, Is.EqualTo(testHowMuch));
         }
 
@@ -118,10 +128,10 @@
             _commandHandler.Handle(command);
 
             //then
-            var sourceBalance = _walletHistory.GetBalance(TestSource);
+            var sourceBalance = GetBalance(TestSource);
             Assert.That(sourceBalance, Is.EqualTo(new Moneyz(-howMuch)));
 
-            var destinationBalance = _walletHistory.GetBalance(TestDestination);
+            var destinationBalance = GetBalance(TestDestination);
             Assert.That(destinationBalance, Is.EqualTo(new Moneyz(howMuch)));
         }
 

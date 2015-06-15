@@ -7,7 +7,6 @@
     public interface WalletHistory
     {
         IList<Operation> GetFullHistory();
-        Moneyz GetBalance(string sourceName);
         IList<Tag> GetAllTags();
         void RemoveSource(string source);
         IRavenQueryable<Operations_ByMonthYear.Result> QueryOperations();
