@@ -13,17 +13,12 @@
     class TagHistoryTests
     {
         private ConsoleMock _consoleMock;
-        private WalletHistory _walletHistory;
         private BagOfRavenMagic _standardBagOfRavenMagic;
 
         [SetUp]
         public void Setup()
         {
             var documentStoreProvider = new DocumentStoreProvider() {RunInMemory = true};
-            _walletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider)
-            {
-                WaitForNonStale = true
-            };
             _standardBagOfRavenMagic = new StandardBagOfRavenMagic(documentStoreProvider) {WaitForNonStale = true};
             _consoleMock = new ConsoleMock();
         }
@@ -41,7 +36,7 @@
             };
 
             var command = new DisplayTagsCommand();
-            var commandHandler = new DisplayTagsCommandHandler(_walletHistory, new WalletUi(_consoleMock));
+            var commandHandler = new DisplayTagsCommandHandler(_standardBagOfRavenMagic, new WalletUi(_consoleMock));
 
             //when
             commandHandler.Handle(command);

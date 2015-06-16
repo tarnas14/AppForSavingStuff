@@ -12,15 +12,13 @@
     public class WalletMainController : Subscriber
     {
         private readonly WalletUi _walletUi;
-        private readonly WalletHistory _ravenHistory;
         private readonly TimeMaster _timeMaster;
         private readonly SourceNameValidator _sourceNameValidator;
         private readonly BagOfRavenMagic _ravenMagic;
 
-        public WalletMainController(WalletUi walletUi, WalletHistory ravenHistory, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic)
+        public WalletMainController(WalletUi walletUi, TimeMaster timeMaster, SourceNameValidator sourceNameValidator, BagOfRavenMagic ravenMagic)
         {
             _walletUi = walletUi;
-            _ravenHistory = ravenHistory;
             _timeMaster = timeMaster;
             _sourceNameValidator = sourceNameValidator;
             _ravenMagic = ravenMagic;
@@ -96,7 +94,7 @@
 
                         break;
                     case "tags":
-                        new DisplayTagsCommandHandler(_ravenHistory, _walletUi).Handle(new DisplayTagsCommand());
+                        new DisplayTagsCommandHandler(_ravenMagic, _walletUi).Handle(new DisplayTagsCommand());
                         break;
 
                     case "remove":
@@ -105,7 +103,7 @@
                             Source = userCommand.Params[1]
                         };
 
-                        new RemoveSourceCommandHandler(_ravenHistory, _walletUi).Handle(removeSourceCommand);
+                        new RemoveSourceCommandHandler(_ravenMagic, _walletUi).Handle(removeSourceCommand);
                         break;
                     case "updateDb":
                         _ravenMagic.UpdateScheme();

@@ -16,7 +16,6 @@
     {
         private Mock<TimeMaster> _timeMasterMock;
         private Mock<SourceNameValidator> _reservedWordsStoreMock;
-        private WalletHistory _walletHistory;
         private OperationCommandHandler _commandHandler;
         private DocumentStoreProvider _documentStoreProvider;
         private const string TestSource = "testSource";
@@ -29,10 +28,6 @@
             _timeMasterMock.Setup(timeMaster => timeMaster.Now).Returns(DateTime.Now);
 
             _documentStoreProvider = new DocumentStoreProvider() {RunInMemory = true};
-            _walletHistory = new RavenDocumentStoreWalletHistory(_documentStoreProvider)
-            {
-                WaitForNonStale = true
-            };
 
             var bagOfRavenMagic = new StandardBagOfRavenMagic(_documentStoreProvider){ WaitForNonStale = true };
 
@@ -56,7 +51,7 @@
             _commandHandler.Handle(command);
 
             //then
-            var operation = _walletHistory.GetFullHistory().First();
+            var operation = _documentStoreProvider.Store.OpenSession().Query<Operation>().Customize(x => x.WaitForNonStaleResultsAsOfNow()).First();
             Assert.That(operation.When, Is.EqualTo(command.When));
         }
 
