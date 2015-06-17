@@ -174,8 +174,6 @@
                 .Where(result => result.MonthYear == month.GetIndexString() && result.TagNames.Any(tag => tag == tagName))
                 .OrderBy(result => result.When).OfType<Operation>().ToList();
 
-                LegacyDataMagic.AddDifferencesToChanges(operations.SelectMany(operation => operation.Changes));
-
                 return operations;
             }
         }
