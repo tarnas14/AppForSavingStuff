@@ -9,18 +9,20 @@
     class TagsUpdateTests
     {
         private DocumentStoreProvider _storeProvider;
+        private BagOfRavenMagic _ravenMagic;
 
         [SetUp]
         public void Setup()
         {
             _storeProvider = new DocumentStoreProvider{RunInMemory = true};
+            _ravenMagic = new StandardBagOfRavenMagic(_storeProvider){WaitForNonStale = true};
         }
 
         [Test]
         public void ShouldMoveTagsToTagStringCollection()
         {
             //given
-            using (var session = _storeProvider.Store.OpenSession())
+            using (var session = _ravenMagic.Store.OpenSession())
             {
                 session.Store(new Operation
                 {
@@ -28,16 +30,13 @@
                 });
                 session.SaveChanges();
             }
-            var tagsUpdate = new MoveTagsToTagStringsAndStoreTags();
+            var tagsUpdate = new MoveTagsToTagStringsAndStoreTags(_ravenMagic);
 
             //when
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                tagsUpdate.Update(session, () => { });
-            }
+            tagsUpdate.Update(() => { });
 
             //then
-            using (var session = _storeProvider.Store.OpenSession())
+            using (var session = _ravenMagic.Store.OpenSession())
             {
                 var operations = session.Query<Operation>();
                 var operation = operations.Single();
@@ -50,7 +49,7 @@
         public void ShouldPrependHashSignsToTagsThatDontStartWithOne()
         {
             //given
-            using (var session = _storeProvider.Store.OpenSession())
+            using (var session = _ravenMagic.Store.OpenSession())
             {
                 session.Store(new Operation
                 {
@@ -58,16 +57,13 @@
                 });
                 session.SaveChanges();
             }
-            var tagsUpdate = new MoveTagsToTagStringsAndStoreTags();
+            var tagsUpdate = new MoveTagsToTagStringsAndStoreTags(_ravenMagic);
 
             //when
-            using (var session = _storeProvider.Store.OpenSession())
-            {
-                tagsUpdate.Update(session, () => { });
-            }
+            tagsUpdate.Update(() => { });
 
             //then
-            using (var session = _storeProvider.Store.OpenSession())
+            using (var session = _ravenMagic.Store.OpenSession())
             {
                 var operations = session.Query<Operation>();
                 var operation = operations.Single();

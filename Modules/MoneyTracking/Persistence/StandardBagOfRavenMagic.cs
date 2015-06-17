@@ -35,13 +35,11 @@ namespace Modules.MoneyTracking.Persistence
         private void UpdateTags()
         {
             Console.WriteLine("Updating tags:");
-            var tags = new MoveTagsToTagStringsAndStoreTags();
-            using (var session = Store.OpenSession())
-            {
-                tags.Update(session, () => Console.Write('.'));
-            }
+            var tags = new MoveTagsToTagStringsAndStoreTags(this);
+            tags.Update(() => Console.Write('.'));
             Console.WriteLine("tags updated");
         }
+
         private void UpdateOperations()
         {
             Console.WriteLine("Updating operations:");

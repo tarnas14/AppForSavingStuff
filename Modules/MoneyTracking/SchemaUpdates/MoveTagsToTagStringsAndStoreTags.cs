@@ -3,34 +3,45 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Persistence;
     using Raven.Client;
 
     public class MoveTagsToTagStringsAndStoreTags
     {
-        public void Update(IDocumentSession session, Action actionOnOperationUpdated)
+        private readonly BagOfRavenMagic _ravenMagic;
+
+        public MoveTagsToTagStringsAndStoreTags(BagOfRavenMagic ravenMagic)
         {
-            IEnumerable<Operation> operations;
-            while ((operations = GetOperationsWithTagsNotInTagStrings(session)).Any())
+            _ravenMagic = ravenMagic;
+        }
+
+        public void Update(Action actionOnOperationUpdated)
+        {
+            using (var session = _ravenMagic.Store.OpenSession())
             {
-                foreach (var operation in operations.Where(operation => operation.Tags != null))
+                IEnumerable<Operation> operations;
+                while ((operations = GetOperationsWithTagsNotInTagStrings(session)).Any())
                 {
-                    operation.TagStrings = new List<string>();
-                    operation.Tags.ToList().ForEach(tag =>
+                    foreach (var operation in operations.Where(operation => operation.Tags != null))
                     {
-                        var sanitizedTag = new Tag(Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value);
-                        operation.TagStrings.Add(sanitizedTag.Value);
-                        session.Store(sanitizedTag);
-                        actionOnOperationUpdated();
-                    });
-                    operation.Tags = null;
+                        operation.TagStrings = new List<string>();
+                        operation.Tags.ToList().ForEach(tag =>
+                        {
+                            var sanitizedTag = new Tag(Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value);
+                            operation.TagStrings.Add(sanitizedTag.Value);
+                            session.Store(sanitizedTag);
+                            actionOnOperationUpdated();
+                        });
+                        operation.Tags = null;
+                    }
+                    session.SaveChanges();
                 }
-                session.SaveChanges();
             }
         }
 
         private IEnumerable<Operation> GetOperationsWithTagsNotInTagStrings(IDocumentSession session)
         {
-            return session.Query<Operation>().Where(operation => operation.Tags != null);
+            return _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).Where(operation => operation.Tags != null);
         }
     }
 }
