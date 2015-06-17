@@ -29,6 +29,7 @@ namespace Modules.MoneyTracking.Persistence
         public void UpdateScheme()
         {
             UpdateTags();
+            UpdateOperations();
         }
 
         private void UpdateTags()
@@ -40,6 +41,13 @@ namespace Modules.MoneyTracking.Persistence
                 tags.Update(session, () => Console.Write('.'));
             }
             Console.WriteLine("tags updated");
+        }
+        private void UpdateOperations()
+        {
+            Console.WriteLine("Updating operations:");
+            var operationUpdate = new OperationChangeDifferences(this);
+            operationUpdate.Update(() => Console.Write('.'));
+            Console.WriteLine("operations updated");
         }
     }
 }

@@ -68,6 +68,7 @@
     <Compile Include="MoneyTracking\RemoveSourceCommand.cs" />
     <Compile Include="MoneyTracking\RemoveSourceCommandHandler.cs" />
     <Compile Include="MoneyTracking\SchemaUpdates\MoveTagsToTagStringsAndStoreTags.cs" />
+    <Compile Include="MoneyTracking\SchemaUpdates\OperationChangeDifferences.cs" />
     <Compile Include="MoneyTracking\SourceNameValidation\MemoryListSourceNameValidator.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\OperationCommand.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\OperationCommandHandler.cs" />
