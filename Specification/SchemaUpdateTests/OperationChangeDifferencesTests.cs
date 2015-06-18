@@ -18,7 +18,7 @@
         }
 
         [Test]
-        public void ShouldAssignDifferenceValueToEachChangInOperations()
+        public void ShouldAssignDifferenceValueToEachChangeInOperations()
         {
             //given
             using (var session = _ravenMagic.Store.OpenSession())
@@ -45,7 +45,7 @@
             //then
             using (var session = _ravenMagic.Store.OpenSession())
             {
-                var operations = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).Where(operation => operation.Changes.Any(change => change.Difference == null)).ToList();
+                var operations = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).ToList().Where(operation => operation.Changes.Any(change => change.Difference == null));
 
                 Assert.That(operations, Is.Empty);
             }

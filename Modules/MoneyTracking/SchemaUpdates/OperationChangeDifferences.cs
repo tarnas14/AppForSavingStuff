@@ -19,22 +19,33 @@ namespace Modules.MoneyTracking.SchemaUpdates
         {
             using (var session = _ravenMagic.Store.OpenSession())
             {
-                var operationsWithoutDifference = GetOperationsWithoutDifference(session);
-                while (operationsWithoutDifference.Any())
+                var operationsWithoutDifference = GetAllOperationsWithoutDifference(session);
+                foreach (var change in operationsWithoutDifference.SelectMany(operations => operations.Changes))
                 {
-                    foreach (var change in operationsWithoutDifference.SelectMany(operations => operations.Changes))
-                    {
-                        change.Difference = change.After - change.Before;
-                        progressAction();
-                    }
+                    change.Difference = change.After - change.Before;
+                    progressAction();
                 }
                 session.SaveChanges();
             }
         }
 
-        private IEnumerable<Operation> GetOperationsWithoutDifference(IDocumentSession session)
+        private IEnumerable<Operation> GetAllOperationsWithoutDifference(IDocumentSession session)
         {
-            return _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).Where(operation => operation.Changes.Any(change => change.Difference == null));
+            var allOperations = new List<Operation>();
+            int start = 0;
+            while (true)
+            {
+                var current = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).Take(1024).Skip(start).ToList();
+                if (current.Count == 0)
+                {
+                    break;
+                }
+
+                start += current.Count;
+                allOperations.AddRange(current);
+            }
+
+            return allOperations.Where(operation => operation.Changes.Any(change => change.Difference == null));
         }
     }
 }

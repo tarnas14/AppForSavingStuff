@@ -19,28 +19,39 @@
         {
             using (var session = _ravenMagic.Store.OpenSession())
             {
-                IEnumerable<Operation> operations;
-                while ((operations = GetOperationsWithTagsNotInTagStrings(session)).Any())
+                var operationsWithTagsNotInTagStrings = GetOperationsWithTagsNotInTagStrings(session);
+                foreach (var operation in operationsWithTagsNotInTagStrings)
                 {
-                    foreach (var operation in operations.Where(operation => operation.Tags != null))
+                    operation.TagStrings = new List<string>();
+                    operation.Tags.ToList().ForEach(tag =>
                     {
-                        operation.TagStrings = new List<string>();
-                        operation.Tags.ToList().ForEach(tag =>
-                        {
-                            var sanitizedTag = new Tag(Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value);
-                            operation.TagStrings.Add(sanitizedTag.Value);
-                            session.Store(sanitizedTag);
-                            actionOnOperationUpdated();
-                        });
-                        operation.Tags = null;
-                    }
-                    session.SaveChanges();
+                        var sanitizedTag = new Tag(Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value);
+                        operation.TagStrings.Add(sanitizedTag.Value);
+                        session.Store(sanitizedTag);
+                        actionOnOperationUpdated();
+                    });
+                    operation.Tags = null;
                 }
+                session.SaveChanges();
             }
         }
 
         private IEnumerable<Operation> GetOperationsWithTagsNotInTagStrings(IDocumentSession session)
         {
+            var allOperations = new List<Operation>();
+            int start = 0;
+            while (true)
+            {
+                var current = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).Take(1024).Skip(start).ToList();
+                if (current.Count == 0)
+                {
+                    break;
+                }
+
+                start += current.Count;
+                allOperations.AddRange(current);
+            }
+
             return _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).Where(operation => operation.Tags != null);
         }
     }
