@@ -16,7 +16,6 @@
         public Operation()
         {
             Changes = new List<Change>();
-            Tags = new List<Tag>();
             TagStrings = new List<string>();
         }
 

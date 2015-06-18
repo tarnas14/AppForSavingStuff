@@ -181,61 +181,6 @@
             return (change.Difference).SignedString;
         }
 
-        public void DisplayHistory(TagHistory history)
-        {
-            var tableDisplay = new TableDisplay(_console);
-
-            var sourceColumn = new Column
-            {
-                Prefix = "    ",
-                Suffix = ": ",
-                AlignRight = true,
-                Data = history.Operations.Select(balance => balance.Key).ToList()
-            };
-
-            var balances = history.Operations.Select(balance => balance.Value);
-
-            var balancesColumn = new Column()
-            {
-                AlignRight = true,
-                Data = balances.Select(balance => balance.ToString()).ToList()
-            };
-
-            var combinedBalance = balances.Aggregate(new Moneyz(0), (m1, m2) => m1 + m2);
-            balancesColumn.Data.Add(combinedBalance.ToString());
-
-            tableDisplay.AddColumns(new[] { sourceColumn, balancesColumn });
-
-            tableDisplay.DisplayHeaderless();
-        }
-
-        public void DisplayMultipleBalances(IEnumerable<Source> sources)
-        {
-            var nameColumn = new Column
-            {
-                Prefix = Tab,
-                AlignRight = true,
-                Data = sources.Select(source => source.Name).ToList()
-            };
-
-            var balanceColumn = new Column
-            {
-                Prefix = ": ",
-                AlignRight = true,
-                Data = sources.Select(source => source.Balance.UnsignedString).ToList()
-            };
-
-            var totalBalance = sources.Aggregate(new Moneyz(0), (s1, s2) => s1 + s2.Balance);
-
-            balanceColumn.Data.Add(totalBalance.ToString());
-
-            var tableDisplay = new TableDisplay(_console);
-            tableDisplay.AddColumn(nameColumn);
-            tableDisplay.AddColumn(balanceColumn);
-
-            tableDisplay.DisplayHeaderless();
-        }
-
         public void DisplayTags(IEnumerable<Tag> tags)
         {
             var ordered = tags.Select(tag => Tag.IsTagName(tag.Value) ? tag.Value : "#" + tag.Value).OrderBy(t => t, StringComparer.InvariantCulture);

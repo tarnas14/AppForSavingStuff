@@ -10,12 +10,14 @@
     {
         private DocumentStoreProvider _storeProvider;
         private BagOfRavenMagic _ravenMagic;
+        private MoveTagsToTagStringsAndStoreTags _tagsUpdate;
 
         [SetUp]
         public void Setup()
         {
             _storeProvider = new DocumentStoreProvider{RunInMemory = true};
             _ravenMagic = new StandardBagOfRavenMagic(_storeProvider){WaitForNonStale = true};
+            _tagsUpdate = new MoveTagsToTagStringsAndStoreTags(_ravenMagic);
         }
 
         [Test]
@@ -30,10 +32,9 @@
                 });
                 session.SaveChanges();
             }
-            var tagsUpdate = new MoveTagsToTagStringsAndStoreTags(_ravenMagic);
 
             //when
-            tagsUpdate.Update(() => { });
+            _tagsUpdate.Update(() => { });
 
             //then
             using (var session = _ravenMagic.Store.OpenSession())
@@ -57,10 +58,9 @@
                 });
                 session.SaveChanges();
             }
-            var tagsUpdate = new MoveTagsToTagStringsAndStoreTags(_ravenMagic);
 
             //when
-            tagsUpdate.Update(() => { });
+            _tagsUpdate.Update(() => { });
 
             //then
             using (var session = _ravenMagic.Store.OpenSession())
@@ -71,6 +71,38 @@
                 Assert.That(operation.Tags, Is.Null);
                 var tags = session.Query<Tag>().ToList();
                 Assert.That(tags.All(tag => Tag.IsTagName(tag.Value)));
+            }
+        }
+
+        [Test]
+        public void ShouldGetRidOfDuplicates()
+        {
+            //given
+            const string tagString = "#tagString";
+
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                session.Store(new Tag(tagString));
+                session.Store(new Tag(tagString));
+                session.Store(new Operation
+                {
+                    Tags = new[] { new Tag(tagString) }
+                });
+                session.Store(new Operation
+                {
+                    Tags = new[] { new Tag(tagString) }
+                });
+                session.SaveChanges();
+            }
+
+            //when
+            _tagsUpdate.Update(() => {});
+
+            //then
+            using (var session = _ravenMagic.Store.OpenSession())
+            {
+                var tags = _ravenMagic.WaitForQueryIfNecessary(session.Query<Tag>()).ToList();
+                Assert.That(tags.Single().Value, Is.EqualTo(tagString));
             }
         }
     }

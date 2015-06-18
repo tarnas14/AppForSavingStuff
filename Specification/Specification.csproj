@@ -73,6 +73,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Persistence\CalculatingSourcesFromChangesViaMapReduceSpecification.cs" />
     <Compile Include="SchemaUpdateTests\OperationChangeDifferencesTests.cs" />
+    <Compile Include="SchemaUpdateTests\TagStringsInitializedCollectionTests.cs" />
     <Compile Include="SchemaUpdateTests\TagsUpdateTests.cs" />
     <Compile Include="WalletSpec\EndToEnd\DisplayBalanceTests.cs" />
     <Compile Include="WalletSpec\EndToEnd\BasicOperationTests.cs" />

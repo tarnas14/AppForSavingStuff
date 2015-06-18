@@ -35,16 +35,19 @@ namespace Modules.MoneyTracking.Persistence
         private void UpdateTags()
         {
             Console.WriteLine("Updating tags:");
-            var tags = new MoveTagsToTagStringsAndStoreTags(this);
-            tags.Update(() => Console.Write('.'));
+            var tagsToTagStrings = new MoveTagsToTagStringsAndStoreTags(this);
+            tagsToTagStrings.Update(() => Console.Write('.'));
+
+            var makeCollectionsOfNullTagStrings = new TagStringsInitializedCollection(this);
+            makeCollectionsOfNullTagStrings.Update(() => Console.Write('.'));
             Console.WriteLine("tags updated");
         }
 
         private void UpdateOperations()
         {
             Console.WriteLine("Updating operations:");
-            var operationUpdate = new OperationChangeDifferences(this);
-            operationUpdate.Update(() => Console.Write('.'));
+            var addDifferenceToChanges = new OperationChangeDifferences(this);
+            addDifferenceToChanges.Update(() => Console.Write('.'));
             Console.WriteLine("operations updated");
         }
     }
