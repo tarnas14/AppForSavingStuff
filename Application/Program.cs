@@ -14,15 +14,16 @@
             var consoleUi = new ConsoleUi();
 
             var documentStoreProvider = new DocumentStoreProvider();
-            var ravenDocumentStoreWalletHistory = new RavenDocumentStoreWalletHistory(documentStoreProvider);
             var ravenMagic = new StandardBagOfRavenMagic(documentStoreProvider);
 
             var systemClockTimeMaster = new SystemClockTimeMaster();
             var reservedWordsStore = new MemoryListSourceNameValidator();
             reservedWordsStore.RestrictWord("tags");
 
-            var wallet = new WalletMainController(new WalletUi(new SystemConsole()), ravenDocumentStoreWalletHistory, systemClockTimeMaster, reservedWordsStore, ravenMagic);
+            var wallet = new WalletMainController(new WalletUi(new SystemConsole()), systemClockTimeMaster, reservedWordsStore, ravenMagic);
             consoleUi.Subscribe(wallet, "wallet");
+
+            consoleUi.UserInput("/wallet balance");
 
             new InputLoop(consoleUi).Loop();
         }
