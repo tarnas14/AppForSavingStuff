@@ -9,7 +9,7 @@ namespace Modules.MoneyTracking
         public string Value
         {
             get { return _value; }
-            set { _value = IsTagName(value) ? value : "#" + value; }
+            set { _value = GetSanitizedValue(value); }
         }
 
         public Tag()
@@ -55,6 +55,11 @@ namespace Modules.MoneyTracking
             {
                 return obj.GetHashCode();
             }
+        }
+
+        public static string GetSanitizedValue(string value)
+        {
+            return IsTagName(value) ? value : "#" + value;
         }
     }
 }

@@ -4,26 +4,17 @@
     using System.Linq;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Persistence;
-    using Modules.MoneyTracking.SchemaUpdates;
     using NUnit.Framework;
 
     class OperationChangeDifferencesTests
     {
-        private BagOfRavenMagic _ravenMagic;
-
-        [SetUp]
-        public void Setup()
-        {
-            _ravenMagic = new StandardBagOfRavenMagic(new DocumentStoreProvider { RunInMemory = true }) {WaitForNonStale = true};
-        }
-
         [Test]
         public void ShouldAssignDifferenceValueToEachChangeInOperations()
         {
             //given
-            using (var session = _ravenMagic.Store.OpenSession())
+            var operations = new[]
             {
-                session.Store(new Operation
+                new Operation
                 {
                     Changes = new List<Change>
                     {
@@ -34,21 +25,14 @@
                             Difference = null
                         }
                     }
-                });
-                session.SaveChanges();
-            }
-            var operationChangesUpdate = new OperationChangeDifferences(_ravenMagic);
+                }
+            };
 
             //when
-            operationChangesUpdate.Update(() => { });
+            SchemaUpdates.PopulateOperationChangesWithBalanceDifferences(operations, () => { });
 
             //then
-            using (var session = _ravenMagic.Store.OpenSession())
-            {
-                var operations = _ravenMagic.WaitForQueryIfNecessary(session.Query<Operation>()).ToList().Where(operation => operation.Changes.Any(change => change.Difference == null));
-
-                Assert.That(operations, Is.Empty);
-            }
+            Assert.That(operations.Where(operation => operation.Changes.Any(change => change.Difference == null)), Is.Empty);
         }
     }
 }

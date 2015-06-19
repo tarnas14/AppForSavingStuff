@@ -1,9 +1,10 @@
 namespace Modules.MoneyTracking.Persistence
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Raven.Client;
     using Raven.Client.Linq;
-    using SchemaUpdates;
 
     public class StandardBagOfRavenMagic : BagOfRavenMagic
     {
@@ -28,27 +29,71 @@ namespace Modules.MoneyTracking.Persistence
 
         public void UpdateScheme()
         {
-            UpdateTags();
-            UpdateOperations();
+            using (var session = Store.OpenSession())
+            {
+                var allOperations = GetAll<Operation>(session);
+                UpdateOperations(allOperations);
+
+                UpdateTags(allOperations, session);
+            }
         }
 
-        private void UpdateTags()
+        private IEnumerable<T> GetAll<T>(IDocumentSession session) where T : class
         {
-            Console.WriteLine("Updating tags:");
-            var tagsToTagStrings = new MoveTagsToTagStringsAndStoreTags(this);
-            tagsToTagStrings.Update(() => Console.Write('.'));
+            var all = new List<T>();
+            int start = 0;
+            while (true)
+            {
+                var current = WaitForQueryIfNecessary(session.Query<T>()).Take(1024).Skip(start).ToList();
+                if (current.Count == 0)
+                {
+                    break;
+                }
 
-            var makeCollectionsOfNullTagStrings = new TagStringsInitializedCollection(this);
-            makeCollectionsOfNullTagStrings.Update(() => Console.Write('.'));
-            Console.WriteLine("tags updated");
+                start += current.Count;
+                all.AddRange(current);
+            }
+
+            return all;
         }
 
-        private void UpdateOperations()
+        private void UpdateTags(IEnumerable<Operation> allOperations, IDocumentSession session)
         {
-            Console.WriteLine("Updating operations:");
-            var addDifferenceToChanges = new OperationChangeDifferences(this);
-            addDifferenceToChanges.Update(() => Console.Write('.'));
-            Console.WriteLine("operations updated");
+            var sanitizedNewTags = SchemaUpdates.SanitizeTags(allOperations.SelectMany(operation => operation.Tags));
+            StoreNewTags(sanitizedNewTags, session);
+
+            var allTags = GetAll<Tag>(session);
+            var duplicatesToRemove = SchemaUpdates.FindDuplicatedTagsToRemove(allTags, () => Console.Write('.'));
+
+            RemoveTags(duplicatesToRemove, session);
+        }
+
+        private void StoreNewTags(IEnumerable<Tag> tags, IDocumentSession session)
+        {
+            foreach (var tag in tags)
+            {
+                session.Store(tag);
+            }
+            session.SaveChanges();
+        }
+
+        private void RemoveTags(IEnumerable<Tag> tags, IDocumentSession session)
+        {
+            foreach (var tag in tags)
+            {
+                session.Delete(tag);
+            }
+            session.SaveChanges();
+        }
+
+        private void UpdateOperations(IEnumerable<Operation> allOperations)
+        {
+            Console.WriteLine("Adding balance differences to changes:");
+            SchemaUpdates.PopulateOperationChangesWithBalanceDifferences(allOperations, () => Console.Write('.'));
+            SchemaUpdates.InitializeOperationsWithEmptyTagStringsCollections(allOperations, () => Console.Write('.'));
+            SchemaUpdates.MoveTagsToTagStrings(allOperations, () => Console.Write('.'));
+            Console.WriteLine();
+            Console.WriteLine("finished");
         }
     }
 }
