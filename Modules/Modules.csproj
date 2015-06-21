@@ -53,6 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Challenges\UI\ChallengingDay.cs" />
+    <Compile Include="Challenges\UI\ChallengesController.cs" />
+    <Compile Include="Challenges\UI\GitStyleUI.cs" />
+    <Compile Include="Challenges\UI\IChallengeRepository.cs" />
     <Compile Include="MoneyTracking\Change.cs" />
     <Compile Include="MoneyTracking\Persistence\BagOfRavenMagic.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />
@@ -100,6 +104,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
