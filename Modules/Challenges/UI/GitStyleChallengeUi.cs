@@ -3,7 +3,7 @@
     using System;
     using System.Text;
 
-    public class GitStyleUI
+    public class GitStyleChallengeUi
     {
         private readonly IChallengeRepository _challengeRepository;
         private Tuple<int, int> _challengeCursor;
@@ -15,10 +15,9 @@
         private const int WeekColumnWidth = 2;
         private const int DayOfTheWeekColumnWidth = 4;
 
-        public GitStyleUI(IChallengeRepository challengeRepository)
+        public GitStyleChallengeUi(IChallengeRepository challengeRepository)
         {
             _challengeRepository = challengeRepository;
-            _initialEncoding = Console.OutputEncoding;
         }
 
         public void Run()

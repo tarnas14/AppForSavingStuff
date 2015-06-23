@@ -6,16 +6,16 @@
 
     public class ChallengesController : Subscriber
     {
-        private readonly GitStyleUI _gitStyleUi;
+        private readonly GitStyleChallengeUi _gitStyleChallengeUi;
 
         public ChallengesController()
         {
-            _gitStyleUi = new GitStyleUI(new JsonChallengeRepository());
+            _gitStyleChallengeUi = new GitStyleChallengeUi(new JsonChallengeRepository());
         }
 
         public void Execute(UserCommand userCommand)
         {
-            _gitStyleUi.Run();
+            _gitStyleChallengeUi.Run();
         }
     }
 
