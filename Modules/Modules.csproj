@@ -53,8 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Challenges\UI\ChallengeHighlighter.cs" />
     <Compile Include="Challenges\UI\ChallengingDay.cs" />
     <Compile Include="Challenges\UI\ChallengesController.cs" />
+    <Compile Include="Challenges\UI\ConsoleUtils.cs" />
     <Compile Include="Challenges\UI\GitStyleChallengeUi.cs" />
     <Compile Include="Challenges\UI\IChallengeRepository.cs" />
     <Compile Include="MoneyTracking\Change.cs" />
