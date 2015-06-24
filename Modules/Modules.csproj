@@ -57,8 +57,12 @@
     <Compile Include="Challenges\UI\ChallengingDay.cs" />
     <Compile Include="Challenges\UI\ChallengesController.cs" />
     <Compile Include="Challenges\UI\ConsoleUtils.cs" />
+    <Compile Include="Challenges\UI\Cursor.cs" />
     <Compile Include="Challenges\UI\GitStyleChallengeUi.cs" />
-    <Compile Include="Challenges\UI\IChallengeRepository.cs" />
+    <Compile Include="Challenges\UI\ChallengeRepository.cs" />
+    <Compile Include="Challenges\UI\DetailsDisplay.cs" />
+    <Compile Include="Challenges\UI\DummyChallengeRepository.cs" />
+    <Compile Include="Challenges\UI\WriteLineDetailDisplay.cs" />
     <Compile Include="MoneyTracking\Change.cs" />
     <Compile Include="MoneyTracking\Persistence\BagOfRavenMagic.cs" />
     <Compile Include="MoneyTracking\CommandHandlers\Command.cs" />

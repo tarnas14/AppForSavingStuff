@@ -4,23 +4,25 @@ namespace Modules.Challenges.UI
 
     public class ChallengeHighlighter
     {
-        private readonly Tuple<int, int> _displayOrigin;
+        private readonly Cursor _displayOrigin;
         private readonly Tuple<int, int> _displaySize;
         private readonly ChallengingDay[,] _displayArray;
         private readonly int _displayedDaysCount;
-        private Tuple<int, int> _cursor;
+        private Cursor _cursor;
         private readonly ConsoleColor _background;
+        private readonly DetailsDisplay _detailsDisplay;
 
-        public ChallengeHighlighter(Tuple<int, int> displayOrigin, Tuple<int, int> displaySize, ChallengingDay[,] displayArray, int displayedDaysCount)
+        public ChallengeHighlighter(Cursor displayOrigin, Tuple<int, int> displaySize, ChallengingDay[,] displayArray, int displayedDaysCount, DetailsDisplay detailsDisplay)
         {
             _background = Console.BackgroundColor;
             _displayOrigin = displayOrigin;
             _displaySize = displaySize;
             _displayArray = displayArray;
             _displayedDaysCount = displayedDaysCount;
+            _detailsDisplay = detailsDisplay;
         }
 
-        public void StartAt(Tuple<int, int> challengeCursor)
+        public void StartAt(Cursor challengeCursor)
         {
             _cursor = challengeCursor;
 
@@ -62,10 +64,16 @@ namespace Modules.Challenges.UI
 
         private void MoveCursor(int offsetX, int offsetY)
         {
-            var nextCursor = Tuple.Create(_cursor.Item1 + offsetX, _cursor.Item2 + offsetY);
+            var nextCursor = new Cursor(_cursor.Left + offsetX, _cursor.Top + offsetY);
 
-            var highlightedItemId = _displaySize.Item2*nextCursor.Item1 + nextCursor.Item2;
-            var tryingToMoveOutsideDisplayArea = nextCursor.Item1 < 0 || nextCursor.Item2 < 0 || highlightedItemId >= _displayedDaysCount || nextCursor.Item1 >= _displaySize.Item1 || nextCursor.Item2 >= _displaySize.Item2;
+            var highlightedItemId = _displaySize.Item2*nextCursor.Left + nextCursor.Top;
+            var tryingToMoveOutsideDisplayArea = 
+                nextCursor.Left < 0 || 
+                nextCursor.Top < 0 || 
+                highlightedItemId >= _displayedDaysCount || 
+                nextCursor.Left >= _displaySize.Item1 || 
+                nextCursor.Top >= _displaySize.Item2;
+
             if (tryingToMoveOutsideDisplayArea)
             {
                 return;
@@ -76,12 +84,12 @@ namespace Modules.Challenges.UI
             _cursor = nextCursor;
         }
 
-        private void Deselect(Tuple<int, int> cursor)
+        private void Deselect(Cursor cursor)
         {
             ConsoleUtils.Utf8Display(() =>
             {
-                var topOffset = _displayOrigin.Item2 + cursor.Item2;
-                var leftOffset = _displayOrigin.Item1 + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Item1 * GitStyleChallengeUi.WeekColumnWidth;
+                var topOffset = _displayOrigin.Top + cursor.Top;
+                var leftOffset = _displayOrigin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 Console.BackgroundColor = _background;
@@ -89,12 +97,13 @@ namespace Modules.Challenges.UI
             });
         }
 
-        private void Select(Tuple<int, int> cursor)
+        private void Select(Cursor cursor)
         {
+            _detailsDisplay.DisplayDetails(_displayArray[cursor.Left, cursor.Top]);
             ConsoleUtils.Utf8Display(() =>
             {
-                var topOffset = _displayOrigin.Item2 + cursor.Item2;
-                var leftOffset = _displayOrigin.Item1 + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Item1 * GitStyleChallengeUi.WeekColumnWidth;
+                var topOffset = _displayOrigin.Top + cursor.Top;
+                var leftOffset = _displayOrigin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 var backgroundColour = Console.BackgroundColor;

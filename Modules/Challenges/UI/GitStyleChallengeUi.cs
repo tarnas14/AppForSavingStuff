@@ -1,13 +1,12 @@
 ﻿namespace Modules.Challenges.UI
 {
     using System;
-    using System.Text;
 
     public class GitStyleChallengeUi
     {
-        private readonly IChallengeRepository _challengeRepository;
-        private Tuple<int, int> _challengeCursor;
-        private Tuple<int, int> _displayOrigin;
+        private readonly ChallengeRepository _challengeRepository;
+        private Cursor _challengeCursor;
+        private Cursor _displayOrigin;
         private ChallengingDay[,] _displayArray;
         private Tuple<int, int> _displaySize;
         private int _displayedDaysCount;
@@ -15,7 +14,7 @@
         public const int WeekColumnWidth = 2;
         public const int DayOfTheWeekColumnWidth = 4;
 
-        public GitStyleChallengeUi(IChallengeRepository challengeRepository)
+        public GitStyleChallengeUi(ChallengeRepository challengeRepository)
         {
             _challengeRepository = challengeRepository;
         }
@@ -25,11 +24,11 @@
             _displayArray = PrepareChallengeDisplayArea();
 
             Console.Clear();
-            _displayOrigin = Tuple.Create(Console.CursorLeft, Console.CursorTop);
+            _displayOrigin = new Cursor(Console.CursorLeft, Console.CursorTop);
 
-            Display(_displayOrigin, _displaySize, _displayArray, _displayedDaysCount);
+            Display(_displayOrigin, _displaySize, _displayedDaysCount);
 
-            var highlighter = new ChallengeHighlighter(_displayOrigin, _displaySize, _displayArray, _displayedDaysCount);
+            var highlighter = new ChallengeHighlighter(_displayOrigin, _displaySize, _displayArray, _displayedDaysCount, new WriteLineDetailDisplay(new Cursor(_displayOrigin.Left, _displayOrigin.Top + _displaySize.Item2)));
             highlighter.StartAt(_challengeCursor);
         }
 
@@ -51,7 +50,7 @@
 
                     if (challengeDayIndex == daysWithChallenge.Count - 1)
                     {
-                        _challengeCursor = Tuple.Create(j, i);
+                        _challengeCursor = new Cursor(j, i);
                     }
 
                     if (challengeDayIndex >= daysWithChallenge.Count)
@@ -66,10 +65,10 @@
             return displayArray;
         }
 
-        private void Display(Tuple<int, int> displayOrigin, Tuple<int, int> displaySize, ChallengingDay[,] displayArray, int maxItemsToDisplay)
+        private void Display(Cursor displayOrigin, Tuple<int, int> displaySize, int maxItemsToDisplay)
         {
             ConsoleUtils.Utf8Display(() => {
-                Console.SetCursorPosition(displayOrigin.Item1, displayOrigin.Item2);
+                Console.SetCursorPosition(displayOrigin.Left, displayOrigin.Top);
                 for (int i = 0; i < displaySize.Item2; i++)
                 {
                     Console.Write("{0} ", DaysOfTheWeek[i]);

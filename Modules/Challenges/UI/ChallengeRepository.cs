@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface IChallengeRepository
+    public interface ChallengeRepository
     {
         IList<ChallengingDay> GetLastDays(int numberOfDaysToDisplay);
     }

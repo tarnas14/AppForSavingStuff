@@ -1,7 +1,10 @@
 ﻿namespace Modules.Challenges.UI
 {
+    using System;
+
     public class ChallengingDay
     {
-        public bool NoChallenge { get; set; }
+        public DateTime Day { get; set; }
+        public string ChallengeTitle { get; set; }
     }
 }

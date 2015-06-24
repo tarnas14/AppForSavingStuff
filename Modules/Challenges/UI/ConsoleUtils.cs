@@ -7,15 +7,31 @@ namespace Modules.Challenges.UI
     {
         public static void Utf8Display(Action displayStuff)
         {
-            var cursor = Tuple.Create(Console.CursorLeft, Console.CursorTop);
-            var encoding = Console.OutputEncoding;
-            Console.OutputEncoding = Encoding.UTF8;
+            DisplayAndReturn(() =>
+            {
+                var encoding = Console.OutputEncoding;
+                Console.OutputEncoding = Encoding.UTF8;
+
+                displayStuff();
+
+                Console.OutputEncoding = encoding; 
+            });
+        }
+
+        public static void DisplayAndReturn(Action displayStuff)
+        {
+            var cursor = new Cursor(Console.CursorLeft, Console.CursorTop);
 
             displayStuff();
 
-            Console.OutputEncoding = encoding;
-            Console.CursorLeft = cursor.Item1;
-            Console.CursorTop = cursor.Item2;
+            Console.CursorLeft = cursor.Left;
+            Console.CursorTop = cursor.Top;
+        }
+
+        public static void ClearLine()
+        {
+            var clearString = string.Format("\r{0}\r", new String(' ', Console.WindowWidth));
+            Console.Write(clearString);
         }
     }
 }
