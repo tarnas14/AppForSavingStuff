@@ -9,7 +9,7 @@ namespace Modules.Challenges.UI
         private readonly ChallengingDay[,] _displayArray;
         private readonly int _displayedDaysCount;
         private Tuple<int, int> _cursor;
-        private ConsoleColor _background;
+        private readonly ConsoleColor _background;
 
         public ChallengeHighlighter(Tuple<int, int> displayOrigin, Tuple<int, int> displaySize, ChallengingDay[,] displayArray, int displayedDaysCount)
         {
@@ -62,9 +62,18 @@ namespace Modules.Challenges.UI
 
         private void MoveCursor(int offsetX, int offsetY)
         {
+            var nextCursor = Tuple.Create(_cursor.Item1 + offsetX, _cursor.Item2 + offsetY);
+
+            var highlightedItemId = _displaySize.Item2*nextCursor.Item1 + nextCursor.Item2;
+            var tryingToMoveOutsideDisplayArea = nextCursor.Item1 < 0 || nextCursor.Item2 < 0 || highlightedItemId >= _displayedDaysCount || nextCursor.Item1 >= _displaySize.Item1 || nextCursor.Item2 >= _displaySize.Item2;
+            if (tryingToMoveOutsideDisplayArea)
+            {
+                return;
+            }
+
             Deselect(_cursor);
-            _cursor = Tuple.Create(_cursor.Item1 + offsetX, _cursor.Item2 + offsetY);
-            Select(_cursor);
+            Select(nextCursor);
+            _cursor = nextCursor;
         }
 
         private void Deselect(Tuple<int, int> cursor)
