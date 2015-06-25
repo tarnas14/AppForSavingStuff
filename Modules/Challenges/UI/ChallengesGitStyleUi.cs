@@ -14,7 +14,7 @@ namespace Modules.Challenges.UI
         public ChallengesGitStyleUi(GitUiConfiguration uiConfiguration)
         {
             _uiConfiguration = uiConfiguration;
-            _dayDisplayInformationFactory = new ChallengingDayDisplayInformationFactory();
+            _dayDisplayInformationFactory = new ChallengingDayDisplayInformationFactory(Console.ForegroundColor);
             Display();
         }
 
@@ -33,17 +33,18 @@ namespace Modules.Challenges.UI
                             continue;
                         }
 
-                        Console.Write("{0} ", GetDayCharacter(j, i));
+                        ConsoleUtils.Display(GetDayDisplayInformation(j, i));
+                        Console.Write(' ');
                     }
                     Console.WriteLine();
                 }
             });
         }
 
-        private char GetDayCharacter(int x, int y)
+        private ChallengingDayDisplayInformation GetDayDisplayInformation(int x, int y)
         {
             var day = _uiConfiguration.ChallengesArray[x, y];
-            return _dayDisplayInformationFactory.PrepareDisplayInformation(day).Character;
+            return _dayDisplayInformationFactory.PrepareDisplayInformation(day);
         }
 
         private string[] DaysOfTheWeek
@@ -134,7 +135,8 @@ namespace Modules.Challenges.UI
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 Console.BackgroundColor = _background;
-                Console.Write("{0} ", GetDayCharacter(cursor.Left, cursor.Top));
+                ConsoleUtils.Display(GetDayDisplayInformation(cursor.Left, cursor.Top));
+                Console.Write(' ');
             });
         }
 
@@ -149,7 +151,7 @@ namespace Modules.Challenges.UI
                 Console.CursorTop = topOffset;
                 var backgroundColour = Console.BackgroundColor;
                 Console.BackgroundColor = ConsoleColor.DarkBlue;
-                Console.Write("{0}", GetDayCharacter(cursor.Left, cursor.Top));
+                ConsoleUtils.Display(GetDayDisplayInformation(cursor.Left, cursor.Top));
                 Console.BackgroundColor = backgroundColour;
                 Console.Write(' ');
             });

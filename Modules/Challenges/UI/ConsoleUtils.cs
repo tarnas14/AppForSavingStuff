@@ -33,5 +33,15 @@ namespace Modules.Challenges.UI
             var clearString = string.Format("\r{0}\r", new String(' ', Console.WindowWidth));
             Console.Write(clearString);
         }
+
+        public static void Display(ChallengingDayDisplayInformation displayInformation)
+        {
+            var initialForegroundColour = Console.ForegroundColor;
+
+            Console.ForegroundColor = displayInformation.Colour;
+            Console.Write(displayInformation.Character);
+
+            Console.ForegroundColor = initialForegroundColour;
+        }
     }
 }

@@ -2,5 +2,6 @@
 {
     public class Challenge
     {
+        public bool Success { get; set; }
     }
 }

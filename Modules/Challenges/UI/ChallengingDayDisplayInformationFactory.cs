@@ -5,8 +5,17 @@
 
     public class ChallengingDayDisplayInformationFactory
     {
+        private readonly ConsoleColor _defaultColour;
+
+        public ChallengingDayDisplayInformationFactory(ConsoleColor defaultColour)
+        {
+            _defaultColour = defaultColour;
+        }
+
         //□
         private const char EmptySquare = '\u25A1';
+        //■
+        private const char FullSquare = '\u25A0';
 
         public ChallengingDayDisplayInformation PrepareDisplayInformation(ChallengingDay day)
         {
@@ -14,11 +23,34 @@
             {
                 return new ChallengingDayDisplayInformation
                 {
-                    Character = EmptySquare
+                    Character = EmptySquare,
+                    Colour = _defaultColour
                 };
             }
 
-            throw new NotImplementedException();
+            if (day.Challenges.All(challenge => !challenge.Success))
+            {
+                return new ChallengingDayDisplayInformation
+                {
+                    Character = FullSquare,
+                    Colour = ConsoleColor.DarkRed
+                };
+            }
+
+            if (day.Challenges.All(challenge => challenge.Success))
+            {
+                return new ChallengingDayDisplayInformation
+                {
+                    Character = FullSquare,
+                    Colour = ConsoleColor.DarkGreen
+                };
+            }
+
+            return new ChallengingDayDisplayInformation
+            {
+                Character = ' ',
+                Colour = _defaultColour
+            };
         }
     }
 }
