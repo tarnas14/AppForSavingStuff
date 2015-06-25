@@ -1,6 +1,7 @@
 ﻿namespace Application
 {
     using Modules;
+    using Modules.Challenges;
     using Modules.Challenges.UI;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Persistence;
@@ -24,7 +25,7 @@
             var wallet = new WalletMainController(new WalletUi(new SystemConsole()), systemClockTimeMaster, reservedWordsStore, ravenMagic);
             consoleUi.Subscribe(wallet, "wallet");
 
-            var challenges = new ChallengesController();
+            var challenges = new ChallengesController(new DummyChallengeRepository());
             consoleUi.Subscribe(challenges, "challenges");
 
             new InputLoop(consoleUi).Loop();

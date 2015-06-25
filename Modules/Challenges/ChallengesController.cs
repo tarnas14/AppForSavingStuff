@@ -1,8 +1,11 @@
-﻿namespace Modules.Challenges.UI
+﻿namespace Modules.Challenges
 {
     using System;
+    using Tarnas.ConsoleUi;
+    using UI;
+    using Console = System.Console;
 
-    public class GitStyleChallengeUi
+    public class ChallengesController : Subscriber
     {
         private readonly ChallengeRepository _challengeRepository;
         private Cursor _challengeCursor;
@@ -14,19 +17,12 @@
         public const int WeekColumnWidth = 2;
         public const int DayOfTheWeekColumnWidth = 4;
 
-        public GitStyleChallengeUi(ChallengeRepository challengeRepository)
-        {
-            _challengeRepository = challengeRepository;
-        }
-
-        public void Run()
+        public void Execute(UserCommand userCommand)
         {
             _displayArray = PrepareChallengeDisplayArea();
 
             Console.Clear();
             _displayOrigin = new Cursor(Console.CursorLeft, Console.CursorTop);
-
-            Display(_displayOrigin, _displaySize, _displayedDaysCount);
 
             var uiConfiguration = new GitUiConfiguration
             {
@@ -36,10 +32,15 @@
                 ChallengesArray = _displayArray
             };
 
-            var highlighter = new ChallengeHighlighter(uiConfiguration);
+            var highlighter = new ChallengesGitStyleUi(uiConfiguration);
             new WriteLineDetailDisplay(new Cursor(_displayOrigin.Left, _displayOrigin.Top + _displaySize.Item2), highlighter);
 
             highlighter.StartAt(_challengeCursor);
+        }
+
+        public ChallengesController(ChallengeRepository challengeRepository)
+        {
+            _challengeRepository = challengeRepository;
         }
 
         private ChallengingDay[,] PrepareChallengeDisplayArea()
@@ -73,44 +74,6 @@
             }
 
             return displayArray;
-        }
-
-        private void Display(Cursor displayOrigin, Tuple<int, int> displaySize, int maxItemsToDisplay)
-        {
-            ConsoleUtils.Utf8Display(() => {
-                Console.SetCursorPosition(displayOrigin.Left, displayOrigin.Top);
-                for (int i = 0; i < displaySize.Item2; i++)
-                {
-                    Console.Write("{0} ", DaysOfTheWeek[i]);
-                    for (int j = 0; j < displaySize.Item1; j++)
-                    {
-                        if (j*7 + i >= maxItemsToDisplay)
-                        {
-                            continue;
-                        }
-
-                        Console.Write("{0} ", '\u25A1');
-                    }
-                    Console.WriteLine();
-                }
-            });
-        }
-
-        private string[] DaysOfTheWeek
-        {
-            get
-            {
-                return new[]
-                {
-                    "Sun",
-                    "Mon",
-                    "Tue",
-                    "Wed",
-                    "Thu",
-                    "Fri",
-                    "Sat"
-                };
-            }
         }
 
         private int CalculateNumberOfDays(double weeksToDisplay)

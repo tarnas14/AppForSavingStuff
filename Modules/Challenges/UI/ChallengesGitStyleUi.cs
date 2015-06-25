@@ -2,17 +2,65 @@ namespace Modules.Challenges.UI
 {
     using System;
 
-    public class ChallengeHighlighter : ChallengingDayPicker
+    public class ChallengesGitStyleUi : ChallengingDayPicker
     {
         public event EventHandler<ChallengingDayPickedEventArgs> ChallengingDayPicked;
 
         private readonly GitUiConfiguration _uiConfiguration;
         private readonly ConsoleColor _background;
         private Cursor _cursor;
+        private readonly ChallengingDayDisplayInformationFactory _dayDisplayInformationFactory;
 
-        public ChallengeHighlighter(GitUiConfiguration uiConfiguration)
+        public ChallengesGitStyleUi(GitUiConfiguration uiConfiguration)
         {
             _uiConfiguration = uiConfiguration;
+            _dayDisplayInformationFactory = new ChallengingDayDisplayInformationFactory();
+            Display();
+        }
+
+        private void Display()
+        {
+            ConsoleUtils.Utf8Display(() =>
+            {
+                Console.SetCursorPosition(_uiConfiguration.Origin.Left, _uiConfiguration.Origin.Top);
+                for (int i = 0; i < _uiConfiguration.Size.Item2; i++)
+                {
+                    Console.Write("{0} ", DaysOfTheWeek[i]);
+                    for (int j = 0; j < _uiConfiguration.Size.Item1; j++)
+                    {
+                        if (j * 7 + i >= _uiConfiguration.DisplayedDaysCount)
+                        {
+                            continue;
+                        }
+
+                        Console.Write("{0} ", GetDayCharacter(j, i));
+                    }
+                    Console.WriteLine();
+                }
+            });
+        }
+
+        private char GetDayCharacter(int x, int y)
+        {
+            var day = _uiConfiguration.ChallengesArray[x, y];
+            return _dayDisplayInformationFactory.PrepareDisplayInformation(day).Character;
+        }
+
+        private string[] DaysOfTheWeek
+        {
+            get
+            {
+                return new[]
+                {
+                    "Sun",
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat"
+                };
+            }
         }
 
         public void StartAt(Cursor challengeCursor)
@@ -82,11 +130,11 @@ namespace Modules.Challenges.UI
             ConsoleUtils.Utf8Display(() =>
             {
                 var topOffset = _uiConfiguration.Origin.Top + cursor.Top;
-                var leftOffset = _uiConfiguration.Origin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
+                var leftOffset = _uiConfiguration.Origin.Left + ChallengesController.DayOfTheWeekColumnWidth + cursor.Left * ChallengesController.WeekColumnWidth;
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 Console.BackgroundColor = _background;
-                Console.Write("{0} ", '\u25A1');
+                Console.Write("{0} ", GetDayCharacter(cursor.Left, cursor.Top));
             });
         }
 
@@ -96,12 +144,12 @@ namespace Modules.Challenges.UI
             ConsoleUtils.Utf8Display(() =>
             {
                 var topOffset = _uiConfiguration.Origin.Top + cursor.Top;
-                var leftOffset = _uiConfiguration.Origin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
+                var leftOffset = _uiConfiguration.Origin.Left + ChallengesController.DayOfTheWeekColumnWidth + cursor.Left * ChallengesController.WeekColumnWidth;
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 var backgroundColour = Console.BackgroundColor;
                 Console.BackgroundColor = ConsoleColor.DarkBlue;
-                Console.Write("{0}", '\u25A1');
+                Console.Write("{0}", GetDayCharacter(cursor.Left, cursor.Top));
                 Console.BackgroundColor = backgroundColour;
                 Console.Write(' ');
             });

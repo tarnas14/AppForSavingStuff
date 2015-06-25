@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Specification", "Specification\Specification.csproj", "{7CBCC543-7C6A-4B91-B49D-56A0E671A0E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WalletSpecification", "Specification\WalletSpecification.csproj", "{7CBCC543-7C6A-4B91-B49D-56A0E671A0E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules", "Modules\Modules.csproj", "{F9FDEF7D-3B49-4080-992B-88972D3BC7B6}"
 EndProject
@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Tarnas.ConsoleUi.dll = Tarnas.ConsoleUi.dll
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChallengesSpecification", "ChallengesSpecification\ChallengesSpecification.csproj", "{E4256C1A-8385-47B4-801B-50D1308D0245}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{46EFBFEE-B1C0-4451-AF65-769498CBE038}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +36,16 @@ Global
 		{343F7FAB-926B-4E66-AE58-190ED665B336}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{343F7FAB-926B-4E66-AE58-190ED665B336}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{343F7FAB-926B-4E66-AE58-190ED665B336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4256C1A-8385-47B4-801B-50D1308D0245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4256C1A-8385-47B4-801B-50D1308D0245}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4256C1A-8385-47B4-801B-50D1308D0245}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4256C1A-8385-47B4-801B-50D1308D0245}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7CBCC543-7C6A-4B91-B49D-56A0E671A0E3} = {46EFBFEE-B1C0-4451-AF65-769498CBE038}
+		{E4256C1A-8385-47B4-801B-50D1308D0245} = {46EFBFEE-B1C0-4451-AF65-769498CBE038}
 	EndGlobalSection
 EndGlobal
