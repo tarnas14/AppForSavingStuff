@@ -2,24 +2,17 @@ namespace Modules.Challenges.UI
 {
     using System;
 
-    public class ChallengeHighlighter
+    public class ChallengeHighlighter : ChallengingDayPicker
     {
-        private readonly Cursor _displayOrigin;
-        private readonly Tuple<int, int> _displaySize;
-        private readonly ChallengingDay[,] _displayArray;
-        private readonly int _displayedDaysCount;
-        private Cursor _cursor;
-        private readonly ConsoleColor _background;
-        private readonly DetailsDisplay _detailsDisplay;
+        public event EventHandler<ChallengingDayPickedEventArgs> ChallengingDayPicked;
 
-        public ChallengeHighlighter(Cursor displayOrigin, Tuple<int, int> displaySize, ChallengingDay[,] displayArray, int displayedDaysCount, DetailsDisplay detailsDisplay)
+        private readonly GitUiConfiguration _uiConfiguration;
+        private readonly ConsoleColor _background;
+        private Cursor _cursor;
+
+        public ChallengeHighlighter(GitUiConfiguration uiConfiguration)
         {
-            _background = Console.BackgroundColor;
-            _displayOrigin = displayOrigin;
-            _displaySize = displaySize;
-            _displayArray = displayArray;
-            _displayedDaysCount = displayedDaysCount;
-            _detailsDisplay = detailsDisplay;
+            _uiConfiguration = uiConfiguration;
         }
 
         public void StartAt(Cursor challengeCursor)
@@ -66,13 +59,13 @@ namespace Modules.Challenges.UI
         {
             var nextCursor = new Cursor(_cursor.Left + offsetX, _cursor.Top + offsetY);
 
-            var highlightedItemId = _displaySize.Item2*nextCursor.Left + nextCursor.Top;
+            var highlightedItemId = _uiConfiguration.Size.Item2 * nextCursor.Left + nextCursor.Top;
             var tryingToMoveOutsideDisplayArea = 
                 nextCursor.Left < 0 || 
                 nextCursor.Top < 0 || 
-                highlightedItemId >= _displayedDaysCount || 
-                nextCursor.Left >= _displaySize.Item1 || 
-                nextCursor.Top >= _displaySize.Item2;
+                highlightedItemId >= _uiConfiguration.DisplayedDaysCount ||
+                nextCursor.Left >= _uiConfiguration.Size.Item1 ||
+                nextCursor.Top >= _uiConfiguration.Size.Item2;
 
             if (tryingToMoveOutsideDisplayArea)
             {
@@ -88,8 +81,8 @@ namespace Modules.Challenges.UI
         {
             ConsoleUtils.Utf8Display(() =>
             {
-                var topOffset = _displayOrigin.Top + cursor.Top;
-                var leftOffset = _displayOrigin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
+                var topOffset = _uiConfiguration.Origin.Top + cursor.Top;
+                var leftOffset = _uiConfiguration.Origin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 Console.BackgroundColor = _background;
@@ -99,11 +92,11 @@ namespace Modules.Challenges.UI
 
         private void Select(Cursor cursor)
         {
-            _detailsDisplay.DisplayDetails(_displayArray[cursor.Left, cursor.Top]);
+            DisplayDetails(_uiConfiguration.ChallengesArray[cursor.Left, cursor.Top]);
             ConsoleUtils.Utf8Display(() =>
             {
-                var topOffset = _displayOrigin.Top + cursor.Top;
-                var leftOffset = _displayOrigin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
+                var topOffset = _uiConfiguration.Origin.Top + cursor.Top;
+                var leftOffset = _uiConfiguration.Origin.Left + GitStyleChallengeUi.DayOfTheWeekColumnWidth + cursor.Left * GitStyleChallengeUi.WeekColumnWidth;
                 Console.CursorLeft = leftOffset;
                 Console.CursorTop = topOffset;
                 var backgroundColour = Console.BackgroundColor;
@@ -112,6 +105,14 @@ namespace Modules.Challenges.UI
                 Console.BackgroundColor = backgroundColour;
                 Console.Write(' ');
             });
+        }
+
+        private void DisplayDetails(ChallengingDay challengingDay)
+        {
+            if (ChallengingDayPicked != null)
+            {
+                ChallengingDayPicked(this, new ChallengingDayPickedEventArgs(challengingDay));
+            }
         }
     }
 }

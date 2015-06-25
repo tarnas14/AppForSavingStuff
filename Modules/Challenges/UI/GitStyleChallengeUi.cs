@@ -28,7 +28,17 @@
 
             Display(_displayOrigin, _displaySize, _displayedDaysCount);
 
-            var highlighter = new ChallengeHighlighter(_displayOrigin, _displaySize, _displayArray, _displayedDaysCount, new WriteLineDetailDisplay(new Cursor(_displayOrigin.Left, _displayOrigin.Top + _displaySize.Item2)));
+            var uiConfiguration = new GitUiConfiguration
+            {
+                Origin = _displayOrigin,
+                Size = _displaySize,
+                DisplayedDaysCount = _displayedDaysCount,
+                ChallengesArray = _displayArray
+            };
+
+            var highlighter = new ChallengeHighlighter(uiConfiguration);
+            new WriteLineDetailDisplay(new Cursor(_displayOrigin.Left, _displayOrigin.Top + _displaySize.Item2), highlighter);
+
             highlighter.StartAt(_challengeCursor);
         }
 

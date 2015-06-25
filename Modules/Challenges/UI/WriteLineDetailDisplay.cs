@@ -2,22 +2,23 @@
 {
     using System;
 
-    class WriteLineDetailDisplay : DetailsDisplay
+    class WriteLineDetailDisplay
     {
         private readonly Cursor _startCursor;
 
-        public WriteLineDetailDisplay(Cursor startCursor)
+        public WriteLineDetailDisplay(Cursor startCursor, ChallengingDayPicker highlighter)
         {
             _startCursor = startCursor;
+            highlighter.ChallengingDayPicked += DisplayDetails;
         }
 
-        public void DisplayDetails(ChallengingDay challengingDay)
+        private void DisplayDetails(object sender, ChallengingDayPickedEventArgs eventArgs)
         {
             ConsoleUtils.DisplayAndReturn(() =>
             {
                 Clear();
                 Console.SetCursorPosition(_startCursor.Left, _startCursor.Top);
-                Console.WriteLine("{0} - {1}", challengingDay.Day, challengingDay.ChallengeTitle);
+                Console.WriteLine("{0} - {1}", eventArgs.ChallengingDay.Day, eventArgs.ChallengingDay.ChallengeTitle);
             });
         }
 
