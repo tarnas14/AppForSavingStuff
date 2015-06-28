@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Raven.Abstractions">
       <HintPath>..\packages\RavenDB.Database.3.0.3528\lib\net45\Raven.Abstractions.dll</HintPath>
     </Reference>
@@ -53,6 +57,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Challenges\Data\DoOrDieChallengeDefinition.cs" />
+    <Compile Include="Challenges\Data\SingleChallengeRepository.cs" />
     <Compile Include="Challenges\UI\Challenge.cs" />
     <Compile Include="Challenges\UI\ChallengesGitStyleUi.cs" />
     <Compile Include="Challenges\UI\ChallengingDay.cs" />
@@ -112,6 +118,7 @@
     <Compile Include="TimeMaster.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
