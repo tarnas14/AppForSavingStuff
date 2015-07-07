@@ -2,7 +2,6 @@
 {
     using Modules;
     using Modules.Challenges;
-    using Modules.Challenges.UI;
     using Modules.MoneyTracking;
     using Modules.MoneyTracking.Persistence;
     using Modules.MoneyTracking.Presentation;
@@ -25,7 +24,7 @@
             var wallet = new WalletMainController(new WalletUi(new SystemConsole()), systemClockTimeMaster, reservedWordsStore, ravenMagic);
             consoleUi.Subscribe(wallet, "wallet");
 
-            var challenges = new ChallengesController(new DummyChallengeRepository());
+            var challenges = new ChallengesController();
             consoleUi.Subscribe(challenges, "challenges");
 
             new InputLoop(consoleUi).Loop();

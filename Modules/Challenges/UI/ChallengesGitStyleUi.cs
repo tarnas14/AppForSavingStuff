@@ -102,6 +102,7 @@ namespace Modules.Challenges.UI
                 }
             }
             Console.CursorVisible = true;
+            Console.Clear();
         }
 
         private void MoveCursor(int offsetX, int offsetY)
