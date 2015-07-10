@@ -6,7 +6,7 @@
     using Modules.Challenges.UI;
     using NUnit.Framework;
 
-    public class SingleChallengeRepositoryTests
+    public class DoOrDieChallengeRepositoryTests
     {
         [Test]
         public void ShouldLoadChallengeDaysForEveryDayIndefiniteChallenge()
@@ -26,7 +26,7 @@
                 }
             };
 
-            var challengeRepo = new SingleChallengeRepository(doOrDieChallenge);
+            var challengeRepo = new DoOrDieChallengeRepository(doOrDieChallenge);
 
             //when
             var days = challengeRepo.GetLastDays(2);

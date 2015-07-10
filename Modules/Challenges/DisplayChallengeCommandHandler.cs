@@ -12,10 +12,9 @@ namespace Modules.Challenges
         private int _displayedDaysCount;
         private readonly ChallengeRepository _challengeRepository;
 
-        public DisplayChallengeCommandHandler(string challengeName)
+        public DisplayChallengeCommandHandler(ChallengeRepository challengeRepository)
         {
-            Console.WriteLine(challengeName);
-            _challengeRepository = new DummyChallengeRepository();
+            _challengeRepository = challengeRepository;
         }
 
         public void Run()

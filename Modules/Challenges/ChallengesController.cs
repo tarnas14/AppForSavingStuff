@@ -1,6 +1,7 @@
 ﻿namespace Modules.Challenges
 {
     using System;
+    using Data;
     using Tarnas.ConsoleUi;
 
     public class ChallengesController : Subscriber
@@ -16,7 +17,7 @@
             {
                 case("doOrDie"):
                     var challengeName = userCommand.Params[1];
-                    var displayChallenge = new DisplayChallengeCommandHandler(challengeName);
+                    var displayChallenge = new DisplayChallengeCommandHandler(new DoOrDieChallengeRepository(ChallengeDefinitionReader.ReadDoOrDieDefinition(challengeName)));
                     displayChallenge.Run();
                     break;
                 default:

@@ -57,8 +57,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Challenges\Data\ChallengeDefinitionReader.cs" />
     <Compile Include="Challenges\Data\DoOrDieChallengeDefinition.cs" />
-    <Compile Include="Challenges\Data\SingleChallengeRepository.cs" />
+    <Compile Include="Challenges\Data\DoOrDieChallengeRepository.cs" />
     <Compile Include="Challenges\DisplayChallengeCommandHandler.cs" />
     <Compile Include="Challenges\UI\Challenge.cs" />
     <Compile Include="Challenges\UI\ChallengesGitStyleUi.cs" />

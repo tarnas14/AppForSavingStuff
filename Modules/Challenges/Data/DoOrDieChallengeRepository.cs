@@ -4,11 +4,11 @@
     using System.Collections.Generic;
     using UI;
 
-    public class SingleChallengeRepository : ChallengeRepository
+    public class DoOrDieChallengeRepository : ChallengeRepository
     {
         private readonly DoOrDieChallengeDefinition _doOrDieChallenge;
 
-        public SingleChallengeRepository(DoOrDieChallengeDefinition doOrDieChallenge)
+        public DoOrDieChallengeRepository(DoOrDieChallengeDefinition doOrDieChallenge)
         {
             _doOrDieChallenge = doOrDieChallenge;
         }
