@@ -13,17 +13,26 @@
             _doOrDieChallenge = doOrDieChallenge;
         }
 
-        public IList<ChallengingDay> GetLastDays(int numberOfDaysToDisplay)
+        public IList<ChallengingDay> GetLastDays(int numberOfDaysToDisplay, DateTime today)
         {
             var days = new List<ChallengingDay>();
 
-            var today = DateTime.Today;
             for (int i = numberOfDaysToDisplay - 1; i >= 0; i--)
             {
+                var challengeDay = today.Subtract(TimeSpan.FromDays(i));
+
+                if (challengeDay < _doOrDieChallenge.ChallengeStart)
+                {
+                    days.Add(new ChallengingDay
+                    {
+                        Day = challengeDay,
+                    });
+                    continue;
+                }
+
                 days.Add(new ChallengingDay
                 {
-                    Day = today.Subtract(TimeSpan.FromDays(i)),
-                    ChallengeTitle = _doOrDieChallenge.Name,
+                    Day = challengeDay,
                     Challenges = _doOrDieChallenge.Definition
                 });
             }

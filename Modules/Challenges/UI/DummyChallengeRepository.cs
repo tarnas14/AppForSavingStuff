@@ -13,12 +13,11 @@
             _random = new Random();
         }
 
-        public IList<ChallengingDay> GetLastDays(int numberOfDaysToDisplay)
+        public IList<ChallengingDay> GetLastDays(int numberOfDaysToDisplay, DateTime today)
         {
             return Enumerable.Range(0, numberOfDaysToDisplay).Select(i => new ChallengingDay
             {
-                ChallengeTitle = string.Format("Test challenge {0}", i),
-                Day = DateTime.Today,
+                Day = today,
                 Challenges = _random.Next(0, 100) > 49 ? new List<Challenge>() : new List<Challenge> { GetRandomChallenge() }
             }).ToList();
         }
@@ -27,7 +26,8 @@
         {
             return new Challenge
             {
-                Success = _random.Next(0, 100) > 49
+                Success = _random.Next(0, 100) > 49,
+                Description = "dummy description here"
             };
         }
     }

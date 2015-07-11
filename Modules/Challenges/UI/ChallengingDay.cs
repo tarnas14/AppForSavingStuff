@@ -11,7 +11,6 @@
         }
 
         public DateTime Day { get; set; }
-        public string ChallengeTitle { get; set; }
         public IEnumerable<Challenge> Challenges { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace Modules.Challenges
         {
             var weeksToDisplay = CalculateWeeksNumberToDisplay();
             _displayedDaysCount = CalculateNumberOfDays(weeksToDisplay);
-            var daysWithChallenge = _challengeRepository.GetLastDays(_displayedDaysCount);
+            var daysWithChallenge = _challengeRepository.GetLastDays(_displayedDaysCount, DateTime.Today);
 
             _displaySize = Tuple.Create(weeksToDisplay, 7);
 
