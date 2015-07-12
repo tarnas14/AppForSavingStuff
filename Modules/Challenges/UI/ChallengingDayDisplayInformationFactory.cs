@@ -6,10 +6,12 @@
     public class ChallengingDayDisplayInformationFactory
     {
         private readonly ConsoleColor _defaultColour;
+        private readonly DateTime _today;
 
-        public ChallengingDayDisplayInformationFactory(ConsoleColor defaultColour)
+        public ChallengingDayDisplayInformationFactory(ConsoleColor defaultColour, DateTime today)
         {
             _defaultColour = defaultColour;
+            _today = today;
         }
 
         //□
@@ -19,7 +21,7 @@
 
         public ChallengingDayDisplayInformation PrepareDisplayInformation(ChallengingDay day)
         {
-            if (!day.Challenges.Any())
+            if (!day.Challenges.Any() || day.Day.Date == _today.Date)
             {
                 return new ChallengingDayDisplayInformation
                 {

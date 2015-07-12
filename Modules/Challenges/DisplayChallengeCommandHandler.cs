@@ -11,6 +11,7 @@ namespace Modules.Challenges
         private Tuple<int, int> _displaySize;
         private int _displayedDaysCount;
         private readonly ChallengeRepository _challengeRepository;
+        private DateTime _today = DateTime.Today;
 
         public DisplayChallengeCommandHandler(ChallengeRepository challengeRepository)
         {
@@ -32,7 +33,7 @@ namespace Modules.Challenges
                 ChallengesArray = _displayArray
             };
 
-            var highlighter = new ChallengesGitStyleUi(uiConfiguration);
+            var highlighter = new ChallengesGitStyleUi(uiConfiguration, new ChallengingDayDisplayInformationFactory(Console.ForegroundColor, _today));
             new WriteLineDetailDisplay(new Cursor(_displayOrigin.Left, _displayOrigin.Top + _displaySize.Item2), highlighter);
 
             highlighter.StartAt(_challengeCursor);
@@ -42,7 +43,7 @@ namespace Modules.Challenges
         {
             var weeksToDisplay = CalculateWeeksNumberToDisplay();
             _displayedDaysCount = CalculateNumberOfDays(weeksToDisplay);
-            var daysWithChallenge = _challengeRepository.GetLastDays(_displayedDaysCount, DateTime.Today);
+            var daysWithChallenge = _challengeRepository.GetLastDays(_displayedDaysCount, _today);
 
             _displaySize = Tuple.Create(weeksToDisplay, 7);
 
@@ -73,7 +74,7 @@ namespace Modules.Challenges
 
         private int CalculateNumberOfDays(double weeksToDisplay)
         {
-            var daysToDisplayInCurrentWeek = (int)DateTime.Today.DayOfWeek + 1;
+            var daysToDisplayInCurrentWeek = (int)_today.DayOfWeek + 1;
             var daysInPreviousWeeks = (weeksToDisplay - 1) * 7;
 
             return (int)(daysInPreviousWeeks + daysToDisplayInCurrentWeek);

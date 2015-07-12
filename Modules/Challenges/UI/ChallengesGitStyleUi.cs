@@ -11,10 +11,10 @@ namespace Modules.Challenges.UI
         private Cursor _cursor;
         private readonly ChallengingDayDisplayInformationFactory _dayDisplayInformationFactory;
 
-        public ChallengesGitStyleUi(GitUiConfiguration uiConfiguration)
+        public ChallengesGitStyleUi(GitUiConfiguration uiConfiguration, ChallengingDayDisplayInformationFactory dayDisplayInformationFactory)
         {
             _uiConfiguration = uiConfiguration;
-            _dayDisplayInformationFactory = new ChallengingDayDisplayInformationFactory(Console.ForegroundColor);
+            _dayDisplayInformationFactory = dayDisplayInformationFactory;
             Display();
         }
 
