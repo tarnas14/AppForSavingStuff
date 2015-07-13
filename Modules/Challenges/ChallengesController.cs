@@ -1,7 +1,6 @@
 ﻿namespace Modules.Challenges
 {
     using System;
-    using Data;
     using Tarnas.ConsoleUi;
 
     public class ChallengesController : Subscriber
@@ -16,14 +15,26 @@
             switch (command)
             {
                 case("doOrDie"):
-                    var challengeName = userCommand.Params[1];
-                    var displayChallenge = new DisplayChallengeCommandHandler(new DoOrDieChallengeRepository(ChallengeDefinitionReader.ReadDoOrDieDefinition(challengeName)));
-                    displayChallenge.Run();
+                    HandleDoOrDieChallengeCommand(userCommand);
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
-       
+
+        private void HandleDoOrDieChallengeCommand(UserCommand userCommand)
+        {
+            if (UserWantsToBrowseChallenge(userCommand))
+            {
+                var challengeName = userCommand.Params[1];
+                var displayChallenge = new DisplayChallengeCommandHandler(DoOrDieChallenge.Load(challengeName));
+                displayChallenge.Run();
+            }
+        }
+
+        private bool UserWantsToBrowseChallenge(UserCommand userCommand)
+        {
+            return userCommand.Params.Count == 2;
+        }
     }
 }

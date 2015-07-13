@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChallengeDisplayInformationTests.cs" />
-    <Compile Include="DoOrDieChallengeRepositoryTests.cs" />
+    <Compile Include="DoOrDieChallengeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

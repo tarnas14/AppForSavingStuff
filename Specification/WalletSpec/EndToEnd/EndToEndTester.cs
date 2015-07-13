@@ -18,7 +18,6 @@
         private readonly ConsoleMock _consoleMock;
         private readonly Mock<TimeMaster> _timeMasterMock;
         private readonly MemoryListSourceNameValidator _sourceNameValidator;
-        private DateTime _date;
         private readonly Random _random;
 
         public EndToEndTester()

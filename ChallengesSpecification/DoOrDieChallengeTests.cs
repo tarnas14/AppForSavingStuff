@@ -2,18 +2,18 @@
 {
     using System;
     using System.Linq;
-    using Modules.Challenges.Data;
+    using Modules.Challenges;
     using Modules.Challenges.UI;
     using NUnit.Framework;
 
-    public class DoOrDieChallengeRepositoryTests
+    public class DoOrDieChallengeTests
     {
         [Test]
         public void ShouldLoadChallengeDaysForEveryDayIndefiniteChallenge()
         {
             //given
             const string description = "do stuff";
-            var doOrDieChallenge = new DoOrDieChallengeDefinition
+            var doOrDieChallenge = new DoOrDieChallenge
             {
                 Name = "chalenge",
                 Cycle = new[] {1},
@@ -26,11 +26,10 @@
                 }
             };
 
-            var challengeRepo = new DoOrDieChallengeRepository(doOrDieChallenge);
             var today = DateTime.Now;
 
             //when
-            var days = challengeRepo.GetLastDays(2, today);
+            var days = doOrDieChallenge.GetLastDays(2, today);
 
             //then
             Assert.That(days.Count, Is.EqualTo(2));
@@ -45,7 +44,7 @@
         {
             //given
             var today = DateTime.Now;
-            var doOrDieChallenge = new DoOrDieChallengeDefinition
+            var doOrDieChallenge = new DoOrDieChallenge
             {
                 Name = "chalenge",
                 Cycle = new[] { 1 },
@@ -53,10 +52,8 @@
                 ChallengeStart = today.Subtract(TimeSpan.FromDays(1))
             };
 
-            var challengeRepo = new DoOrDieChallengeRepository(doOrDieChallenge);
-
             //when
-            var days = challengeRepo.GetLastDays(3, DateTime.Now);
+            var days = doOrDieChallenge.GetLastDays(3, DateTime.Now);
 
             //then
             Assert.That(days.First().Challenges, Is.Empty);

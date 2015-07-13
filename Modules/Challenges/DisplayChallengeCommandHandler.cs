@@ -5,17 +5,17 @@ namespace Modules.Challenges
 
     public class DisplayChallengeCommandHandler
     {
+        private readonly DoOrDieChallenge _challenge;
         private Cursor _challengeCursor;
         private Cursor _displayOrigin;
         private ChallengingDay[,] _displayArray;
         private Tuple<int, int> _displaySize;
         private int _displayedDaysCount;
-        private readonly ChallengeRepository _challengeRepository;
         private DateTime _today = DateTime.Today;
 
-        public DisplayChallengeCommandHandler(ChallengeRepository challengeRepository)
+        public DisplayChallengeCommandHandler(DoOrDieChallenge challenge)
         {
-            _challengeRepository = challengeRepository;
+            _challenge = challenge;
         }
 
         public void Run()
@@ -43,7 +43,7 @@ namespace Modules.Challenges
         {
             var weeksToDisplay = CalculateWeeksNumberToDisplay();
             _displayedDaysCount = CalculateNumberOfDays(weeksToDisplay);
-            var daysWithChallenge = _challengeRepository.GetLastDays(_displayedDaysCount, _today);
+            var daysWithChallenge = _challenge.GetLastDays(_displayedDaysCount, _today);
 
             _displaySize = Tuple.Create(weeksToDisplay, 7);
 
