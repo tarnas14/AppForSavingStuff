@@ -11,30 +11,18 @@
         public void Execute(UserCommand userCommand)
         {
             var command = userCommand.Params[0];
+            var challengeName = string.Empty;
 
             switch (command)
             {
                 case("doOrDie"):
-                    HandleDoOrDieChallengeCommand(userCommand);
+                    challengeName = userCommand.Params[1];
+                    var displayChallenge = new DisplayChallengeCommandHandler(DoOrDieChallenge.Load(challengeName));
+                    displayChallenge.Run();
                     break;
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        private void HandleDoOrDieChallengeCommand(UserCommand userCommand)
-        {
-            if (UserWantsToBrowseChallenge(userCommand))
-            {
-                var challengeName = userCommand.Params[1];
-                var displayChallenge = new DisplayChallengeCommandHandler(DoOrDieChallenge.Load(challengeName));
-                displayChallenge.Run();
-            }
-        }
-
-        private bool UserWantsToBrowseChallenge(UserCommand userCommand)
-        {
-            return userCommand.Params.Count == 2;
         }
     }
 }
