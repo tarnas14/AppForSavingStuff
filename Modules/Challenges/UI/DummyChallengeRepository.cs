@@ -18,16 +18,16 @@
             return Enumerable.Range(0, numberOfDaysToDisplay).Select(i => new ChallengingDay
             {
                 Day = today,
-                Challenges = _random.Next(0, 100) > 49 ? new List<Challenge>() : new List<Challenge> { GetRandomChallenge() }
+                ChallengeResult = _random.Next(0, 100) > 49 ? null : GetRandomChallenge()
             }).ToList();
         }
 
-        private Challenge GetRandomChallenge()
+        private ChallengeResult GetRandomChallenge()
         {
-            return new Challenge
+            return new ChallengeResult
             {
                 Success = _random.Next(0, 100) > 49,
-                Description = "dummy description here"
+                Message = "dummy description here"
             };
         }
     }

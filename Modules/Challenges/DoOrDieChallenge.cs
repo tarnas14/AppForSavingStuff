@@ -9,8 +9,6 @@
     public class DoOrDieChallenge
     {
         public string Name { get; set; }
-        public ICollection<int> Cycle { get; set; }
-        public ICollection<Challenge> Definition { get; set; }
         public DateTime ChallengeStart { get; set; }
 
         public IList<ChallengingDay> GetLastDays(int numberOfDaysToDisplay, DateTime today)
@@ -33,7 +31,7 @@
                 days.Add(new ChallengingDay
                 {
                     Day = challengeDay,
-                    Challenges = Definition
+                    ChallengeResult = new ChallengeResult ()
                 });
             }
 

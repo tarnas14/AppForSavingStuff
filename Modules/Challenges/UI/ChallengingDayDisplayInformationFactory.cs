@@ -21,7 +21,7 @@
 
         public ChallengingDayDisplayInformation PrepareDisplayInformation(ChallengingDay day)
         {
-            if (!day.Challenges.Any() || day.Day.Date == _today.Date)
+            if (day.ChallengeResult == null || day.Day.Date == _today.Date)
             {
                 return new ChallengingDayDisplayInformation
                 {
@@ -30,7 +30,7 @@
                 };
             }
 
-            if (day.Challenges.All(challenge => !challenge.Success))
+            if (!day.ChallengeResult.Success)
             {
                 return new ChallengingDayDisplayInformation
                 {
@@ -39,7 +39,7 @@
                 };
             }
 
-            if (day.Challenges.All(challenge => challenge.Success))
+            if (day.ChallengeResult.Success)
             {
                 return new ChallengingDayDisplayInformation
                 {

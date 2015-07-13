@@ -59,7 +59,7 @@
   <ItemGroup>
     <Compile Include="Challenges\DoOrDieChallenge.cs" />
     <Compile Include="Challenges\DisplayChallengeCommandHandler.cs" />
-    <Compile Include="Challenges\UI\Challenge.cs" />
+    <Compile Include="Challenges\UI\ChallengeResult.cs" />
     <Compile Include="Challenges\UI\ChallengesGitStyleUi.cs" />
     <Compile Include="Challenges\UI\ChallengingDay.cs" />
     <Compile Include="Challenges\UI\ChallengingDayDisplayInformation.cs" />

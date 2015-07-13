@@ -21,12 +21,12 @@
         }
 
         [Test]
-        public void ShouldReturnEmptySquareForDaysWithoutChallenges()
+        public void ShouldReturnEmptySquareForDaysWithoutChallenge()
         {
             //given
             var day = new ChallengingDay
             {
-                Challenges = new List<Challenge>()
+                ChallengeResult = null
             };
 
             //when
@@ -38,17 +38,14 @@
         }
 
         [Test]
-        public void ShouldReturnDarkRedFullSquareWhenAllChallengesAreFailed()
+        public void ShouldReturnDarkRedFullSquareWhenChallengeIsNotASuccess()
         {
             //given
             var day = new ChallengingDay
             {
-                Challenges = new List<Challenge>
+                ChallengeResult = new ChallengeResult
                 {
-                    new Challenge
-                    {
-                        Success = false
-                    }
+                    Success = false
                 }
             };
 
@@ -61,18 +58,15 @@
         }
 
         [Test]
-        public void ShouldReturnDarkGreenFullSquareWhenAllChallengesAreASuccess()
+        public void ShouldReturnDarkGreenFullSquareWhenChallengeIsASuccess()
         {
             //given
             var day = new ChallengingDay
             {
-                Challenges = new List<Challenge>
-                {
-                    new Challenge
+                ChallengeResult = new ChallengeResult
                     {
                         Success = true
                     }
-                }
             };
 
             //when
@@ -90,13 +84,10 @@
             var day = new ChallengingDay
             {
                 Day = _today,
-                Challenges = new List<Challenge>
-                {
-                    new Challenge
+                ChallengeResult = new ChallengeResult
                     {
                         Success = false
                     }
-                }
             };
 
             //when
@@ -114,13 +105,10 @@
             var day = new ChallengingDay
             {
                 Day = _today,
-                Challenges = new List<Challenge>
-                {
-                    new Challenge
+                ChallengeResult = new ChallengeResult
                     {
                         Success = true
                     }
-                }
             };
 
             //when
