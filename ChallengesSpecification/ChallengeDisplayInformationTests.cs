@@ -115,8 +115,8 @@
             var displayInformation = _challengingDayDisplay.PrepareDisplayInformation(day);
 
             //then
-            Assert.That(displayInformation.Character, Is.EqualTo(EmptySquare));
-            Assert.That(displayInformation.Colour, Is.EqualTo(_defaultColour));
+            Assert.That(displayInformation.Character, Is.EqualTo(FullSquare));
+            Assert.That(displayInformation.Colour, Is.EqualTo(ConsoleColor.DarkGreen));
         }
     }
 }

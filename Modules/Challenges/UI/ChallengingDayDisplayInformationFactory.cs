@@ -21,7 +21,7 @@
 
         public ChallengingDayDisplayInformation PrepareDisplayInformation(ChallengingDay day)
         {
-            if (day.ChallengeResult == null || day.Day.Date == _today.Date)
+            if (day.ChallengeResult == null || TodayNotASuccess(day))
             {
                 return new ChallengingDayDisplayInformation
                 {
@@ -53,6 +53,11 @@
                 Character = ' ',
                 Colour = _defaultColour
             };
+        }
+
+        private bool TodayNotASuccess(ChallengingDay day)
+        {
+            return day.Day.Date == _today.Date && !day.ChallengeResult.Success;
         }
     }
 }

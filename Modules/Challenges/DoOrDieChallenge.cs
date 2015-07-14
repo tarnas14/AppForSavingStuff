@@ -58,19 +58,31 @@
             return challengingDay;
         }
 
+        public void MarkAsDone(DateTime date, string message = null)
+        {
+            Results.Add(date.Date, new ChallengeResult { Success = true, Message = message});
+        }
+
         private const string ChallengesPath = "_challenges";
 
         public static DoOrDieChallenge Load(string challengeName)
         {
-            var challengeFilePath = string.Format("{0}/{1}.json", ChallengesPath, challengeName);
+            var challengeFilePath = ResolveChallengeFilePath(challengeName);
             return
                 JsonConvert.DeserializeObject<DoOrDieChallenge>(
                     File.ReadAllText(challengeFilePath));
         }
 
-        public void MarkAsDone(DateTime date, string message = null)
+        private static string ResolveChallengeFilePath(string challengeName)
         {
-            Results.Add(date.Date, new ChallengeResult { Success = true, Message = message});
+            return string.Format("{0}/{1}.json", ChallengesPath, challengeName);
+        }
+
+        public void Save()
+        {
+            var serializedChallenge = JsonConvert.SerializeObject(this);
+
+            File.WriteAllText(ResolveChallengeFilePath(Name), serializedChallenge);
         }
     }
 }

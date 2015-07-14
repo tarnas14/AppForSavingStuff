@@ -20,6 +20,18 @@
                     var displayChallenge = new DisplayChallengeCommandHandler(DoOrDieChallenge.Load(challengeName));
                     displayChallenge.Run();
                     break;
+                case("doOrDieDone"):
+                    challengeName = userCommand.Params[1];
+                    var doOrDieChallenge = DoOrDieChallenge.Load(challengeName);
+                    var message = string.Empty;
+                    if (userCommand.Params.Count == 3)
+                    {
+                        message = userCommand.Params[2];
+                    }
+
+                    doOrDieChallenge.MarkAsDone(DateTime.Today, message);
+                    doOrDieChallenge.Save();
+                    break;
                 default:
                     throw new NotImplementedException();
             }
