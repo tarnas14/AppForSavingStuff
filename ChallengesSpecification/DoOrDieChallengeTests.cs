@@ -1,6 +1,7 @@
 ﻿namespace ChallengesSpecification
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Modules.Challenges;
     using NUnit.Framework;
@@ -46,7 +47,25 @@
             Assert.That(days.First().ChallengeResult, Is.Null);
         }
 
+        [Test]
+        public void ShouldMarkADayAsDone()
+        {
+            //given
+            var today = DateTime.Now;
+            var doOrDieChallenge = new DoOrDieChallenge
+            {
+                Name = "chalenge",
+                ChallengeStart = today.Subtract(TimeSpan.FromDays(1))
+            };
 
+            doOrDieChallenge.MarkAsDone(today);
+
+            //when
+            var days = doOrDieChallenge.GetLastDays(1, DateTime.Today);
+
+            //then
+            Assert.That(days.First().ChallengeResult.Success, Is.True);
+        }
     }
 
     public class IDontKnowHowDotNetWorksTests
@@ -62,6 +81,40 @@
 
             //then
             Assert.That(backThen, Is.EqualTo(new DateTime(2015, 9, 30)));
+        }
+
+        [Test]
+        public void ShouldStoreValuesByDateTime()
+        {
+            //given
+            var dict = new Dictionary<DateTime, int>();
+
+            var date = DateTime.Today;
+
+            dict.Add(date.Date, 1);
+
+            //when
+            int result;
+            dict.TryGetValue(date.Date, out result);
+
+            //then
+            Assert.That(result, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void ResetsTheValueAtQuestionWhenTryingToGetValueThatIsNotInTheDictionary()
+        {
+            //given
+            var dict = new Dictionary<DateTime, int>();
+
+            const int expectedResult = 3;
+            var result = expectedResult;
+
+            //when
+            dict.TryGetValue(DateTime.Today.Date, out result);
+
+            //then
+            Assert.That(result, Is.EqualTo(0));
         }
     }
 }
