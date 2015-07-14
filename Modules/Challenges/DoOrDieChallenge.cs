@@ -68,9 +68,9 @@
                     File.ReadAllText(challengeFilePath));
         }
 
-        public void MarkAsDone(DateTime date)
+        public void MarkAsDone(DateTime date, string message = null)
         {
-            Results.Add(date.Date, new ChallengeResult { Success = true });
+            Results.Add(date.Date, new ChallengeResult { Success = true, Message = message});
         }
     }
 }

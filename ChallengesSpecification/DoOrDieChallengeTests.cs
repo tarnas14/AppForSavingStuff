@@ -66,6 +66,28 @@
             //then
             Assert.That(days.First().ChallengeResult.Success, Is.True);
         }
+
+        [Test]
+        public void ShouldMarkADayAsDoneWithAMessage()
+        {
+            //given
+            var today = DateTime.Now;
+            var doOrDieChallenge = new DoOrDieChallenge
+            {
+                Name = "chalenge",
+                ChallengeStart = today.Subtract(TimeSpan.FromDays(1))
+            };
+
+            const string message = "yaay, message";
+            doOrDieChallenge.MarkAsDone(today, message);
+
+            //when
+            var days = doOrDieChallenge.GetLastDays(1, DateTime.Today);
+
+            //then
+            Assert.That(days.First().ChallengeResult.Success, Is.True);
+            Assert.That(days.First().ChallengeResult.Message, Is.EqualTo(message));
+        }
     }
 
     public class IDontKnowHowDotNetWorksTests
